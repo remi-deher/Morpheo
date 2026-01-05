@@ -2,6 +2,7 @@
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 using Morpheo.Sdk.Blobs;
 
 namespace Morpheo.Core.Blobs
@@ -15,9 +16,14 @@ namespace Morpheo.Core.Blobs
         private readonly string _rootPath;
         private const int BufferSize = 81920; // 80 KB
 
-        public FileSystemBlobStore(string rootPath)
+        public FileSystemBlobStore(IOptions<FileSystemBlobStoreOptions> options)
         {
-            _rootPath = rootPath ?? throw new ArgumentNullException(nameof(rootPath));
+            _rootPath = options?.Value?.RootPath ?? throw new ArgumentNullException(nameof(options));
+            if (string.IsNullOrWhiteSpace(_rootPath))
+            {
+                 throw new ArgumentException("MorpheoStorageOptions.RootPath cannot be null or empty.");
+            }
+
             if (!Directory.Exists(_rootPath))
             {
                 Directory.CreateDirectory(_rootPath);

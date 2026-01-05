@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Morpheo.Core.Configuration;
 using Morpheo.Sdk;
 
-namespace Morpheo.Core.Extensions;
+namespace Morpheo;
 
 /// <summary>
 /// Extension methods for configuring the Morpheo dashboard.

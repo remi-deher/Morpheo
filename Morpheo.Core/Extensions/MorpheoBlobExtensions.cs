@@ -6,7 +6,7 @@ using Morpheo.Sdk.Blobs;
 using System;
 using System.IO;
 
-namespace Morpheo.Core.Extensions
+namespace Morpheo
 {
     /// <summary>
     /// Configures blob storage for large file handling (Sidecar Pattern).
@@ -21,9 +21,19 @@ namespace Morpheo.Core.Extensions
         /// <param name="path">Storage root directory (defaults to 'storage/blobs' relative to app base).</param>
         public static IMorpheoBuilder AddBlobStore(this IMorpheoBuilder builder, string? path = null)
         {
-            var storagePath = path ?? Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "storage", "blobs");
+            var storagePath = path;
+            if (string.IsNullOrEmpty(storagePath))
+            {
+                var appData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                storagePath = Path.Combine(appData, "Morpheo", "Blobs");
+            }
 
-            builder.Services.TryAddSingleton<IMorpheoBlobStore>(sp => new FileSystemBlobStore(storagePath));
+            builder.Services.Configure<FileSystemBlobStoreOptions>(options =>
+            {
+                options.RootPath = storagePath;
+            });
+
+            builder.Services.TryAddSingleton<IMorpheoBlobStore, FileSystemBlobStore>();
 
             return builder;
         }
