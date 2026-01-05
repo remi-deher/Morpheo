@@ -2,7 +2,7 @@
 
 ![Build Status](https://img.shields.io/badge/build-passing-brightgreen) ![NuGet Version](https://img.shields.io/nuget/v/Morpheo.Core?label=Morpheo.Core) ![License](https://img.shields.io/badge/license-MIT-blue) ![.NET 10](https://img.shields.io/badge/.NET-10.0-purple)
 
-**Morpheo est un Framework de Synchronisation de Données Distribuées (.NET 9+).**
+**Morpheo est un Framework de Synchronisation de Données Distribuées (.NET 10).**
 
 > **Vision & Philosophie : Ne pas réinventer la roue, mais la faire tourner plus vite.**
 > Morpheo transforme des architectures client-serveur fragiles en systèmes distribués, auto-organisés et indestructibles. Il permet à vos applications d'être "Offline-First" et "Local-First" tout en garantissant une cohérence éventuelle forte à travers un maillage de nœuds.
@@ -390,7 +390,7 @@ Projet sous licence MIT - voir le fichier `LICENSE`.
 
 ![Build Status](https://img.shields.io/badge/build-passing-brightgreen) ![NuGet Version](https://img.shields.io/nuget/v/Morpheo.Core?label=Morpheo.Core) ![License](https://img.shields.io/badge/license-MIT-blue) ![.NET 10](https://img.shields.io/badge/.NET-10.0-purple)
 
-**Morpheo is a Distributed Data Synchronization Framework (.NET 9+).**
+**Morpheo is a Distributed Data Synchronization Framework (.NET 10).**
 
 > **Vision & Philosophy: Don't reinvent the wheel, make it spin faster.**
 > Morpheo transforms fragile client-server architectures into resilient, self-organizing distributed systems. It enables your applications to be "Offline-First" and "Local-First" while ensuring strong eventual consistency across a mesh of nodes.
