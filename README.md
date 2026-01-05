@@ -15,6 +15,9 @@ La solution est organisée en composants modulaires conçus pour la flexibilité
 - **`Morpheo.Tests`** : Suite détaillée de tests Unitaires & d'Intégration utilisant un Simulateur Réseau En Mémoire pour valider les comportements distribués robustes.
 - **`Morpheo.Benchmarks`** : Outils de profilage de performance pour assurer une latence faible et des allocations mémoire minimales sur les chemins critiques.
 
+> [!IMPORTANT]
+> Une documentation détaille se trouve à ce lien https://remi-deher.github.io/Morpheo
+
 ## ✨ Fonctionnalités Clés
 
 - **Offline-First & Local-First** : Les nœuds écrivent toujours dans leur base de données locale en premier. La connectivité (Internet/Serveur) est traitée comme une optimisation optionnelle, pas comme une exigence.
@@ -86,6 +89,9 @@ The solution is organized into modular components designed for flexibility and t
 - **`Morpheo.Sdk`**: Public contracts and lightweight interfaces for integrating Morpheo into your host applications.
 - **`Morpheo.Tests`**: Detailed Unit & Integration tests suite utilizing an In-Memory Network Simulator for validating robust distributed behaviors.
 - **`Morpheo.Benchmarks`**: Performance profiling tools to ensure low latency and minimal memory allocation on hot paths.
+
+> [!IMPORTANT]
+> Detailled documentation can be found at this link https://remi-deher.github.io/Morpheo
 
 ## ✨ Key Features
 
