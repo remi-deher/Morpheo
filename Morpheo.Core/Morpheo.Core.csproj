@@ -10,6 +10,12 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageProjectUrl>https://github.com/remi-deher/Morpheo</PackageProjectUrl>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Version>1.0.1</Version>
+    <Company>remi-deher</Company>
+    <Authors>$(AssemblyName),remi-deher</Authors>
   </PropertyGroup>
 
   <ItemGroup>
@@ -37,6 +43,13 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Morpheo.Sdk\Morpheo.Sdk.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>

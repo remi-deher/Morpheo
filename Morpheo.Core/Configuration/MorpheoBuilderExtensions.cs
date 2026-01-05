@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 
 using Morpheo.Core.Configuration;
-using Morpheo.Core.Extensions;
+
 using Morpheo.Core.Sync;
 using Morpheo.Core.Sync.Strategies;
 using Morpheo.Core.Security;
@@ -12,7 +12,7 @@ using Morpheo.Core.Data;
 using Morpheo.Core.Printers;
 using Morpheo.Sdk;
 
-namespace Morpheo.Core.Configuration;
+namespace Morpheo;
 
 /// <summary>
 /// Fluent API extensions for configuring Morpheo strategies and components.
@@ -93,7 +93,11 @@ public static class MorpheoBuilderExtensions
         {
             var folder = Environment.SpecialFolder.LocalApplicationData;
             var path = Environment.GetFolderPath(folder);
-            var dbPath = System.IO.Path.Join(path, "morpheo.db");
+            // Ensure directory exists
+            var morpheoPath = System.IO.Path.Combine(path, "Morpheo");
+            System.IO.Directory.CreateDirectory(morpheoPath);
+
+            var dbPath = System.IO.Path.Combine(morpheoPath, "morpheo.db");
             connectionString = $"Data Source={dbPath}";
         }
 
@@ -115,16 +119,26 @@ public static class MorpheoBuilderExtensions
     /// </summary>
     public static IMorpheoBuilder UseFileLogStore(this IMorpheoBuilder builder, string? storagePath = null)
     {
-        if (storagePath != null)
+        if (storagePath == null)
         {
-            builder.Services.Configure<MorpheoOptions>(opt => 
-            {
-                if (Path.IsPathRooted(storagePath))
-                    opt.LocalStoragePath = storagePath;
-                else
-                    opt.LocalStoragePath = Path.Combine(opt.LocalStoragePath ?? AppContext.BaseDirectory, storagePath);
-            });
+            // Default to %LocalAppData%/Morpheo/Logs
+            var appData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            storagePath = Path.Combine(appData, "Morpheo", "Logs");
         }
+
+        builder.Services.Configure<MorpheoOptions>(opt => 
+        {
+            if (Path.IsPathRooted(storagePath))
+            {
+                opt.LocalStoragePath = storagePath;
+            }
+            else
+            {
+                // If user provides a relative path, we still anchor it in LocalAppData for safety/zero-config
+                var appData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                opt.LocalStoragePath = Path.Combine(appData, "Morpheo", storagePath);
+            }
+        });
 
         builder.Services.AddSingleton<FileLogStore>();
         builder.Services.Replace(ServiceDescriptor.Singleton<ISyncLogStore>(sp => sp.GetRequiredService<FileLogStore>()));

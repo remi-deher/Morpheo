@@ -4,7 +4,7 @@ using Morpheo.Core.Configuration;
 using Morpheo.Sdk;
 using Morpheo.Core.Sync;
 
-namespace Morpheo.Core.Extensions;
+namespace Morpheo;
 
 /// <summary>
 /// Extension methods for loading and applying Morpheo configuration.
@@ -12,8 +12,18 @@ namespace Morpheo.Core.Extensions;
 public static class MorpheoConfigurationExtensions
 {
     /// <summary>
-    /// Loads the runtime configuration from 'morpheo.runtime.json' and applies settings.
+    /// Loads the Morpheo configuration from the 'morpheo.runtime.json' file and applies it.
+    /// Use this for "Configuration-First" setups instead of fluent code configuration.
     /// </summary>
+    /// <remarks>
+    /// This method automatically handles:
+    /// <list type="bullet">
+    /// <item><description>Node Name and Port</description></item>
+    /// <item><description>Enabling Mesh (P2P)</description></item>
+    /// <item><description>Connecting to a Central Server (Uplink)</description></item>
+    /// <item><description>Database Provider Selection (currently SQLite)</description></item>
+    /// </list>
+    /// </remarks>
     /// <param name="builder">The Morpheo builder.</param>
     /// <returns>The Morpheo builder.</returns>
     public static IMorpheoBuilder LoadRuntimeConfiguration(this IMorpheoBuilder builder)

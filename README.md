@@ -219,6 +219,8 @@ Grâce à l'injection de dépendances et au pattern Builder, la configuration es
 Idéal pour commencer un projet proprement.
 
 ```csharp
+using Morpheo; // Un seul namespace pour tout gouverner
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Configuration minimale : Persistance locale uniquement.
@@ -227,43 +229,48 @@ builder.Services.AddMorpheo(morpheo =>
 {
     morpheo.Configure(options => 
     {
-        options.NodeName = "MyLocalApp";
+        options.NodeName = "MyMorpheoNode";
         options.Role = NodeRole.StandardClient;
     });
 
-    // Utilisation du moteur de stockage Hybride (LSM + SQLite) en local
-    // Prêt pour la sync future, mais fonctionne en standalone aujourd'hui.
-    morpheo.UseSqlite("Data Source=local.db");
-    morpheo.UseHybridLogStore(); 
+    // 1. Stockage (Zero-Config)
+    // Par défaut, stocke dans %LocalAppData%/Morpheo pour éviter les permissions denied
+    morpheo.UseSqlite(); 
+    morpheo.AddBlobStore();
+
+    // 2. Moteur de Logs
+    // Utilisation du mode Hybride (RAM + Disque + SQL) pour la performance
+    morpheo.UseHybridLogStore();
 });
 ```
 
-### Exemple B : La Totale (Stratégie Hybride Priorisée)
-Une configuration de production où l'on mixe P2P local (Priorité 1) et Cloud (Fallback).
+### Exemple B : La Totale (Stratégie Mesh Hybride)
+Une configuration de production "Zero-Config" prête pour le déploiement réel.
 
 ```csharp
+using Morpheo;
+
 builder.Services.AddMorpheo(morpheo =>
 {
     // ... Config Identité ...
+    morpheo.Configure(o => o.NodeName = "Store-POS-01");
 
-    // 1. Stockage Robuste (Hot File + Cold SQL)
-    morpheo.UseSqlite("Data Source=pos.db");
-    morpheo.UseHybridLogStore();
+    // 1. Stockage Explicite (Optionnel, pour le contrôle total)
+    // Ici, on force un chemin spécifique dans LocalAppData pour être propre
+    var appData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+    morpheo.UseSqlite($"Data Source={Path.Combine(appData, "Morpheo", "store.db")}");
+    morpheo.UseFileLogStore(); // Logs haute performance
 
-    // 2. Orchestration de Stratégies (Priorisation)
-    // Morpheo va composer ces stratégies pour assurer la livraison.
-    
-    // Priorité 1 : Le Mesh Local (Vitesse, Résilience, Gratuit)
-    morpheo.UseGossipStrategy(fanout: 3); 
-    morpheo.UseUdpDiscovery();
+    // 2. Réseau : Mesh P2P
+    // Active la découverte UDP + Serveur Web Kestrel interne
+    morpheo.AddMesh();
 
-    // Priorité 2 : Le Cloud (Sécurité, Globalité) - Activé aussi si besoin
-    morpheo.UseBinaryTransport(); // Optimisation MessagePack pour le WAN
-    
     // 3. Impression Native (Si sur Windows)
     if (OperatingSystem.IsWindows())
     {
-        morpheo.UseNativePrinting();
+        // Enregistre les services d'impression Win32 (winspool.drv)
+        // Note: Accessible via builder.Services car c'est une extension IServiceCollection
+        builder.Services.AddWindowsPrinting();
     }
 });
 ```
