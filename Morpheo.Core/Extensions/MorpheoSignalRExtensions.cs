@@ -7,7 +7,7 @@ using Morpheo.Core.SignalR;
 using Morpheo.Core.Sync.Strategies;
 using Morpheo.Sdk;
 
-namespace Morpheo.Core.Extensions;
+namespace Morpheo;
 
 /// <summary>
 /// Extension methods for SignalR integration.

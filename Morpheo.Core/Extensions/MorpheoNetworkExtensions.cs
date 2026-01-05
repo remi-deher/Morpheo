@@ -6,7 +6,7 @@ using Morpheo.Core.Server;
 using Morpheo.Core.Sync.Strategies;
 using Morpheo.Sdk;
 
-namespace Morpheo.Core.Extensions;
+namespace Morpheo;
 
 /// <summary>
 /// Extension methods for configuring network features.
@@ -14,14 +14,37 @@ namespace Morpheo.Core.Extensions;
 public static class MorpheoNetworkExtensions
 {
     /// <summary>
-    /// Enables full Mesh Networking capabilities (UDP Discovery + P2P Sync).
+    /// Enables local network discovery via UDP Broadcast.
+    /// This allows nodes to find each other without a central server.
     /// </summary>
+    /// <remarks>
+    /// Registers <see cref="UdpDiscoveryService"/> as the implementation of <see cref="INetworkDiscovery"/>.
+    /// </remarks>
+    /// <param name="builder">The Morpheo builder.</param>
+    /// <returns>The Morpheo builder.</returns>
+    public static IMorpheoBuilder UseUdpDiscovery(this IMorpheoBuilder builder)
+    {
+        builder.Services.Replace(ServiceDescriptor.Singleton<INetworkDiscovery, UdpDiscoveryService>());
+        return builder;
+    }
+
+    /// <summary>
+    /// Enables full Mesh Networking capabilities (Zero-Conf).
+    /// </summary>
+    /// <remarks>
+    /// This method activates:
+    /// <list type="bullet">
+    /// <item><description>UDP Discovery (to find peers)</description></item>
+    /// <item><description>MorpheoWebServer (Kestrel, to receive sync requests)</description></item>
+    /// <item><description>MeshBroadcastStrategy (to propagate updates to peers)</description></item>
+    /// </list>
+    /// </remarks>
     /// <param name="builder">The Morpheo builder.</param>
     /// <returns>The Morpheo builder.</returns>
     public static IMorpheoBuilder AddMesh(this IMorpheoBuilder builder)
     {
         // 1. UDP Discovery
-        builder.Services.Replace(ServiceDescriptor.Singleton<INetworkDiscovery, UdpDiscoveryService>());
+        builder.UseUdpDiscovery();
 
         // 2. Web Server (Kestrel)
         builder.Services.Replace(ServiceDescriptor.Singleton<IMorpheoServer, MorpheoWebServer>());

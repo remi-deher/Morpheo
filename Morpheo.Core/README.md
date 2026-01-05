@@ -52,18 +52,18 @@ Ce pipeline est conçu pour être **Non-Bloquant**. L'écriture disque (Hot Path
 Pourquoi Morpheo est-il robuste ? Parce qu'il repose sur des choix d'architecture bas niveau radicaux.
 
 ### A. Stockage Hybride (LSM + SQL)
-*   **Le Problème :** Les bases SQL (B-Tree) sont trop lentes pour l'écriture massive de logs (Write Amplification). Les fichiers plats sont rapides mais difficiles à requêter.
-*   **La Solution Morpheo :**
-    *   **Hot Store (LSM) :** Écriture séquentielle pure dans des fichiers `.jsonl`. Chaque entrée est protégée par un **CRC32**. Si le courant saute pendant l'écriture, la corruption est détectée et isolée au redémarrage (Crash-Safety).
-    *   **Cold Store (SQL) :** Un processus d'arrière-plan déplace calmement les données vers SQLite/Postgres pour l'historique infini.
+*   **Le Problème : ** Les bases SQL (B-Tree) sont trop lentes pour l'écriture massive de logs (Write Amplification). Les fichiers plats sont rapides mais difficiles à requêter.
+*   **La Solution Morpheo : **
+    *   **Hot Store (LSM) : ** Écriture séquentielle pure dans des fichiers `.jsonl`. Chaque entrée est protégée par un **CRC32**. Si le courant saute pendant l'écriture, la corruption est détectée et isolée au redémarrage (Crash-Safety).
+    *   **Cold Store (SQL) : ** Un processus d'arrière-plan déplace calmement les données vers SQLite/Postgres pour l'historique infini.
 
 ### B. Consistance via Merkle Trees (Anti-Entropy)
-*   **Le Problème :** En UDP (Gossip), des paquets se perdent. Comment savoir si deux nœuds sont parfaitement synchronisés sans tout comparer (trop coûteux) ?
-*   **La Solution Morpheo :** Chaque nœud maintient un **Arbre de Merkle** (Hash Tree) de ses données. Pour se synchroniser, ils comparent juste la racine (Root Hash). Si elle diffère, ils descendent intelligemment dans l'arbre pour trouver *le* paquet manquant. C'est la technologie derrière Git et Bitcoin.
+*   **Le Problème : ** En UDP (Gossip), des paquets se perdent. Comment savoir si deux nœuds sont parfaitement synchronisés sans tout comparer (trop coûteux) ?
+*   **La Solution Morpheo : ** Chaque nœud maintient un **Arbre de Merkle** (Hash Tree) de ses données. Pour se synchroniser, ils comparent juste la racine (Root Hash). Si elle diffère, ils descendent intelligemment dans l'arbre pour trouver *le* paquet manquant. C'est la technologie derrière Git et Bitcoin.
 
 ### C. Compression Récursive (Deep Diff RFC 6902)
-*   **Le Problème :** Envoyer un objet JSON entier de 10KB pour changer une propriété booléenne est un gaspillage criminel de bande passante 4G.
-*   **La Solution Morpheo :** L'algorithme `DeltaCompressionService` traverse le graphe d'objet et génère un **Patch JSON** minimal.
+*   **Le Problème : ** Envoyer un objet JSON entier de 10KB pour changer une propriété booléenne est un gaspillage criminel de bande passante 4G.
+*   **La Solution Morpheo : ** L'algorithme `DeltaCompressionService` traverse le graphe d'objet et génère un **Patch JSON** minimal.
     *   *Avant :* `{ "id": "u1", "deeply": { "nested": { "value": "new" } }, ... }` (Tout l'objet)
     *   *Après :* `[ { "op": "replace", "path": "/deeply/nested/value", "value": "new" } ]` (40 octets)
 
@@ -87,10 +87,10 @@ Morpheo maintient plusieurs boucles de contrôle autonomes (`IHostedService`) po
 
 Contribuer au Core est une responsabilité majeure. Une erreur ici peut corrompre les données de milliers d'utilisateurs.
 
-1.  **Crash Safety First :** Toute modification du `FileLogStore` doit être accompagnée d'un test de simulation de coupure de courant (écriture partielle).
-2.  **No Deadlocks :** Le moteur est hautement concurrent. L'utilisation de `.Result` ou `.Wait()` est formellement interdite. Tout doit être `async`.
-3.  **Backward Compatibility :** Le format de sérialisation (`SyncLogDto`) est sacré. Ne jamais retirer un champ ou changer son ID binaire (MessagePack).
-4.  **Zero-Allocation Focus :** Dans le Hot Path, préférez `Span<T>` et `System.Text.Json.Nodes` pour minimiser la pression sur le Garbage Collector.
+1.  **Crash Safety First : ** Toute modification du `FileLogStore` doit être accompagnée d'un test de simulation de coupure de courant (écriture partielle).
+2.  **No Deadlocks : ** Le moteur est hautement concurrent. L'utilisation de `.Result` ou `.Wait()` est formellement interdite. Tout doit être `async`.
+3.  **Backward Compatibility : ** Le format de sérialisation (`SyncLogDto`) est sacré. Ne jamais retirer un champ ou changer son ID binaire (MessagePack).
+4.  **Zero-Allocation Focus : ** Dans le Hot Path, préférez `Span<T>` et `System.Text.Json.Nodes` pour minimiser la pression sur le Garbage Collector.
 
 ---
 *Architecturé avec précision pour .NET 10.*
