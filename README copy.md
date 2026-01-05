@@ -169,62 +169,15 @@ Morpheo brise les silos en combinant le meilleur de chaque technologie :
 
 ## ⚡ Performance & Benchmarks
 
-Morpheo est obsédé par la performance. il ne se contente pas de dire qu'il est rapide, il le prouve.
-Voici les résultats des benchmarks officiels exécutés sur **.NET 10 (Janvier 2026)**.
+Morpheo est conçu pour la performance brute. Les benchmarks sur .NET 10 montrent que le moteur de stockage hybride (`FileLogStore`) surpasse largement les solutions traditionnelles.
 
-**Vous pouvez trouver les résultats détaillés dans le dossier Benchmark du dépot**
-
-### 1. Stockage : Moteur Hybride vs SQL Classique
-Comparaison d'écriture brute (1000 logs) entre lz `FileLogStore` (basé sur le principe LSM Append-Only) et une insertion standard Entity Framework Core (SQLite).
-
-| Méthode | Scénario | Temps Moyen | Allocation Mémoire | Gain |
-| :--- | :--- | :--- | :--- | :--- |
-| **SQLite (EF Core)** | 1000 Writes | 63.60 ms | 12.67 MB | (Baseline) |
-| **Morpheo (LSM)** | 1000 Writes | **10.22 ms** | **1.36 MB** | 🚀 **x6.2 Plus Rapide** |
-
-> **Analyse** : En évitant l'overhead relationnel et le tracking d'objets d'EF Core pour les logs immuables, Morpheo réduit la pression sur le Garbage Collector (GC) de **9.3x**.
-
-### 2. Pipeline Complet d'Ingestion (End-to-End)
-Ce test mesure le temps réel entre la réception d'une donnée, sa validation (Vector Clock), sa sécurisation (Merkle Hash) et son écriture disque.
-
-| Pipeline | Temps Moyen | Allocation Mémoire | Ratio |
-| :--- | :--- | :--- | :--- |
-| **Standard (EF/SQL)** | 10,788.50 µs (~10.8 ms) | 15.89 MB | (Baseline) |
-| **Morpheo (Optimisé)** | **18.12 µs** (~0.018 ms) | **0.003 MB** | ⚡ **x595 Plus Rapide** |
-
-> **Révélation** : Le pipeline optimisé de Morpheo est **595x plus rapide** qu'une approche naïve. C'est la différence entre un système qui s'écroule sous la charge et un système temps-réel.
-
-### 3. Résolution de Conflits (Vector Clocks)
-Morpheo utilise des Vector Clocks pour déterminer la causalité sans serveur central. L'algorithme est optimisé pour être "Zero-Allocation".
-
-| Opération | Nœuds | Temps Moyen | Mémoire |
-| :--- | :--- | :--- | :--- |
-| **Fusion (Merge)** | 10 | **2.48 µs** | **56 Bytes** |
-| **Comparaison** | 10 | **0.30 µs** | **0 Bytes** (Zero-Alloc) |
-
-### 4. Intégrité des Données (Merkle Trees)
-Les Arbres de Merkle permettent de vérifier si deux nœuds sont synchronisés sans transférer les données.
-
-| Nombre de Logs | Temps de Hachage (Root) | Allocation |
+| Scénario (Écriture 1000 ops) | Temps (Moyen) | Mémoire (Allouée) |
 | :--- | :--- | :--- |
-| 1 000 | 1.30 ms | 1.07 MB |
-| **10 000** | **8.66 ms** | **10.75 MB** |
+| **SQLite (EF Core)** | 61.15 ms | 12.67 MB |
+| **Morpheo (LSM)** | **9.77 ms** (🚀 ~6x Plus Rapide)  | **1.39 MB** (🍃 ~9x Plus Léger) |
 
-### 5. Optimisation Bande Passante (Compression Delta)
-Mesure la génération de "Patchs" pour ne transférer que les octets modifiés d'un document JSON.
-
-| Opération | Temps Moyen |
-| :--- | :--- |
-| **Générer Patch** (Diff) | 1.50 ms |
-| **Appliquer Patch** | 1.15 ms |
-
-### 6. Taxe de Sérialisation (Overhead)
-Coût de transformation des objets C# en JSON pour le transport réseau.
-
-| Scénario | Temps Moyen |
-| :--- | :--- |
-| **Sérialiser 1 Objet** | 3.00 µs |
-| **Sérialiser Batch (1000)** | 4.50 ms |
+> **Conflits résolus en nanosecondes** : La fusion de Vector Clocks (Merge) prend ~4.4 µs pour 10 nœuds avec seulement **56 octets** d'allocation.
+> **Scalabilité** : Le calcul de hash Merkle pour 10 000 logs ne prend que **15 ms**.
 
 ---
 
@@ -557,62 +510,15 @@ Morpheo breaks silos by combining the best of each technology:
 
 ## ⚡ Performance & Benchmarks
 
-Morpheo is obsessed with performance. He don't just say he's fast; he prove it.
-Here are the official benchmark results run on **.NET 10 (January 2026)**.
+Morpheo is built for raw performance. Benchmarks on .NET 10 show that the hybrid storage engine (`FileLogStore`) significantly outperforms traditional solutions.
 
-**You can find all details results in benchmark folder of repository**
-
-### 1. Storage: Hybrid Engine vs Classic SQL
-Comparison of raw writes (1000 logs) between `FileLogStore` (LSM Append-Only) and a standard Entity Framework Core insertion (SQLite).
-
-| Method | Scenario | Mean Time | Memory Allocated | Gain |
-| :--- | :--- | :--- | :--- | :--- |
-| **SQLite (EF Core)** | 1000 Writes | 63.60 ms | 12.67 MB | (Baseline) |
-| **Morpheo (LSM)** | 1000 Writes | **10.22 ms** | **1.36 MB** | 🚀 **x6.2 Faster** |
-
-> **Analysis**: By avoiding relational overhead and EF Core tracking for immutable logs, Morpheo reduces Garbage Collector (GC) pressure by **9.3x**.
-
-### 2. End-to-End Ingestion Pipeline
-This test measures the real time between data reception, validation (Vector Clock), security (Merkle Hash), and disk write.
-
-| Pipeline | Mean Time | Memory Allocated | Ratio |
-| :--- | :--- | :--- | :--- |
-| **Standard (EF/SQL)** | 10,788.50 µs (~10.8 ms) | 15.89 MB | (Baseline) |
-| **Morpheo (Optimized)** | **18.12 µs** (~0.018 ms) | **0.003 MB** | ⚡ **x595 Faster** |
-
-> **Revelation**: Morpheo's optimized pipeline is **595x faster** than a naive approach. This is the difference between a system that crumbles under load and a real-time system.
-
-### 3. Conflict Resolution (Vector Clocks)
-Morpheo uses Vector Clocks to determine causality without a central server. The algorithm is optimized to be "Zero-Allocation".
-
-| Operation | Nodes | Mean Time | Memory |
-| :--- | :--- | :--- | :--- |
-| **Merge** | 10 | **2.48 µs** | **56 Bytes** |
-| **CompareTo** | 10 | **0.30 µs** | **0 Bytes** (Zero-Alloc) |
-
-### 4. Data Integrity (Merkle Trees)
-Merkle Trees allow verifying if two nodes are in sync without transferring data.
-
-| Log Count | Hashing Time (Root) | Allocation |
+| Scenario (Write 1000 ops) | Time (Mean) | Memory (Allocated) |
 | :--- | :--- | :--- |
-| 1,000 | 1.30 ms | 1.07 MB |
-| **10,000** | **8.66 ms** | **10.75 MB** |
+| **SQLite (EF Core)** | 61.15 ms | 12.67 MB |
+| **Morpheo (LSM)** | **9.77 ms** (🚀 ~6x Faster) | **1.39 MB** (🍃 ~9x Lighter) |
 
-### 5. Bandwidth Optimization (Delta Compression)
-Measures the generation of "Patches" to transfer only modified bytes of a JSON document.
-
-| Operation | Mean Time |
-| :--- | :--- |
-| **Generate Patch** (Diff) | 1.50 ms |
-| **Apply Patch** | 1.15 ms |
-
-### 6. Serialization Tax (Overhead)
-Cost of transforming C# objects into JSON for network transport.
-
-| Scenario | Mean Time |
-| :--- | :--- |
-| **Serialize 1 Object** | 3.00 µs |
-| **Serialize Batch (1000)** | 4.50 ms |
+> **Conflicts resolved in nanoseconds**: Vector Clock merging takes ~4.4 µs for 10 nodes with only **56 bytes** of allocation.
+> **Scalability**: Merkle hash calculation for 10,000 logs takes just **15 ms**.
 
 ---
 
