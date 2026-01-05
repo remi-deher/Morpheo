@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Description>Core implementation of the Morpheo framework, including synchronization, discovery, and hosting logic.</Description>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MessagePack" Version="3.1.4" />
+    <PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="10.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.1" />
+    <PackageReference Include="System.Drawing.Common" Version="10.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="10.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="10.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.0" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="UI\index.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Morpheo.Sdk\Morpheo.Sdk.csproj" />
+  </ItemGroup>
+
+</Project>

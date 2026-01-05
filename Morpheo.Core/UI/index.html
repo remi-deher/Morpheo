@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<!-- 
+    Summary: 
+    Embedded Dashboard UI for Morpheo Node.
+    Provides real-time stats, system configuration, and logs visualization.
+-->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{TITLE}}</title>
+    <style>
+        :root {
+            --bg-color: #0d0d12;
+            --text-color: #e0e0e0;
+            --primary-color: #00ffcc;
+            --secondary-color: #ff0055;
+            --card-bg: #1a1a24;
+            --input-bg: #2a2a35;
+            --input-border: #444;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 1px solid var(--primary-color);
+            padding-bottom: 10px;
+        }
+
+        .status-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .status-dot {
+            height: 12px;
+            width: 12px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 10px;
+            box-shadow: 0 0 10px var(--primary-color);
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-label {
+            font-size: 0.8em;
+            color: #888;
+        }
+
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        /* Config Form */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #aaa;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 8px;
+            background-color: var(--input-bg);
+            border: 1px solid var(--input-border);
+            color: var(--text-color);
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        input[type="checkbox"] {
+            margin-right: 10px;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .danger-zone {
+            border: 1px solid var(--secondary-color);
+        }
+
+        #restart-msg {
+            color: var(--secondary-color);
+            font-weight: bold;
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* Tabs */
+        .tabs {
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            background-color: #333;
+            color: #fff;
+            margin-right: 5px;
+        }
+
+        .tab-btn.active {
+            background-color: var(--primary-color);
+            color: #000;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>{{TITLE}}</h1>
+
+    <div class="status-container">
+        <span class="status-dot"></span>
+        <span id="status-text">ONLINE</span>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="showTab('dashboard', this)">Dashboard</button>
+        <button class="tab-btn" onclick="showTab('settings', this)">System Config</button>
+    </div>
+
+    <!-- DASHBOARD TAB -->
+    <div id="tab-dashboard">
+        <div class="card">
+            <h2>Node Information</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-label">Node Name</span>
+                    <span class="stat-value" id="val-name">Loading...</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Port</span>
+                    <span class="stat-value" id="val-port">-</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">DB Type</span>
+                    <span class="stat-value" id="val-db">-</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SETTINGS TAB -->
+    <div id="tab-settings" style="display:none;">
+        <div class="card">
+            <h2>Infrastructure Settings</h2>
+            <div class="form-group">
+                <label>Node Name</label>
+                <input type="text" id="cfg-name" placeholder="Morpheo-Node-01" />
+            </div>
+            <div class="form-group">
+                <label>HTTP Port</label>
+                <input type="number" id="cfg-port" placeholder="5000" />
+            </div>
+            <div class="form-group">
+                <label>Storage Engine (Database Type)</label>
+                <select id="cfg-dbtype">
+                    <option value="Sqlite">Sqlite (Embedded)</option>
+                    <option value="Postgres">Postgres (Server)</option>
+                    <option value="SqlServer">SQL Server (Enterprise)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Connection String</label>
+                <input type="text" id="cfg-connstring" placeholder="Data Source=local.db" />
+            </div>
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="cfg-mesh" /> Enable Local Mesh (UDP Discovery)
+                </label>
+            </div>
+            <div class="form-group">
+                <label>Central Server URL (Uplink/Bridge)</label>
+                <input type="text" id="cfg-central" placeholder="https://api.morpheo.cloud" />
+            </div>
+            <button onclick="saveAndRestart()">Save & Restart Node</button>
+            <div id="restart-msg">Rebooting system... Please wait.</div>
+        </div>
+    </div>
+
+    <script>
+        const API_PATH = '{{PATH}}';
+
+        async function fetchStats() {
+            try {
+                const response = await fetch(API_PATH + '/api/stats');
+                const data = await response.json();
+
+                document.getElementById('val-name').textContent = data.nodeName;
+                document.getElementById('val-port').textContent = data.port;
+                document.getElementById('val-db').textContent = data.dbType;
+
+                document.getElementById('status-text').textContent = "ONLINE";
+                document.querySelector('.status-dot').style.backgroundColor = "var(--primary-color)";
+            } catch (error) {
+                console.error('Error fetching stats:', error);
+                document.getElementById('status-text').textContent = "OFFLINE";
+                document.querySelector('.status-dot').style.backgroundColor = "var(--secondary-color)";
+            }
+        }
+
+        async function loadConfig() {
+            try {
+                // /api/sys/config
+                const response = await fetch(API_PATH + '/api/sys/config');
+                if (!response.ok) return;
+                const cfg = await response.json();
+
+                document.getElementById('cfg-name').value = cfg.nodeName;
+                document.getElementById('cfg-port').value = cfg.httpPort;
+                document.getElementById('cfg-dbtype').value = cfg.databaseType;
+                document.getElementById('cfg-connstring').value = cfg.connectionString;
+                document.getElementById('cfg-mesh').checked = cfg.enableMesh;
+                document.getElementById('cfg-central').value = cfg.centralServerUrl || "";
+            } catch (e) {
+                console.log("Config API not available");
+            }
+        }
+
+        async function saveAndRestart() {
+            if (!confirm("This will restart the Morpheo Node service. Continue?")) return;
+
+            const config = {
+                nodeName: document.getElementById('cfg-name').value,
+                httpPort: parseInt(document.getElementById('cfg-port').value),
+                databaseType: document.getElementById('cfg-dbtype').value,
+                connectionString: document.getElementById('cfg-connstring').value,
+                enableMesh: document.getElementById('cfg-mesh').checked,
+                centralServerUrl: document.getElementById('cfg-central').value
+            };
+
+            document.getElementById('restart-msg').style.display = "block";
+
+            try {
+                // /api/sys/config
+                await fetch(API_PATH + '/api/sys/config', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(config)
+                });
+
+                // /api/sys/restart
+                await fetch(API_PATH + '/api/sys/restart', { method: 'POST' });
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        function showTab(tabName, btn) {
+            document.getElementById('tab-dashboard').style.display = tabName === 'dashboard' ? 'block' : 'none';
+            document.getElementById('tab-settings').style.display = tabName === 'settings' ? 'block' : 'none';
+
+            // Toggle classes
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            if (tabName === 'settings') loadConfig();
+        }
+
+        // Initial fetch
+        fetchStats();
+
+        // Refresh every 5s
+        setInterval(fetchStats, 5000);
+    </script>
+</body>
+
+</html>
