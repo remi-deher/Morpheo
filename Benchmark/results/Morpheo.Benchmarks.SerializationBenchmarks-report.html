@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8' />
+<title>Morpheo.Benchmarks.SerializationBenchmarks-20260106-000355</title>
+
+<style type="text/css">
+	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
+	td, th { padding: 6px 13px; border: 1px solid #ddd; text-align: right; }
+	tr { background-color: #fff; border-top: 1px solid #ccc; }
+	tr:nth-child(even) { background: #f8f8f8; }
+</style>
+</head>
+<body>
+<pre><code>
+BenchmarkDotNet v0.15.8, Windows 11 (10.0.26200.7462/25H2/2025Update/HudsonValley2)
+13th Gen Intel Core i5-1345U 1.60GHz, 1 CPU, 12 logical and 10 physical cores
+.NET SDK 10.0.101
+  [Host]     : .NET 10.0.1 (10.0.1, 10.0.125.57005), X64 RyuJIT x86-64-v3
+  DefaultJob : .NET 10.0.1 (10.0.1, 10.0.125.57005), X64 RyuJIT x86-64-v3
+</code></pre>
+<pre><code></code></pre>
+
+<table>
+<thead><tr><th>Method      </th><th>N</th><th>Mean  </th><th>Error</th><th>StdDev</th><th>Median</th><th>Gen0</th><th>Gen1</th><th>Gen2</th><th>Allocated</th>
+</tr>
+</thead><tbody><tr><td>Serialize_Single</td><td>100</td><td>5.500 &mu;s</td><td>0.3094 &mu;s</td><td>0.9026 &mu;s</td><td>5.829 &mu;s</td><td>1.1101</td><td>-</td><td>-</td><td>6.8 KB</td>
+</tr><tr><td>Deserialize_Single</td><td>100</td><td>6.396 &mu;s</td><td>0.0623 &mu;s</td><td>0.1200 &mu;s</td><td>6.385 &mu;s</td><td>0.6561</td><td>-</td><td>-</td><td>4.05 KB</td>
+</tr><tr><td>Serialize_Batch</td><td>100</td><td>419.128 &mu;s</td><td>6.8904 &mu;s</td><td>5.7538 &mu;s</td><td>417.084 &mu;s</td><td>189.4531</td><td>185.5469</td><td>185.5469</td><td>800.04 KB</td>
+</tr><tr><td>Serialize_Single</td><td>1000</td><td>3.004 &mu;s</td><td>0.0347 &mu;s</td><td>0.0308 &mu;s</td><td>3.006 &mu;s</td><td>1.1101</td><td>-</td><td>-</td><td>6.8 KB</td>
+</tr><tr><td>Deserialize_Single</td><td>1000</td><td>6.077 &mu;s</td><td>0.1027 &mu;s</td><td>0.0960 &mu;s</td><td>6.053 &mu;s</td><td>0.6561</td><td>-</td><td>-</td><td>4.05 KB</td>
+</tr><tr><td>Serialize_Batch</td><td>1000</td><td>4,496.291 &mu;s</td><td>80.1535 &mu;s</td><td>74.9757 &mu;s</td><td>4,466.226 &mu;s</td><td>507.8125</td><td>500.0000</td><td>500.0000</td><td>8579.4 KB</td>
+</tr></tbody></table>
+</body>
+</html>

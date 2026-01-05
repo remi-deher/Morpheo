@@ -42,7 +42,6 @@ public class MerkleTreeBenchmarks
     [Benchmark]
     public string CalculateRootHash()
     {
-        // Project SyncLogDto to string (e.g. JsonData) because ComputeRootHash expects strings
         return _merkleService.ComputeRootHash(_logs.Select(l => l.JsonData));
     }
 }
