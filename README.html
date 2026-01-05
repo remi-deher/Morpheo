@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+
+  <head>
+    <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <title>Morpheo Framework | Morpheo Framework </title>
+      <meta name="viewport" content="width=device-width">
+      <meta name="title" content="Morpheo Framework | Morpheo Framework ">
+    
+    
+      <link rel="shortcut icon" href="favicon.ico">
+      <link rel="stylesheet" href="styles/docfx.vendor.min.css">
+      <link rel="stylesheet" href="styles/docfx.css">
+      <link rel="stylesheet" href="styles/main.css">
+      <meta property="docfx:navrel" content="toc.html">
+      <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+
+              <a class="navbar-brand" href="index.html">
+                <img id="logo" class="svg" src="logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+
+        <div id="search-results">
+          <div class="search-list">Search Results for <span></span></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination" data-first=First data-prev=Previous data-next=Next data-last=Last></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        <div class="article row grid">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+<h1 id="morpheo-framework">Morpheo Framework</h1>
+
+<p><img src="https://img.shields.io/badge/build-passing-brightgreen" alt="Build Status"> <img src="https://img.shields.io/nuget/v/Morpheo.Core?label=Morpheo.Core" alt="NuGet Version"> <img src="https://img.shields.io/badge/license-MIT-blue" alt="License"> <img src="https://img.shields.io/badge/.NET-10.0-purple" alt=".NET 10"></p>
+<p><strong>Morpheo est un Framework de Synchronisation de Données Distribuées (.NET 10).</strong></p>
+<blockquote>
+<p><strong>Vision &amp; Philosophie : Ne pas réinventer la roue, mais la faire tourner plus vite.</strong>
+Morpheo transforme des architectures client-serveur fragiles en systèmes distribués, auto-organisés et indestructibles. Il permet à vos applications d'être &quot;Offline-First&quot; et &quot;Local-First&quot; tout en garantissant une cohérence éventuelle forte à travers un maillage de nœuds.</p>
+</blockquote>
+<hr>
+<h2 id="-table-des-matières">📑 Table des Matières</h2>
+<ul>
+<li><a href="#-architecture">Architecture</a></li>
+<li><a href="#-vision--philosophie">Vision &amp; Philosophie</a></li>
+<li><a href="#-les-4-topologies-de-d%C3%A9ploiement">Topologies de Déploiement</a></li>
+<li><a href="#-fonctionnalit%C3%A9s-cl%C3%A9s">Fonctionnalités Clés &amp; Comparatif</a></li>
+<li><a href="#-performance--benchmarks">Performance &amp; Benchmarks</a></li>
+<li><a href="#%EF%B8%8F-impression-distribu%C3%A9e">Impression Distribuée</a></li>
+<li><a href="#-orchestration--code">Orchestration &amp; Code</a></li>
+<li><a href="#-d%C3%A9marrage-rapide">Démarrage Rapide</a></li>
+<li><a href="#%EF%B8%8F-roadmap--futur">Roadmap &amp; Futur</a></li>
+<li><a href="#%EF%B8%8F-d%C3%A9veloppement--contribution">Développement &amp; Contribution</a></li>
+<li><a href="#-licence">Licence</a></li>
+</ul>
+<hr>
+<h2 id="-architecture">🏗 Architecture</h2>
+<p>La solution est organisée en composants modulaires conçus pour la flexibilité :</p>
+<ul>
+<li><strong><code>Morpheo.Core</code></strong> : Le moteur (Horloges Vectorielles, Arbres de Merkle, CRDTs).</li>
+<li><strong><code>Morpheo.Sdk</code></strong> : Contrats publics et interfaces d'intégration.</li>
+<li><strong><code>Morpheo.Tests</code></strong> : Simulateur Réseau En Mémoire pour valider la robustesse.</li>
+<li><strong><code>Morpheo.Benchmarks</code></strong> : Profilage de performance (Zero-Alloc hot paths).</li>
+</ul>
+<hr>
+<h2 id="-vision--philosophie">🔮 Vision &amp; Philosophie</h2>
+<p>Les applications modernes ne peuvent plus se permettre d'être &quot;hors ligne&quot;.</p>
+<p><strong>Morpheo</strong> n'est pas une simple librairie de cache. C'est un <strong>Orchestrateur de Cohérence de Données</strong>. Il agit comme une couche d'abstraction intelligente qui harmonise les standards (SQLite, HTTP, UDP) pour garantir que, quoi qu'il arrive (coupure réseau, latence, crash), vos données finissent toujours par converger.</p>
+<hr>
+<h2 id="-les-4-topologies-de-déploiement">🌐 Les 4 Topologies de Déploiement</h2>
+<p><strong>Morpheo s'adapte à l'infrastructure, et non l'inverse.</strong> Il suffit de configurer le Builder pour changer radicalement de topologie.</p>
+<pre><code class="lang-mermaid">graph LR
+    %% Styles modernes
+    classDef app fill:#e3f2fd,stroke:#1565c0,stroke-width:2px,color:#0d47a1
+    classDef db fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#bf360c
+    classDef node fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px,color:#1b5e20
+    classDef server fill:#fce4ec,stroke:#c2185b,stroke-width:2px,color:#880e4f
+    classDef cloud fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,stroke-dasharray: 5 5,color:#4a148c
+    
+    %% 1. Local Only
+    subgraph LocalOnly [📂 1. Local Only]
+        direction TB
+        App1[📱 App]:::app --&gt;|Morpheo| DB[(🗄️ SQLite)]:::db
+    end
+
+    %% 2. P2P Mesh
+    subgraph Mesh [🕸️ 2. P2P Mesh]
+        direction TB
+        N1[Node A]:::node &lt;--&gt;|UDP| N2[Node B]:::node
+        N2 &lt;--&gt;|UDP| N3[Node C]:::node
+        N3 &lt;--&gt;|UDP| N1
+    end
+
+    %% 3. Client-Server
+    subgraph ClientServer [📡 3. Client-Server]
+        direction TB
+        S1[🖥️ Server]:::server
+        C1[📱 Client 1]:::app &lt;--&gt;|SignalR| S1
+        C2[📱 Client 2]:::app &lt;--&gt;|SignalR| S1
+    end
+
+    %% 4. Hybrid
+    subgraph Hybrid [⚡ 4. Hybride]
+        direction LR
+        H1[🏥 POS A]:::node &lt;--&gt;|🚀 Prio 1: Mesh| H2[🏥 POS B]:::node
+        H1 -.-&gt;|☁️ Prio 2: SignalR| C((Cloud)):::cloud
+    end
+</code></pre>
+<h3 id="-exemple-de-topologie-globale-vaste-réseau">🌍 Exemple de Topologie Globale (Vaste Réseau)</h3>
+<p>Voici comment Morpheo connecte tout le monde ensemble :</p>
+<pre><code class="lang-mermaid">graph TD
+    classDef mesh fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20
+    classDef hq fill:#e3f2fd,stroke:#1565c0,color:#0d47a1
+    classDef cloud fill:#f3e5f5,stroke:#7b1fa2,stroke-dasharray: 5 5,color:#4a148c
+    classDef remote fill:#fff3e0,stroke:#e65100,color:#e65100
+
+    Cloud((☁️ Morpheo Cloud Relay)):::cloud
+
+    subgraph Factory [&quot;🏭 Usine (P2P Mesh - Offline)&quot;]
+        style Factory fill:#f1f8e9,stroke:#33691e,stroke-dasharray: 5 5
+        F1[🤖 Robot A]:::mesh &lt;--&gt;|UDP| F2[🤖 Robot B]:::mesh
+        F2 &lt;--&gt;|UDP| F3[📠 Terminal]:::mesh
+        F3 &lt;--&gt;|UDP| F1
+    end
+
+    subgraph HeadQuarter [&quot;🏢 Siège (Client-Server)&quot;]
+        style HeadQuarter fill:#e1f5fe,stroke:#01579b,stroke-dasharray: 5 5
+        Server[🗄️ Serveur Central]:::hq
+        Admin1[💻 Admin PC]:::hq &lt;--&gt;|TCP| Server
+        Admin2[💻 Dashboard]:::hq &lt;--&gt;|TCP| Server
+    end
+
+    subgraph Remote [&quot;🏠 Terrain (Hybride)&quot;]
+        style Remote fill:#fff3e0,stroke:#e65100,stroke-dasharray: 5 5
+        R1[🚚 Tablette Livreur]:::remote
+    end
+
+    %% Connections au Cloud
+    F3 -.-&gt;|Sync Différée| Cloud
+    Server &lt;--&gt;|Sync Temps Réel| Cloud
+    R1 -.-&gt;|4G| Cloud
+    
+    %% Connection Ad-Hoc (Le livreur passe à l'usine)
+    R1 &lt;--&gt;|Bluetooth/WiFi Direct| F1
+</code></pre>
+<h3 id="guide-de-choix--quand-utiliser-quoi-">Guide de Choix : Quand utiliser quoi ?</h3>
+<blockquote>
+<p><strong>💡 Note Importante : La Puissance de la Composition</strong>
+Ces topologies ne sont pas mutuellement exclusives. Morpheo vous permet de <strong>mixer</strong> ces stratégies et de définir des ordres de priorité.</p>
+<p><em>Exemple :</em> Vous pouvez définir une stratégie où l'application tente d'abord de synchroniser en <strong>P2P Local (UDP)</strong> (Priorité 1, Gratuit &amp; Rapide), et si aucun pair n'est trouvé, elle bascule automatiquement sur le <strong>Cloud (SignalR)</strong> (Priorité 2, Fallback).</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Topologie</th>
+<th style="text-align: left;">Cas d'Usage Idéal</th>
+<th style="text-align: left;">Pourquoi ?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Local Only</strong></td>
+<td style="text-align: left;">MVP, Prototypage</td>
+<td style="text-align: left;">&quot;Morpheo-iser&quot; l'app dès le début sans complexité réseau.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>P2P Mesh</strong></td>
+<td style="text-align: left;">Usines, IoT, Zones Blanches</td>
+<td style="text-align: left;">Résilience totale : si Internet coupe, l'usine tourne encore.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Client-Serveur</strong></td>
+<td style="text-align: left;">App Mobile, Web, SaaS</td>
+<td style="text-align: left;">Modèle classique centralisé, simple à sécuriser.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Hybride</strong></td>
+<td style="text-align: left;">Point de Vente (POS), Santé</td>
+<td style="text-align: left;"><strong>Le Must.</strong> Vitesse locale + Sécurité Cloud.</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="-fonctionnalités-clés">✨ Fonctionnalités Clés</h2>
+<p>Morpheo brise les silos en combinant le meilleur de chaque technologie :</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Composant</th>
+<th style="text-align: left;">Technologie</th>
+<th style="text-align: left;">L'Avantage Morpheo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Fiabilité</strong></td>
+<td style="text-align: left;">SQLite / EF Core</td>
+<td style="text-align: left;"><strong>Solidité SQL</strong> pour la persistance locale.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Résilience</strong></td>
+<td style="text-align: left;">UDP Multicast</td>
+<td style="text-align: left;"><strong>Zéro Config</strong> et découverte automatique des nœuds.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Efficience</strong></td>
+<td style="text-align: left;">Merkle Trees</td>
+<td style="text-align: left;"><strong>Sync Optimisée</strong> : transfert uniquement les deltas.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Conflits</strong></td>
+<td style="text-align: left;">Vector Clocks</td>
+<td style="text-align: left;"><strong>Résolution Mathématique</strong> des écritures concurrentes.</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="comparatif--pourquoi-morpheo-change-la-donne-">Comparatif : Pourquoi Morpheo change la donne ?</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Critère</th>
+<th style="text-align: left;">Windows Shared Printing (SMB)</th>
+<th style="text-align: left;">Cloud Print Solutions</th>
+<th style="text-align: left;">Morpheo Distributed Print</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Offline First</strong></td>
+<td style="text-align: left;">❌ Non (Dépend du LAN/AD)</td>
+<td style="text-align: left;">❌ Non (Dépend d'Internet)</td>
+<td style="text-align: left;">✅ <strong>Oui</strong> (Fonctionne en P2P local)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Zéro Config</strong></td>
+<td style="text-align: left;">❌ Complexe (IP, DNS, VPN)</td>
+<td style="text-align: left;">❌ Lourd (Agents à installer)</td>
+<td style="text-align: left;">✅ <strong>Automatique</strong> (Découverte UDP)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Traversée NAT</strong></td>
+<td style="text-align: left;">❌ Impossible sans VPN</td>
+<td style="text-align: left;">✅ Oui</td>
+<td style="text-align: left;">✅ <strong>Oui</strong> (Via Gossip ou Relay)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Performance</strong></td>
+<td style="text-align: left;">⚠️ Lenteur RPC</td>
+<td style="text-align: left;">⚠️ Latence Internet</td>
+<td style="text-align: left;">🚀 <strong>Temps Réel</strong> (Stream Raw)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Universel</strong></td>
+<td style="text-align: left;">❌ Windows Uniquement</td>
+<td style="text-align: left;">✅ Multi-platforme</td>
+<td style="text-align: left;">✅ <strong>Multi-OS</strong> (Windows/Linux/Android)</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="-performance--benchmarks">⚡ Performance &amp; Benchmarks</h2>
+<p>Morpheo est obsédé par la performance. il ne se contente pas de dire qu'il est rapide, il le prouve.
+Voici les résultats des benchmarks officiels exécutés sur <strong>.NET 10 (Janvier 2026)</strong>.</p>
+<p><strong>Vous pouvez trouver les résultats détaillés dans le dossier Benchmark du dépot</strong></p>
+<h3 id="1-stockage--moteur-hybride-vs-sql-classique">1. Stockage : Moteur Hybride vs SQL Classique</h3>
+<p>Comparaison d'écriture brute (1000 logs) entre lz <code>FileLogStore</code> (basé sur le principe LSM Append-Only) et une insertion standard Entity Framework Core (SQLite).</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Méthode</th>
+<th style="text-align: left;">Scénario</th>
+<th style="text-align: left;">Temps Moyen</th>
+<th style="text-align: left;">Allocation Mémoire</th>
+<th style="text-align: left;">Gain</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>SQLite (EF Core)</strong></td>
+<td style="text-align: left;">1000 Writes</td>
+<td style="text-align: left;">63.60 ms</td>
+<td style="text-align: left;">12.67 MB</td>
+<td style="text-align: left;">(Baseline)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Morpheo (LSM)</strong></td>
+<td style="text-align: left;">1000 Writes</td>
+<td style="text-align: left;"><strong>10.22 ms</strong></td>
+<td style="text-align: left;"><strong>1.36 MB</strong></td>
+<td style="text-align: left;">🚀 <strong>x6.2 Plus Rapide</strong></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Analyse</strong> : En évitant l'overhead relationnel et le tracking d'objets d'EF Core pour les logs immuables, Morpheo réduit la pression sur le Garbage Collector (GC) de <strong>9.3x</strong>.</p>
+</blockquote>
+<h3 id="2-pipeline-complet-dingestion-end-to-end">2. Pipeline Complet d'Ingestion (End-to-End)</h3>
+<p>Ce test mesure le temps réel entre la réception d'une donnée, sa validation (Vector Clock), sa sécurisation (Merkle Hash) et son écriture disque.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Pipeline</th>
+<th style="text-align: left;">Temps Moyen</th>
+<th style="text-align: left;">Allocation Mémoire</th>
+<th style="text-align: left;">Ratio</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Standard (EF/SQL)</strong></td>
+<td style="text-align: left;">10,788.50 µs (~10.8 ms)</td>
+<td style="text-align: left;">15.89 MB</td>
+<td style="text-align: left;">(Baseline)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Morpheo (Optimisé)</strong></td>
+<td style="text-align: left;"><strong>18.12 µs</strong> (~0.018 ms)</td>
+<td style="text-align: left;"><strong>0.003 MB</strong></td>
+<td style="text-align: left;">⚡ <strong>x595 Plus Rapide</strong></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Révélation</strong> : Le pipeline optimisé de Morpheo est <strong>595x plus rapide</strong> qu'une approche naïve. C'est la différence entre un système qui s'écroule sous la charge et un système temps-réel.</p>
+</blockquote>
+<h3 id="3-résolution-de-conflits-vector-clocks">3. Résolution de Conflits (Vector Clocks)</h3>
+<p>Morpheo utilise des Vector Clocks pour déterminer la causalité sans serveur central. L'algorithme est optimisé pour être &quot;Zero-Allocation&quot;.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Opération</th>
+<th style="text-align: left;">Nœuds</th>
+<th style="text-align: left;">Temps Moyen</th>
+<th style="text-align: left;">Mémoire</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Fusion (Merge)</strong></td>
+<td style="text-align: left;">10</td>
+<td style="text-align: left;"><strong>2.48 µs</strong></td>
+<td style="text-align: left;"><strong>56 Bytes</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Comparaison</strong></td>
+<td style="text-align: left;">10</td>
+<td style="text-align: left;"><strong>0.30 µs</strong></td>
+<td style="text-align: left;"><strong>0 Bytes</strong> (Zero-Alloc)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="4-intégrité-des-données-merkle-trees">4. Intégrité des Données (Merkle Trees)</h3>
+<p>Les Arbres de Merkle permettent de vérifier si deux nœuds sont synchronisés sans transférer les données.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Nombre de Logs</th>
+<th style="text-align: left;">Temps de Hachage (Root)</th>
+<th style="text-align: left;">Allocation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">1 000</td>
+<td style="text-align: left;">1.30 ms</td>
+<td style="text-align: left;">1.07 MB</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>10 000</strong></td>
+<td style="text-align: left;"><strong>8.66 ms</strong></td>
+<td style="text-align: left;"><strong>10.75 MB</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="5-optimisation-bande-passante-compression-delta">5. Optimisation Bande Passante (Compression Delta)</h3>
+<p>Mesure la génération de &quot;Patchs&quot; pour ne transférer que les octets modifiés d'un document JSON.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Opération</th>
+<th style="text-align: left;">Temps Moyen</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Générer Patch</strong> (Diff)</td>
+<td style="text-align: left;">1.50 ms</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Appliquer Patch</strong></td>
+<td style="text-align: left;">1.15 ms</td>
+</tr>
+</tbody>
+</table>
+<h3 id="6-taxe-de-sérialisation-overhead">6. Taxe de Sérialisation (Overhead)</h3>
+<p>Coût de transformation des objets C# en JSON pour le transport réseau.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Scénario</th>
+<th style="text-align: left;">Temps Moyen</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Sérialiser 1 Objet</strong></td>
+<td style="text-align: left;">3.00 µs</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Sérialiser Batch (1000)</strong></td>
+<td style="text-align: left;">4.50 ms</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="-impression-distribuée">🖨️ Impression Distribuée</h2>
+<p>Morpheo considère les imprimantes comme des nœuds du réseau. N'importe quel appareil peut imprimer sur n'importe quelle imprimante du Mesh via une découverte automatique (Zéro Driver).</p>
+<h3 id="comment-ça-marche--code">Comment ça marche ? (Code)</h3>
+<p>Fini le cauchemar des drivers. Morpheo utilise le <strong>RAW Passthrough</strong> (ZPL, ESC/POS).</p>
+<h4 id="1-côté-serveur-le-nœud-qui-a-limprimante-usbréseau">1. Côté Serveur (Le nœud qui a l'imprimante USB/Réseau)</h4>
+<p>Il suffit de déclarer que ce nœud est une &quot;Gateway d'Impression&quot;.</p>
+<pre><code class="lang-csharp">// Program.cs sur le PC Caisse
+morpheo.Configure(o =&gt; o.Capabilities = NodeCapabilities.PrintGateway);
+
+if (OperatingSystem.IsWindows())
+{
+    // Active le pont vers winspool.drv
+    morpheo.UseNativePrinting();
+}
+</code></pre>
+<h4 id="2-côté-client-la-tablette-qui-veut-imprimer">2. Côté Client (La Tablette qui veut imprimer)</h4>
+<p>Elle découvre les imprimantes disponibles et envoie le flux brut.</p>
+<pre><code class="lang-csharp">// Sur la tablette (n'importe où dans le Mesh)
+var printService = app.Services.GetRequiredService&lt;IPrintService&gt;();
+
+// Trouve l'imprimante &quot;Kitchen-Prnt-01&quot; n'importe où sur le réseau
+await printService.PrintRawAsync(&quot;Kitchen-Prnt-01&quot;, &quot;^XA^FO50,50^ADN,36,20^FDHello Morpheo^FS^XZ&quot;);
+</code></pre>
+<hr>
+<h2 id="-orchestration--code">🎹 Orchestration &amp; Code</h2>
+<p>Grâce à l'injection de dépendances et au pattern Builder, la configuration est fluide et expressive. Vous définissez des <strong>Stratégies Composites</strong>.</p>
+<h3 id="exemple-a--démarrage-rapide-local-only">Exemple A : Démarrage Rapide (Local Only)</h3>
+<p>Idéal pour commencer un projet proprement.</p>
+<pre><code class="lang-csharp">using Morpheo; // Un seul namespace pour tout gouverner
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Configuration minimale : Persistance locale uniquement.
+// Pas de réseau, pas de complexité. Juste des données propres.
+builder.Services.AddMorpheo(morpheo =&gt;
+{
+    morpheo.Configure(options =&gt; 
+    {
+        options.NodeName = &quot;MyMorpheoNode&quot;;
+        options.Role = NodeRole.StandardClient;
+    });
+
+    // 1. Stockage (Zero-Config)
+    // Par défaut, stocke dans %LocalAppData%/Morpheo pour éviter les permissions denied
+    morpheo.UseSqlite(); 
+    morpheo.AddBlobStore();
+
+    // 2. Moteur de Logs
+    // Utilisation du mode Hybride (RAM + Disque + SQL) pour la performance
+    morpheo.UseHybridLogStore();
+});
+</code></pre>
+<h3 id="exemple-b--la-totale-stratégie-mesh-hybride">Exemple B : La Totale (Stratégie Mesh Hybride)</h3>
+<p>Une configuration de production &quot;Zero-Config&quot; prête pour le déploiement réel.</p>
+<pre><code class="lang-csharp">using Morpheo;
+
+builder.Services.AddMorpheo(morpheo =&gt;
+{
+    // ... Config Identité ...
+    morpheo.Configure(o =&gt; o.NodeName = &quot;Store-POS-01&quot;);
+
+    // 1. Stockage Explicite (Optionnel, pour le contrôle total)
+    // Ici, on force un chemin spécifique dans LocalAppData pour être propre
+    var appData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+    morpheo.UseSqlite($&quot;Data Source={Path.Combine(appData, &quot;Morpheo&quot;, &quot;store.db&quot;)}&quot;);
+    morpheo.UseFileLogStore(); // Logs haute performance
+
+    // 2. Réseau : Mesh P2P
+    // Active la découverte UDP + Serveur Web Kestrel interne
+    morpheo.AddMesh();
+
+    // 3. Impression Native (Si sur Windows)
+    if (OperatingSystem.IsWindows())
+    {
+        // Enregistre les services d'impression Win32 (winspool.drv)
+        // Note: Accessible via builder.Services car c'est une extension IServiceCollection
+        builder.Services.AddWindowsPrinting();
+    }
+});
+</code></pre>
+<p>Comparé aux solutions classiques (SMB, Cloud Print), Morpheo offre une impression <strong>Temps Réel</strong>, <strong>Offline-First</strong>, et <strong>Sans Configuration</strong>.</p>
+<hr>
+<h2 id="-démarrage-rapide">🚀 Démarrage Rapide</h2>
+<h3 id="installation">Installation</h3>
+<pre><code class="lang-bash">dotnet add package Morpheo.Core
+</code></pre>
+<h3 id="configuration-standard-node">Configuration (Standard Node)</h3>
+<pre><code class="lang-csharp">using Morpheo.Core;
+
+var builder = Host.CreateDefaultBuilder();
+builder.ConfigureServices(services =&gt;
+{
+    services.AddMorpheo(options =&gt; 
+    {
+        options.NodeName = &quot;Terminal-01&quot;;
+        options.DiscoveryPort = 5000;
+        // options.Role = NodeRole.StandardClient;
+    })
+    .UseSqlite(); // Stockage Hybride (SQL + FileSystem)
+});
+
+await builder.Build().RunAsync();
+</code></pre>
+<hr>
+<h2 id="-roadmap--futur">🗺️ Roadmap &amp; Futur</h2>
+<ul>
+<li><strong>Court Terme</strong> : Support Impression Linux (CUPS/IPP).</li>
+<li><strong>Moyen Terme</strong> : Universal Hardware Mesh (Partage de ports COM/Série sur IP).</li>
+<li><strong>Long Terme</strong> : Support WebAssembly (Blazor) pour P2P direct dans le navigateur.</li>
+</ul>
+<hr>
+<h2 id="-développement--contribution">🛠️ Développement &amp; Contribution</h2>
+<p>Morpheo est conçu pour être aussi agréable à développer qu'à utiliser. Je remercie les contributions de tous horizons.</p>
+<p>Pour garantir une expérience fluide, le repository inclut deux formats de solution :</p>
+<ul>
+<li><strong><code>Morpheo.sln</code> (Standard)</strong> : Le format classique, compatible avec toutes les versions de Visual Studio, JetBrains Rider, et la CLI <code>dotnet</code>. C'est le choix par défaut pour la compatibilité maximale et les pipelines CI/CD.</li>
+<li><strong><code>Morpheo.slnx</code> (Modern)</strong> : Le nouveau format XML de solution (.NET 10 Ready). Plus lisible, plus rapide à charger, et plus facile à merger (fini les conflits de GUIDs dans le .sln).</li>
+</ul>
+<p>Je m'efforce de garder une DX (Developer Experience) de premier plan. Si vous avez des suggestions pour améliorer l'environnement de build, ouvrez une issue !</p>
+<hr>
+<h2 id="-licence">📜 Licence</h2>
+<p>Projet sous licence MIT - voir le fichier <code>LICENSE</code>.</p>
+<hr>
+<hr>
+<h1 id="morpheo-framework-english">Morpheo Framework (English)</h1>
+<p><img src="https://img.shields.io/badge/build-passing-brightgreen" alt="Build Status"> <img src="https://img.shields.io/nuget/v/Morpheo.Core?label=Morpheo.Core" alt="NuGet Version"> <img src="https://img.shields.io/badge/license-MIT-blue" alt="License"> <img src="https://img.shields.io/badge/.NET-10.0-purple" alt=".NET 10"></p>
+<p><strong>Morpheo is a Distributed Data Synchronization Framework (.NET 10).</strong></p>
+<blockquote>
+<p><strong>Vision &amp; Philosophy: Don't reinvent the wheel, make it spin faster.</strong>
+Morpheo transforms fragile client-server architectures into resilient, self-organizing distributed systems. It enables your applications to be &quot;Offline-First&quot; and &quot;Local-First&quot; while ensuring strong eventual consistency across a mesh of nodes.</p>
+</blockquote>
+<hr>
+<h2 id="-table-of-contents">📑 Table of Contents</h2>
+<ul>
+<li><a href="#-architecture-1">Architecture</a></li>
+<li><a href="#-vision--philosophy-1">Vision &amp; Philosophy</a></li>
+<li><a href="#-the-4-deployment-topologies">Deployment Topologies</a></li>
+<li><a href="#-key-features">Key Features &amp; Comparison</a></li>
+<li><a href="#-performance--benchmarks-1">Performance &amp; Benchmarks</a></li>
+<li><a href="#%EF%B8%8F-distributed-printing">Distributed Printing</a></li>
+<li><a href="#-orchestration--code-1">Orchestration &amp; Code</a></li>
+<li><a href="#-getting-started">Getting Started</a></li>
+<li><a href="#%EF%B8%8F-roadmap--future">Roadmap &amp; Future</a></li>
+<li><a href="#%EF%B8%8F-development--contribution">Development &amp; Contribution</a></li>
+<li><a href="#-license-1">License</a></li>
+</ul>
+<hr>
+<h2 id="-architecture-1">🏗 Architecture</h2>
+<p>The solution is organized into modular components designed for flexibility:</p>
+<ul>
+<li><strong><code>Morpheo.Core</code></strong>: The engine (Vector Clocks, Merkle Trees, CRDTs).</li>
+<li><strong><code>Morpheo.Sdk</code></strong>: Public contracts and integration interfaces.</li>
+<li><strong><code>Morpheo.Tests</code></strong>: In-Memory Network Simulator to validate robustness.</li>
+<li><strong><code>Morpheo.Benchmarks</code></strong>: Performance profiling (Zero-Alloc hot paths).</li>
+</ul>
+<hr>
+<h2 id="-vision--philosophy">🔮 Vision &amp; Philosophy</h2>
+<p>Modern applications can no longer afford to be &quot;offline&quot;.</p>
+<p><strong>Morpheo</strong> is not just a cache library. It is a <strong>Data Consistency Orchestrator</strong>. It acts as an smart abstraction layer that harmonizes standards (SQLite, HTTP, UDP) to ensure that, whatever happens (network outage, latency, crash), your data always converges.</p>
+<hr>
+<h2 id="-the-4-deployment-topologies">🌐 The 4 Deployment Topologies</h2>
+<p><strong>Morpheo adapts to the infrastructure, not the other way around.</strong> You just need to configure the Builder to radically change topology.</p>
+<pre><code class="lang-mermaid">graph LR
+    %% Modern styles
+    classDef app fill:#e3f2fd,stroke:#1565c0,stroke-width:2px,color:#0d47a1
+    classDef db fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#bf360c
+    classDef node fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px,color:#1b5e20
+    classDef server fill:#fce4ec,stroke:#c2185b,stroke-width:2px,color:#880e4f
+    classDef cloud fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,stroke-dasharray: 5 5,color:#4a148c
+    
+    %% 1. Local Only
+    subgraph LocalOnly [📂 1. Local Only]
+        direction TB
+        App1[📱 App]:::app --&gt;|Morpheo| DB[(🗄️ SQLite)]:::db
+    end
+
+    %% 2. P2P Mesh
+    subgraph Mesh [🕸️ 2. P2P Mesh]
+        direction TB
+        N1[Node A]:::node &lt;--&gt;|UDP| N2[Node B]:::node
+        N2 &lt;--&gt;|UDP| N3[Node C]:::node
+        N3 &lt;--&gt;|UDP| N1
+    end
+
+    %% 3. Client-Server
+    subgraph ClientServer [📡 3. Client-Server]
+        direction TB
+        S1[🖥️ Server]:::server
+        C1[📱 Client 1]:::app &lt;--&gt;|SignalR| S1
+        C2[📱 Client 2]:::app &lt;--&gt;|SignalR| S1
+    end
+
+    %% 4. Hybrid
+    subgraph Hybrid [⚡ 4. Hybrid]
+        direction LR
+        H1[🏥 POS A]:::node &lt;--&gt;|🚀 Prio 1: Mesh| H2[🏥 POS B]:::node
+        H1 -.-&gt;|☁️ Prio 2: SignalR| C((Cloud)):::cloud
+    end
+</code></pre>
+<h3 id="-global-topology-example-wide-network">🌍 Global Topology Example (Wide Network)</h3>
+<p>Here is how Morpheo connects everyone together:</p>
+<pre><code class="lang-mermaid">graph TD
+    classDef mesh fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20
+    classDef hq fill:#e3f2fd,stroke:#1565c0,color:#0d47a1
+    classDef cloud fill:#f3e5f5,stroke:#7b1fa2,stroke-dasharray: 5 5,color:#4a148c
+    classDef remote fill:#fff3e0,stroke:#e65100,color:#e65100
+
+    Cloud((☁️ Morpheo Cloud Relay)):::cloud
+
+    subgraph Factory [&quot;🏭 Factory (P2P Mesh - Offline)&quot;]
+        style Factory fill:#f1f8e9,stroke:#33691e,stroke-dasharray: 5 5
+        F1[🤖 Robot A]:::mesh &lt;--&gt;|UDP| F2[🤖 Robot B]:::mesh
+        F2 &lt;--&gt;|UDP| F3[📠 Terminal]:::mesh
+        F3 &lt;--&gt;|UDP| F1
+    end
+
+    subgraph HeadQuarter [&quot;🏢 HQ (Client-Server)&quot;]
+        style HeadQuarter fill:#e1f5fe,stroke:#01579b,stroke-dasharray: 5 5
+        Server[🗄️ Central Server]:::hq
+        Admin1[💻 Admin PC]:::hq &lt;--&gt;|TCP| Server
+        Admin2[💻 Dashboard]:::hq &lt;--&gt;|TCP| Server
+    end
+
+    subgraph Remote [&quot;🏠 Field (Hybrid)&quot;]
+        style Remote fill:#fff3e0,stroke:#e65100,stroke-dasharray: 5 5
+        R1[🚚 Delivery Tablet]:::remote
+    end
+
+    %% Connections to Cloud
+    F3 -.-&gt;|Delayed Sync| Cloud
+    Server &lt;--&gt;|Real-Time Sync| Cloud
+    R1 -.-&gt;|4G| Cloud
+    
+    %% Ad-Hoc Connection (Driver visits factory)
+    R1 &lt;--&gt;|Bluetooth/WiFi Direct| F1
+</code></pre>
+<h3 id="selection-guide-when-to-use-what">Selection Guide: When to use what?</h3>
+<blockquote>
+<p><strong>💡 Important Note: The Power of Composition</strong>
+These topologies are not mutually exclusive. Morpheo allows you to <strong>mix</strong> these strategies and define priority orders.</p>
+<p><em>Example:</em> You can define a strategy where the application first attempts to synchronize via <strong>Local P2P (UDP)</strong> (Priority 1, Free &amp; Fast), and if no peer is found, it automatically switches to <strong>Cloud (SignalR)</strong> (Priority 2, Fallback).</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Topology</th>
+<th style="text-align: left;">Ideal Use Case</th>
+<th style="text-align: left;">Why?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Local Only</strong></td>
+<td style="text-align: left;">MVP, Prototyping</td>
+<td style="text-align: left;">&quot;Morpheo-ize&quot; the app from the start without network complexity.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>P2P Mesh</strong></td>
+<td style="text-align: left;">Factories, IoT, Dead Zones</td>
+<td style="text-align: left;">Total resilience: if Internet cuts, the factory still runs.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Client-Server</strong></td>
+<td style="text-align: left;">Mobile App, Web, SaaS</td>
+<td style="text-align: left;">Classic centralized model, simple to secure.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Hybrid</strong></td>
+<td style="text-align: left;">Point of Sale (POS), Healthcare</td>
+<td style="text-align: left;"><strong>The Must.</strong> Local speed + Cloud security.</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="-key-features">✨ Key Features</h2>
+<p>Morpheo breaks silos by combining the best of each technology:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Component</th>
+<th style="text-align: left;">Technology</th>
+<th style="text-align: left;">Morpheo Advantage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Reliability</strong></td>
+<td style="text-align: left;">SQLite / EF Core</td>
+<td style="text-align: left;"><strong>SQL Solidity</strong> for local persistence.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Resilience</strong></td>
+<td style="text-align: left;">UDP Multicast</td>
+<td style="text-align: left;"><strong>Zero Config</strong> and automatic node discovery.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Efficiency</strong></td>
+<td style="text-align: left;">Merkle Trees</td>
+<td style="text-align: left;"><strong>Optimized Sync</strong>: transfers only deltas.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Conflicts</strong></td>
+<td style="text-align: left;">Vector Clocks</td>
+<td style="text-align: left;"><strong>Mathematical Resolution</strong> of concurrent edits.</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="comparison-why-morpheo-changes-the-game">Comparison: Why Morpheo changes the game?</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Criterion</th>
+<th style="text-align: left;">Windows Shared Printing (SMB)</th>
+<th style="text-align: left;">Cloud Print Solutions</th>
+<th style="text-align: left;">Morpheo Distributed Print</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Offline First</strong></td>
+<td style="text-align: left;">❌ No (Depends on LAN/AD)</td>
+<td style="text-align: left;">❌ No (Depends on Internet)</td>
+<td style="text-align: left;">✅ <strong>Yes</strong> (Works in local P2P)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Zero Config</strong></td>
+<td style="text-align: left;">❌ Complex (IP, DNS, VPN)</td>
+<td style="text-align: left;">❌ Heavy (Agents to install)</td>
+<td style="text-align: left;">✅ <strong>Automatic</strong> (UDP Discovery)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>NAT Traversal</strong></td>
+<td style="text-align: left;">❌ Impossible without VPN</td>
+<td style="text-align: left;">✅ Yes</td>
+<td style="text-align: left;">✅ <strong>Yes</strong> (Via Gossip or Relay)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Performance</strong></td>
+<td style="text-align: left;">⚠️ Slow RPC</td>
+<td style="text-align: left;">⚠️ Internet Latency</td>
+<td style="text-align: left;">🚀 <strong>Real-Time</strong> (Raw Stream)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Universal</strong></td>
+<td style="text-align: left;">❌ Windows Only</td>
+<td style="text-align: left;">✅ Multi-platform</td>
+<td style="text-align: left;">✅ <strong>Multi-OS</strong> (Windows/Linux/Android)</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="-performance--benchmarks-1">⚡ Performance &amp; Benchmarks</h2>
+<p>Morpheo is obsessed with performance. He don't just say he's fast; he prove it.
+Here are the official benchmark results run on <strong>.NET 10 (January 2026)</strong>.</p>
+<p><strong>You can find all details results in benchmark folder of repository</strong></p>
+<h3 id="1-storage-hybrid-engine-vs-classic-sql">1. Storage: Hybrid Engine vs Classic SQL</h3>
+<p>Comparison of raw writes (1000 logs) between <code>FileLogStore</code> (LSM Append-Only) and a standard Entity Framework Core insertion (SQLite).</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Method</th>
+<th style="text-align: left;">Scenario</th>
+<th style="text-align: left;">Mean Time</th>
+<th style="text-align: left;">Memory Allocated</th>
+<th style="text-align: left;">Gain</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>SQLite (EF Core)</strong></td>
+<td style="text-align: left;">1000 Writes</td>
+<td style="text-align: left;">63.60 ms</td>
+<td style="text-align: left;">12.67 MB</td>
+<td style="text-align: left;">(Baseline)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Morpheo (LSM)</strong></td>
+<td style="text-align: left;">1000 Writes</td>
+<td style="text-align: left;"><strong>10.22 ms</strong></td>
+<td style="text-align: left;"><strong>1.36 MB</strong></td>
+<td style="text-align: left;">🚀 <strong>x6.2 Faster</strong></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Analysis</strong>: By avoiding relational overhead and EF Core tracking for immutable logs, Morpheo reduces Garbage Collector (GC) pressure by <strong>9.3x</strong>.</p>
+</blockquote>
+<h3 id="2-end-to-end-ingestion-pipeline">2. End-to-End Ingestion Pipeline</h3>
+<p>This test measures the real time between data reception, validation (Vector Clock), security (Merkle Hash), and disk write.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Pipeline</th>
+<th style="text-align: left;">Mean Time</th>
+<th style="text-align: left;">Memory Allocated</th>
+<th style="text-align: left;">Ratio</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Standard (EF/SQL)</strong></td>
+<td style="text-align: left;">10,788.50 µs (~10.8 ms)</td>
+<td style="text-align: left;">15.89 MB</td>
+<td style="text-align: left;">(Baseline)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Morpheo (Optimized)</strong></td>
+<td style="text-align: left;"><strong>18.12 µs</strong> (~0.018 ms)</td>
+<td style="text-align: left;"><strong>0.003 MB</strong></td>
+<td style="text-align: left;">⚡ <strong>x595 Faster</strong></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Revelation</strong>: Morpheo's optimized pipeline is <strong>595x faster</strong> than a naive approach. This is the difference between a system that crumbles under load and a real-time system.</p>
+</blockquote>
+<h3 id="3-conflict-resolution-vector-clocks">3. Conflict Resolution (Vector Clocks)</h3>
+<p>Morpheo uses Vector Clocks to determine causality without a central server. The algorithm is optimized to be &quot;Zero-Allocation&quot;.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Operation</th>
+<th style="text-align: left;">Nodes</th>
+<th style="text-align: left;">Mean Time</th>
+<th style="text-align: left;">Memory</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Merge</strong></td>
+<td style="text-align: left;">10</td>
+<td style="text-align: left;"><strong>2.48 µs</strong></td>
+<td style="text-align: left;"><strong>56 Bytes</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>CompareTo</strong></td>
+<td style="text-align: left;">10</td>
+<td style="text-align: left;"><strong>0.30 µs</strong></td>
+<td style="text-align: left;"><strong>0 Bytes</strong> (Zero-Alloc)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="4-data-integrity-merkle-trees">4. Data Integrity (Merkle Trees)</h3>
+<p>Merkle Trees allow verifying if two nodes are in sync without transferring data.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Log Count</th>
+<th style="text-align: left;">Hashing Time (Root)</th>
+<th style="text-align: left;">Allocation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">1,000</td>
+<td style="text-align: left;">1.30 ms</td>
+<td style="text-align: left;">1.07 MB</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>10,000</strong></td>
+<td style="text-align: left;"><strong>8.66 ms</strong></td>
+<td style="text-align: left;"><strong>10.75 MB</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="5-bandwidth-optimization-delta-compression">5. Bandwidth Optimization (Delta Compression)</h3>
+<p>Measures the generation of &quot;Patches&quot; to transfer only modified bytes of a JSON document.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Operation</th>
+<th style="text-align: left;">Mean Time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Generate Patch</strong> (Diff)</td>
+<td style="text-align: left;">1.50 ms</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Apply Patch</strong></td>
+<td style="text-align: left;">1.15 ms</td>
+</tr>
+</tbody>
+</table>
+<h3 id="6-serialization-tax-overhead">6. Serialization Tax (Overhead)</h3>
+<p>Cost of transforming C# objects into JSON for network transport.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Scenario</th>
+<th style="text-align: left;">Mean Time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Serialize 1 Object</strong></td>
+<td style="text-align: left;">3.00 µs</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Serialize Batch (1000)</strong></td>
+<td style="text-align: left;">4.50 ms</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="-distributed-printing">🖨️ Distributed Printing</h2>
+<p>Morpheo considers printers as network nodes. Any device can print to any printer in the Mesh via automatic discovery (Zero Driver).</p>
+<h3 id="how-does-it-work-code">How does it work? (Code)</h3>
+<p>No more driver nightmares. Morpheo uses <strong>RAW Passthrough</strong> (ZPL, ESC/POS).</p>
+<h4 id="1-server-side-the-node-with-the-usbnetwork-printer">1. Server Side (The node with the USB/Network printer)</h4>
+<p>Simply declare that this node is a &quot;Print Gateway&quot;.</p>
+<pre><code class="lang-csharp">// Program.cs on the POS PC
+morpheo.Configure(o =&gt; o.Capabilities = NodeCapabilities.PrintGateway);
+
+if (OperatingSystem.IsWindows())
+{
+    // Enables the bridge to winspool.drv
+    morpheo.UseNativePrinting();
+}
+</code></pre>
+<h4 id="2-client-side-the-tablet-that-wants-to-print">2. Client Side (The Tablet that wants to print)</h4>
+<p>It discovers available printers and sends the raw stream.</p>
+<pre><code class="lang-csharp">// On the tablet (anywhere in the Mesh)
+var printService = app.Services.GetRequiredService&lt;IPrintService&gt;();
+
+// Finds the printer &quot;Kitchen-Prnt-01&quot; anywhere on the network
+await printService.PrintRawAsync(&quot;Kitchen-Prnt-01&quot;, &quot;^XA^FO50,50^ADN,36,20^FDHello Morpheo^FS^XZ&quot;);
+</code></pre>
+<hr>
+<h2 id="-orchestration--code-1">🎹 Orchestration &amp; Code</h2>
+<p>Thanks to dependency injection and the Builder pattern, configuration is fluid and expressive. You define <strong>Composite Strategies</strong>.</p>
+<h3 id="example-a-quick-start-local-only">Example A: Quick Start (Local Only)</h3>
+<p>Ideal for starting a project cleanly.</p>
+<pre><code class="lang-csharp">using Morpheo; // One namespace to rule them all
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Minimal setup: Local persistence only.
+// No network, no complexity. Just clean data.
+builder.Services.AddMorpheo(morpheo =&gt;
+{
+    morpheo.Configure(options =&gt; 
+    {
+        options.NodeName = &quot;MyMorpheoNode&quot;;
+        options.Role = NodeRole.StandardClient;
+    });
+
+    // 1. Storage (Zero-Config)
+    // Defaults to %LocalAppData%/Morpheo to avoid permission denied
+    morpheo.UseSqlite(); 
+    morpheo.AddBlobStore();
+
+    // 2. Log Engine
+    // Uses Hybrid mode (RAM + Disk + SQL) for performance
+    morpheo.UseHybridLogStore();
+});
+</code></pre>
+<h3 id="example-b-the-full-package-hybrid-mesh-strategy">Example B: The Full Package (Hybrid Mesh Strategy)</h3>
+<p>A &quot;Zero-Config&quot; production setup ready for real-world deployment.</p>
+<pre><code class="lang-csharp">using Morpheo;
+
+builder.Services.AddMorpheo(morpheo =&gt;
+{
+    // ... Identity Config ...
+    morpheo.Configure(o =&gt; o.NodeName = &quot;Store-POS-01&quot;);
+
+    // 1. Explicit Storage (Optional, for total control)
+    // Here, we force a specific path in LocalAppData
+    var appData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+    morpheo.UseSqlite($&quot;Data Source={Path.Combine(appData, &quot;Morpheo&quot;, &quot;store.db&quot;)}&quot;);
+    morpheo.UseFileLogStore(); // High-performance logs
+
+    // 2. Network: P2P Mesh
+    // Enables UDP discovery + Internal Kestrel Web Server
+    morpheo.AddMesh();
+
+    // 3. Native Printing (If on Windows)
+    if (OperatingSystem.IsWindows())
+    {
+        // Registers Win32 print services (winspool.drv)
+        // Note: Accessible via builder.Services as it is an IServiceCollection extension
+        builder.Services.AddWindowsPrinting();
+    }
+});
+</code></pre>
+<p>Compared to classic solutions (SMB, Cloud Print), Morpheo offers <strong>Real-Time</strong>, <strong>Offline-First</strong>, and <strong>Configuration-Free</strong> printing.</p>
+<hr>
+<h2 id="-getting-started">🚀 Getting Started</h2>
+<h3 id="installation-1">Installation</h3>
+<pre><code class="lang-bash">dotnet add package Morpheo.Core
+</code></pre>
+<h3 id="configuration-standard-node-1">Configuration (Standard Node)</h3>
+<pre><code class="lang-csharp">using Morpheo.Core;
+
+var builder = Host.CreateDefaultBuilder();
+builder.ConfigureServices(services =&gt;
+{
+    services.AddMorpheo(options =&gt; 
+    {
+        options.NodeName = &quot;Terminal-01&quot;;
+        options.DiscoveryPort = 5000;
+        // options.Role = NodeRole.StandardClient;
+    })
+    .UseSqlite(); // Hybrid Storage (SQL + FileSystem)
+});
+
+await builder.Build().RunAsync();
+</code></pre>
+<hr>
+<h2 id="-roadmap--future">🗺️ Roadmap &amp; Future</h2>
+<ul>
+<li><strong>Short Term</strong>: Linux Printing Support (CUPS/IPP).</li>
+<li><strong>Mid Term</strong>: Universal Hardware Mesh (COM/Serial port sharing over IP).</li>
+<li><strong>Long Term</strong>: WebAssembly Support (Blazor) for pure browser P2P sync.</li>
+</ul>
+<hr>
+<h2 id="-development--contribution">🛠️ Development &amp; Contribution</h2>
+<p>Morpheo is designed to be as enjoyable to develop as it is to use. I welcome contributions from all backgrounds.</p>
+<p>To ensure a smooth experience, the repository includes two solution formats:</p>
+<ul>
+<li><strong><code>Morpheo.sln</code> (Standard)</strong>: The classic format, compatible with all versions of Visual Studio, JetBrains Rider, and the <code>dotnet</code> CLI. It is the default choice for maximum compatibility and CI/CD pipelines.</li>
+<li><strong><code>Morpheo.slnx</code> (Modern)</strong>: The new XML solution format (.NET 10 Ready). More readable, faster to load, and easier to merge (no more GUID conflicts in the .sln).</li>
+</ul>
+<p>I strive to keep a top-tier DX (Developer Experience). If you have suggestions to improve the build environment, open an issue!</p>
+<hr>
+<h2 id="-license">📜 License</h2>
+<p>Project licensed under MIT - see the <code>LICENSE</code> file.</p>
+
+</article>
+          </div>
+
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/remi-deher/Morpheo/blob/main/README.md/#L1" class="contribution-link">Edit this page</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In this article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+      Copyright © 2025 DEHER Rémi - Propulsé par .NET 10
+      
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script type="text/javascript" src="styles/docfx.vendor.min.js"></script>
+    <script type="text/javascript" src="styles/docfx.js"></script>
+    <script type="text/javascript" src="styles/main.js"></script>
+  </body>
+</html>

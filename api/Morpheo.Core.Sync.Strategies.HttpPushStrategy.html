@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+
+  <head>
+    <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <title>Class HttpPushStrategy | Morpheo Framework </title>
+      <meta name="viewport" content="width=device-width">
+      <meta name="title" content="Class HttpPushStrategy | Morpheo Framework ">
+    
+    <meta name="description" content="Strategy that pushes synchronization logs to a central server via HTTP.">
+      <link rel="shortcut icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
+      <link rel="stylesheet" href="../styles/docfx.css">
+      <link rel="stylesheet" href="../styles/main.css">
+      <meta property="docfx:navrel" content="../toc.html">
+      <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="../">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+
+        <div id="search-results">
+          <div class="search-list">Search Results for <span></span></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination" data-first=First data-prev=Previous data-next=Next data-last=Last></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Morpheo.Core.Sync.Strategies.HttpPushStrategy">
+
+
+
+  <h1 id="Morpheo_Core_Sync_Strategies_HttpPushStrategy" data-uid="Morpheo.Core.Sync.Strategies.HttpPushStrategy" class="text-break">Class HttpPushStrategy</h1>
+  <div class="markdown level0 summary"><p>Strategy that pushes synchronization logs to a central server via HTTP.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+    <div class="level1"><span class="xref">HttpPushStrategy</span></div>
+  </div>
+  <div class="implements">
+    <h5>Implements</h5>
+    <div><a class="xref" href="Morpheo.Sdk.ISyncStrategyProvider.html">ISyncStrategyProvider</a></div>
+    <div><a class="xref" href="Morpheo.Sdk.ISyncRoutingStrategy.html">ISyncRoutingStrategy</a></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Morpheo.html">Morpheo</a>.<a class="xref" href="Morpheo.Core.html">Core</a>.<a class="xref" href="Morpheo.Core.Sync.html">Sync</a>.<a class="xref" href="Morpheo.Core.Sync.Strategies.html">Strategies</a></h6>
+  <h6><strong>Assembly</strong>: Morpheo.Core.dll</h6>
+  <h5 id="Morpheo_Core_Sync_Strategies_HttpPushStrategy_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class HttpPushStrategy : ISyncStrategyProvider, ISyncRoutingStrategy</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/remi-deher/Morpheo/new/main/apiSpec/new?filename=Morpheo_Core_Sync_Strategies_HttpPushStrategy__ctor_System_Net_Http_IHttpClientFactory_System_Uri_Microsoft_Extensions_Logging_ILogger_Morpheo_Core_Sync_Strategies_HttpPushStrategy__.md&amp;value=---%0Auid%3A%20Morpheo.Core.Sync.Strategies.HttpPushStrategy.%23ctor(System.Net.Http.IHttpClientFactory%2CSystem.Uri%2CMicrosoft.Extensions.Logging.ILogger%7BMorpheo.Core.Sync.Strategies.HttpPushStrategy%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/remi-deher/Morpheo/blob/main/Morpheo.Core/Sync/Strategies/HttpPushStrategy.cs/#L16">View Source</a>
+  </span>
+  <a id="Morpheo_Core_Sync_Strategies_HttpPushStrategy__ctor_" data-uid="Morpheo.Core.Sync.Strategies.HttpPushStrategy.#ctor*"></a>
+  <h4 id="Morpheo_Core_Sync_Strategies_HttpPushStrategy__ctor_System_Net_Http_IHttpClientFactory_System_Uri_Microsoft_Extensions_Logging_ILogger_Morpheo_Core_Sync_Strategies_HttpPushStrategy__" data-uid="Morpheo.Core.Sync.Strategies.HttpPushStrategy.#ctor(System.Net.Http.IHttpClientFactory,System.Uri,Microsoft.Extensions.Logging.ILogger{Morpheo.Core.Sync.Strategies.HttpPushStrategy})">HttpPushStrategy(IHttpClientFactory, Uri, ILogger&lt;HttpPushStrategy&gt;)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public HttpPushStrategy(IHttpClientFactory httpClientFactory, Uri targetUri, ILogger&lt;HttpPushStrategy&gt; logger)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.http.ihttpclientfactory">IHttpClientFactory</a></td>
+        <td><span class="parametername">httpClientFactory</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uri">Uri</a></td>
+        <td><span class="parametername">targetUri</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1">ILogger</a>&lt;<a class="xref" href="Morpheo.Core.Sync.Strategies.HttpPushStrategy.html">HttpPushStrategy</a>&gt;</td>
+        <td><span class="parametername">logger</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/remi-deher/Morpheo/new/main/apiSpec/new?filename=Morpheo_Core_Sync_Strategies_HttpPushStrategy_PropagateAsync_Morpheo_Sdk_SyncLogDto_System_Collections_Generic_IEnumerable_Morpheo_Sdk_PeerInfo__System_Func_Morpheo_Sdk_PeerInfo_Morpheo_Sdk_SyncLogDto_System_Threading_Tasks_Task_System_Boolean___.md&amp;value=---%0Auid%3A%20Morpheo.Core.Sync.Strategies.HttpPushStrategy.PropagateAsync(Morpheo.Sdk.SyncLogDto%2CSystem.Collections.Generic.IEnumerable%7BMorpheo.Sdk.PeerInfo%7D%2CSystem.Func%7BMorpheo.Sdk.PeerInfo%2CMorpheo.Sdk.SyncLogDto%2CSystem.Threading.Tasks.Task%7BSystem.Boolean%7D%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/remi-deher/Morpheo/blob/main/Morpheo.Core/Sync/Strategies/HttpPushStrategy.cs/#L27">View Source</a>
+  </span>
+  <a id="Morpheo_Core_Sync_Strategies_HttpPushStrategy_PropagateAsync_" data-uid="Morpheo.Core.Sync.Strategies.HttpPushStrategy.PropagateAsync*"></a>
+  <h4 id="Morpheo_Core_Sync_Strategies_HttpPushStrategy_PropagateAsync_Morpheo_Sdk_SyncLogDto_System_Collections_Generic_IEnumerable_Morpheo_Sdk_PeerInfo__System_Func_Morpheo_Sdk_PeerInfo_Morpheo_Sdk_SyncLogDto_System_Threading_Tasks_Task_System_Boolean___" data-uid="Morpheo.Core.Sync.Strategies.HttpPushStrategy.PropagateAsync(Morpheo.Sdk.SyncLogDto,System.Collections.Generic.IEnumerable{Morpheo.Sdk.PeerInfo},System.Func{Morpheo.Sdk.PeerInfo,Morpheo.Sdk.SyncLogDto,System.Threading.Tasks.Task{System.Boolean}})">PropagateAsync(SyncLogDto, IEnumerable&lt;PeerInfo&gt;, Func&lt;PeerInfo, SyncLogDto, Task&lt;bool&gt;&gt;)</h4>
+  <div class="markdown level1 summary"><p>Executes the propagation of a log entry to appropriate targets.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task PropagateAsync(SyncLogDto log, IEnumerable&lt;PeerInfo&gt; candidates, Func&lt;PeerInfo, SyncLogDto, Task&lt;bool&gt;&gt; sendFunc)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Morpheo.Sdk.SyncLogDto.html">SyncLogDto</a></td>
+        <td><span class="parametername">log</span></td>
+        <td><p>The data to send.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="Morpheo.Sdk.PeerInfo.html">PeerInfo</a>&gt;</td>
+        <td><span class="parametername">candidates</span></td>
+        <td><p>The list of currently visible peers (via Discovery).</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-3">Func</a>&lt;<a class="xref" href="Morpheo.Sdk.PeerInfo.html">PeerInfo</a>, <a class="xref" href="Morpheo.Sdk.SyncLogDto.html">SyncLogDto</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a>&gt;&gt;</td>
+        <td><span class="parametername">sendFunc</span></td>
+        <td><p>A delegate that performs the actual sending.
+Returns TRUE if the send was successful (ACK), FALSE otherwise.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <a class="xref" href="Morpheo.Sdk.ISyncStrategyProvider.html">ISyncStrategyProvider</a>
+  </div>
+  <div>
+      <a class="xref" href="Morpheo.Sdk.ISyncRoutingStrategy.html">ISyncRoutingStrategy</a>
+  </div>
+
+</article>
+          </div>
+
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/remi-deher/Morpheo/new/main/apiSpec/new?filename=Morpheo_Core_Sync_Strategies_HttpPushStrategy.md&amp;value=---%0Auid%3A%20Morpheo.Core.Sync.Strategies.HttpPushStrategy%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Edit this page</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/remi-deher/Morpheo/blob/main/Morpheo.Core/Sync/Strategies/HttpPushStrategy.cs/#L10" class="contribution-link">View Source</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In this article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+      Copyright © 2025 DEHER Rémi - Propulsé par .NET 10
+      
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script type="text/javascript" src="../styles/docfx.vendor.min.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

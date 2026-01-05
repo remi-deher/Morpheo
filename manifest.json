@@ -1,0 +1,1297 @@
+{
+  "source_base_path": "/home/runner/work/Morpheo/Morpheo/docs",
+  "xrefmap": "xrefmap.yml",
+  "files": [
+    {
+      "type": "Resource",
+      "output": {
+        "resource": {
+          "relative_path": "index.json"
+        }
+      }
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../README.md",
+      "output": {
+        ".html": {
+          "relative_path": "README.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Blobs.FileSystemBlobStore.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Blobs.FileSystemBlobStore.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Blobs.FileSystemBlobStore",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.Blobs.FileSystemBlobStore.yml\" sourcestartlinenumber=\"1\">File system implementation of the blob store.\nStores blobs as files and metadata as JSON sidecars.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Blobs.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Blobs.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Blobs",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Client.MorpheoHttpClient.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Client.MorpheoHttpClient.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Client.MorpheoHttpClient",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.Client.MorpheoHttpClient.yml\" sourcestartlinenumber=\"1\">HTTP client implementation for communicating with Morpheo nodes.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Client.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Client.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Client",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Configuration.IMorpheoBuilder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Configuration.IMorpheoBuilder.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Configuration.IMorpheoBuilder",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.Configuration.IMorpheoBuilder.yml\" sourcestartlinenumber=\"1\">Interface for configuring Morpheo services.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Configuration.MorpheoBuilder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Configuration.MorpheoBuilder.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Configuration.MorpheoBuilder",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.Configuration.MorpheoBuilder.yml\" sourcestartlinenumber=\"1\">Default implementation of the Morpheo configuration builder.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Configuration.MorpheoConfigManager.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Configuration.MorpheoConfigManager.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Configuration.MorpheoConfigManager",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.Configuration.MorpheoConfigManager.yml\" sourcestartlinenumber=\"1\">Manages the loading and saving of the runtime configuration.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Configuration.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Configuration.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Configuration",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Crdt.DistributedCounter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Crdt.DistributedCounter.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Crdt.DistributedCounter",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.Crdt.DistributedCounter.yml\" sourcestartlinenumber=\"1\">Generic implementation of a Pn-Counter (Positive-Negative Counter).\nAllows managing quantities (Stocks, Balance) without conflicts.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Crdt.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Crdt.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Crdt",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Data.DatabaseInitializer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Data.DatabaseInitializer.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Data.DatabaseInitializer",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.Data.DatabaseInitializer.yml\" sourcestartlinenumber=\"1\">Service responsible for initializing the Morpheo database.\nHandles migration of legacy databases and creation of new schemas.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Data.MorpheoDbContext.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Data.MorpheoDbContext.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Data.MorpheoDbContext",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.Data.MorpheoDbContext.yml\" sourcestartlinenumber=\"1\">The Entity Framework Core context for Morpheo data.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Data.MorpheoEntity.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Data.MorpheoEntity.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Data.MorpheoEntity",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Data.SimpleTypeResolver.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Data.SimpleTypeResolver.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Data.SimpleTypeResolver",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.Data.SimpleTypeResolver.yml\" sourcestartlinenumber=\"1\">A simple implementation of <xref href=\"Morpheo.Sdk.IEntityTypeResolver\" data-throw-if-not-resolved=\"false\"></xref> using a manual registration dictionary.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Data.SyncLog.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Data.SyncLog.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Data.SyncLog",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.Data.SyncLog.yml\" sourcestartlinenumber=\"1\">Represents a synchronization log entry stored in the database.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Data.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Data.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Data",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Discovery.DiscoveryMessageType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Discovery.DiscoveryMessageType.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Discovery.DiscoveryMessageType",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.Discovery.DiscoveryMessageType.yml\" sourcestartlinenumber=\"1\">Types of discovery messages.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Discovery.DiscoveryPacket.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Discovery.DiscoveryPacket.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Discovery.DiscoveryPacket",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.Discovery.DiscoveryPacket.yml\" sourcestartlinenumber=\"1\">Represents a packet exchanged during the discovery process.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Discovery.NullNetworkDiscovery.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Discovery.NullNetworkDiscovery.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Discovery.NullNetworkDiscovery",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.Discovery.NullNetworkDiscovery.yml\" sourcestartlinenumber=\"1\">No-op implementation of network discovery.\nUsed when discovery is disabled or not supported.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Discovery.UdpDiscoveryService.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Discovery.UdpDiscoveryService.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Discovery.UdpDiscoveryService",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.Discovery.UdpDiscoveryService.yml\" sourcestartlinenumber=\"1\">UDP-based implementation of network discovery.\nBroadcasts &quot;Hello&quot; packets and listens for responses to find peers on the local network.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Discovery.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Discovery.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Discovery",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Extensions.MorpheoBlobExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Extensions.MorpheoBlobExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Extensions.MorpheoBlobExtensions",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.Extensions.MorpheoBlobExtensions.yml\" sourcestartlinenumber=\"1\">Extension methods for configuring blob storage.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Extensions.MorpheoCloudExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Extensions.MorpheoCloudExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Extensions.MorpheoCloudExtensions",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.Extensions.MorpheoCloudExtensions.yml\" sourcestartlinenumber=\"1\">Extension methods for cloud connectivity.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Extensions.MorpheoConfigurationExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Extensions.MorpheoConfigurationExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Extensions.MorpheoConfigurationExtensions",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.Extensions.MorpheoConfigurationExtensions.yml\" sourcestartlinenumber=\"1\">Extension methods for loading and applying Morpheo configuration.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Extensions.MorpheoDashboardExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Extensions.MorpheoDashboardExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Extensions.MorpheoDashboardExtensions",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.Extensions.MorpheoDashboardExtensions.yml\" sourcestartlinenumber=\"1\">Extension methods for configuring the Morpheo dashboard.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Extensions.MorpheoNetworkExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Extensions.MorpheoNetworkExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Extensions.MorpheoNetworkExtensions",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.Extensions.MorpheoNetworkExtensions.yml\" sourcestartlinenumber=\"1\">Extension methods for configuring network features.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Extensions.MorpheoSignalRExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Extensions.MorpheoSignalRExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Extensions.MorpheoSignalRExtensions",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.Extensions.MorpheoSignalRExtensions.yml\" sourcestartlinenumber=\"1\">Extension methods for SignalR integration.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Extensions.MorpheoStorageExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Extensions.MorpheoStorageExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Extensions.MorpheoStorageExtensions",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.Extensions.MorpheoStorageExtensions.yml\" sourcestartlinenumber=\"1\">Provides extension methods for configuring storage providers within the Morpheo framework.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Extensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Extensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Extensions",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.HostingExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.HostingExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.HostingExtensions",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.HostingExtensions.yml\" sourcestartlinenumber=\"1\">Extension methods for configuring the Morpheo worker.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.MorpheoNode.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.MorpheoNode.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.MorpheoNode",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.MorpheoNode.yml\" sourcestartlinenumber=\"1\">Main hosted service representing a Morpheo Node.\nManages the lifecycle of the web server and network discovery interactions.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.MorpheoServiceExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.MorpheoServiceExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.MorpheoServiceExtensions",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.MorpheoServiceExtensions.yml\" sourcestartlinenumber=\"1\">Extension methods for registering Morpheo services in the dependency injection container.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Printers.LocalPrinter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Printers.LocalPrinter.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Printers.LocalPrinter",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Printers.NullPrintGateway.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Printers.NullPrintGateway.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Printers.NullPrintGateway",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.Printers.NullPrintGateway.yml\" sourcestartlinenumber=\"1\">Default implementation of <xref href=\"Morpheo.Sdk.IPrintGateway\" data-throw-if-not-resolved=\"false\"></xref> that does nothing.\nPrevents crashes if no printing strategy is defined (e.g., Linux Server without CUPS).</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Printers.WindowsPrinterService.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Printers.WindowsPrinterService.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Printers.WindowsPrinterService",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.Printers.WindowsPrinterService.yml\" sourcestartlinenumber=\"1\">Windows-specific implementation of the print gateway.\nInteractions with the Windows Spooler.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Printers.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Printers.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Printers",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Security.AllowAllAuthenticator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Security.AllowAllAuthenticator.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Security.AllowAllAuthenticator",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.Security.AllowAllAuthenticator.yml\" sourcestartlinenumber=\"1\">Default authentication strategy (Convention): Allow everything.\nIdeal for development or isolated networks without configuration.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Security.PskHmacAuthenticator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Security.PskHmacAuthenticator.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Security.PskHmacAuthenticator",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.Security.PskHmacAuthenticator.yml\" sourcestartlinenumber=\"1\">&quot;Opt-in&quot; secure authenticator.\nVerifies that the request is signed with a shared secret key (Cluster Secret).\nComplies with Morpheo RFC Section 6.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Security.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Security.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Security",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Server.IMorpheoServer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Server.IMorpheoServer.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Server.IMorpheoServer",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.Server.IMorpheoServer.yml\" sourcestartlinenumber=\"1\">Defines the contract for the embedded Morpheo server.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Server.MorpheoWebServer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Server.MorpheoWebServer.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Server.MorpheoWebServer",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.Server.MorpheoWebServer.yml\" sourcestartlinenumber=\"1\">Embedded Web Server (Kestrel) hosting the Morpheo API.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Server.NullMorpheoServer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Server.NullMorpheoServer.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Server.NullMorpheoServer",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.Server.NullMorpheoServer.yml\" sourcestartlinenumber=\"1\">No-op server implementation.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Server.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Server.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Server",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.SignalR.MorpheoSyncHub.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.SignalR.MorpheoSyncHub.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.SignalR.MorpheoSyncHub",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.SignalR.MorpheoSyncHub.yml\" sourcestartlinenumber=\"1\">SignalR Hub for real-time synchronization.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.SignalR.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.SignalR.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.SignalR",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Sync.ConflictResolutionEngine.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Sync.ConflictResolutionEngine.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Sync.ConflictResolutionEngine",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.Sync.ConflictResolutionEngine.yml\" sourcestartlinenumber=\"1\">Providies the core logic for resolving data conflicts between local and remote entity states during synchronization.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Sync.DataSyncService.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Sync.DataSyncService.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Sync.DataSyncService",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.Sync.DataSyncService.yml\" sourcestartlinenumber=\"1\">Core service managing data synchronization, broadcasting, and conflict resolution.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Sync.DeltaCompressionService.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Sync.DeltaCompressionService.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Sync.DeltaCompressionService",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.Sync.DeltaCompressionService.yml\" sourcestartlinenumber=\"1\">Provides differential compression services to optimize data transfer by calculating and applying patches between JSON documents.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Sync.FileLogStore.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Sync.FileLogStore.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Sync.FileLogStore",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.Sync.FileLogStore.yml\" sourcestartlinenumber=\"1\">A file-based persistence store for sync logs.\nMimics a Write-Ahead Log (WAL) or simple append-only file storage.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Sync.LogCompactionService.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Sync.LogCompactionService.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Sync.LogCompactionService",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.Sync.LogCompactionService.yml\" sourcestartlinenumber=\"1\">Background service responsible for compacting (Garbage Collecting) old sync logs.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Sync.MerkleTreeService.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Sync.MerkleTreeService.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Sync.MerkleTreeService",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.Sync.MerkleTreeService.yml\" sourcestartlinenumber=\"1\">Provides services for calculating Merkle Tree Root Hashes to verify data integrity and consistency across distributed nodes.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Sync.SqlSyncLogStore.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Sync.SqlSyncLogStore.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Sync.SqlSyncLogStore",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.Sync.SqlSyncLogStore.yml\" sourcestartlinenumber=\"1\">Implements a persistent store for synchronization logs using a SQL database via Entity Framework Core.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Sync.Strategies.CompositeRoutingStrategy.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Sync.Strategies.CompositeRoutingStrategy.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Sync.Strategies.CompositeRoutingStrategy",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.Sync.Strategies.CompositeRoutingStrategy.yml\" sourcestartlinenumber=\"1\">A routing strategy that combines multiple sub-strategies (providers).</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Sync.Strategies.ExternalDbSyncStrategy-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Sync.Strategies.ExternalDbSyncStrategy-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Sync.Strategies.ExternalDbSyncStrategy<TContext>",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.Sync.Strategies.ExternalDbSyncStrategy-1.yml\" sourcestartlinenumber=\"1\">Synchronization strategy that pushes changes to an external database (e.g., PostgreSQL, SQL Server).</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Sync.Strategies.HttpPushStrategy.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Sync.Strategies.HttpPushStrategy.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Sync.Strategies.HttpPushStrategy",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.Sync.Strategies.HttpPushStrategy.yml\" sourcestartlinenumber=\"1\">Strategy that pushes synchronization logs to a central server via HTTP.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Sync.Strategies.IHubConnectionWrapper.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Sync.Strategies.IHubConnectionWrapper.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Sync.Strategies.IHubConnectionWrapper",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.Sync.Strategies.IHubConnectionWrapper.yml\" sourcestartlinenumber=\"1\">Abstraction for HubConnection to facilitate testing.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Sync.Strategies.MeshBroadcastStrategy.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Sync.Strategies.MeshBroadcastStrategy.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Sync.Strategies.MeshBroadcastStrategy",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.Sync.Strategies.MeshBroadcastStrategy.yml\" sourcestartlinenumber=\"1\">Default strategy: Floods the network (Gossip).\nIdeal for pure Mesh mode without a central server.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Sync.Strategies.NullRoutingStrategy.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Sync.Strategies.NullRoutingStrategy.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Sync.Strategies.NullRoutingStrategy",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.Sync.Strategies.NullRoutingStrategy.yml\" sourcestartlinenumber=\"1\">No-op routing strategy.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Sync.Strategies.NullStrategyProvider.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Sync.Strategies.NullStrategyProvider.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Sync.Strategies.NullStrategyProvider",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.Sync.Strategies.NullStrategyProvider.yml\" sourcestartlinenumber=\"1\">No-op strategy provider.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Sync.Strategies.SignalRClientStrategy.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Sync.Strategies.SignalRClientStrategy.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Sync.Strategies.SignalRClientStrategy",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.Sync.Strategies.SignalRClientStrategy.yml\" sourcestartlinenumber=\"1\">Strategy for connecting to a SignalR Hub as a client.\nRelays local changes to the hub and receives remote changes.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Sync.Strategies.SignalRHubConnectionWrapper.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Sync.Strategies.SignalRHubConnectionWrapper.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Sync.Strategies.SignalRHubConnectionWrapper",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.Sync.Strategies.SignalRHubConnectionWrapper.yml\" sourcestartlinenumber=\"1\">Real implementation wrapping the actual HubConnection.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Sync.Strategies.SignalRServerBroadcastStrategy.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Sync.Strategies.SignalRServerBroadcastStrategy.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Sync.Strategies.SignalRServerBroadcastStrategy",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.Sync.Strategies.SignalRServerBroadcastStrategy.yml\" sourcestartlinenumber=\"1\">Strategy for broadcasting changes to all connected SignalR clients (Server-side).</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Sync.Strategies.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Sync.Strategies.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Sync.Strategies",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Sync.VectorClock.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Sync.VectorClock.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Sync.VectorClock",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.Sync.VectorClock.yml\" sourcestartlinenumber=\"1\">Implementation of a Vector Clock for tracking causal history in a distributed system.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Sync.VectorRelation.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Sync.VectorRelation.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Sync.VectorRelation",
+      "Summary": "<p sourcefile=\"api/Morpheo.Core.Sync.VectorRelation.yml\" sourcestartlinenumber=\"1\">Relationship between two vector clocks.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.Sync.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.Sync.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core.Sync",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Core.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Core.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Core",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Sdk.Blobs.BlobMetadata.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Sdk.Blobs.BlobMetadata.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Sdk.Blobs.BlobMetadata",
+      "Summary": "<p sourcefile=\"api/Morpheo.Sdk.Blobs.BlobMetadata.yml\" sourcestartlinenumber=\"1\">Represents metadata for a stored blob (Binary Large Object).</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Sdk.Blobs.IMorpheoBlobStore.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Sdk.Blobs.IMorpheoBlobStore.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Sdk.Blobs.IMorpheoBlobStore",
+      "Summary": "<p sourcefile=\"api/Morpheo.Sdk.Blobs.IMorpheoBlobStore.yml\" sourcestartlinenumber=\"1\">Defines the contract for a blob storage service.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Sdk.Blobs.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Sdk.Blobs.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Sdk.Blobs",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Sdk.DashboardOptions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Sdk.DashboardOptions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Sdk.DashboardOptions",
+      "Summary": "<p sourcefile=\"api/Morpheo.Sdk.DashboardOptions.yml\" sourcestartlinenumber=\"1\">Configuration options for the Morpheo dashboard.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Sdk.HostingOptions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Sdk.HostingOptions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Sdk.HostingOptions",
+      "Summary": "<p sourcefile=\"api/Morpheo.Sdk.HostingOptions.yml\" sourcestartlinenumber=\"1\">Configuration options for hosting the service, allowing white-label customization.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Sdk.IEntityTypeResolver.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Sdk.IEntityTypeResolver.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Sdk.IEntityTypeResolver",
+      "Summary": "<p sourcefile=\"api/Morpheo.Sdk.IEntityTypeResolver.yml\" sourcestartlinenumber=\"1\">Service allowing the resolution engine to retrieve the C# Type\nfrom the entity name stored in the database (e.g., &quot;Product&quot; -&gt; typeof(Morpheo.App.Product)).</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Sdk.IMergeable-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Sdk.IMergeable-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Sdk.IMergeable<T>",
+      "Summary": "<p sourcefile=\"api/Morpheo.Sdk.IMergeable-1.yml\" sourcestartlinenumber=\"1\">Contract for any entity capable of merging itself (CRDT).\nThe Framework will use this method in case of vector conflict.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Sdk.IMorpheoClient.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Sdk.IMorpheoClient.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Sdk.IMorpheoClient",
+      "Summary": "<p sourcefile=\"api/Morpheo.Sdk.IMorpheoClient.yml\" sourcestartlinenumber=\"1\">Definition of a client capable of communicating with other Morpheo nodes.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Sdk.IMorpheoNode.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Sdk.IMorpheoNode.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Sdk.IMorpheoNode",
+      "Summary": "<p sourcefile=\"api/Morpheo.Sdk.IMorpheoNode.yml\" sourcestartlinenumber=\"1\">Represents a Morpheo node causing the initialization and management of services (Database, Network, etc.).</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Sdk.INetworkDiscovery.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Sdk.INetworkDiscovery.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Sdk.INetworkDiscovery",
+      "Summary": "<p sourcefile=\"api/Morpheo.Sdk.INetworkDiscovery.yml\" sourcestartlinenumber=\"1\">Defines the contract for network discovery services.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Sdk.IPrintGateway.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Sdk.IPrintGateway.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Sdk.IPrintGateway",
+      "Summary": "<p sourcefile=\"api/Morpheo.Sdk.IPrintGateway.yml\" sourcestartlinenumber=\"1\">Defines the contract for a print gateway service.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Sdk.IRequestAuthenticator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Sdk.IRequestAuthenticator.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Sdk.IRequestAuthenticator",
+      "Summary": "<p sourcefile=\"api/Morpheo.Sdk.IRequestAuthenticator.yml\" sourcestartlinenumber=\"1\">Defines the contract for validating incoming requests (Gatekeeper).</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Sdk.ISyncRoutingStrategy.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Sdk.ISyncRoutingStrategy.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Sdk.ISyncRoutingStrategy",
+      "Summary": "<p sourcefile=\"api/Morpheo.Sdk.ISyncRoutingStrategy.yml\" sourcestartlinenumber=\"1\">Defines the strategy for data propagation within the network.\nAllows implementing logics such as &quot;Single Server&quot;, &quot;Full Mesh&quot;, or &quot;Cascade (Failover)&quot;.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Sdk.ISyncStrategyProvider.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Sdk.ISyncStrategyProvider.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Sdk.ISyncStrategyProvider",
+      "Summary": "<p sourcefile=\"api/Morpheo.Sdk.ISyncStrategyProvider.yml\" sourcestartlinenumber=\"1\">Marker interface for synchronization strategy providers.\nEnables multiple injection via CompositeRoutingStrategy.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Sdk.MorpheoOptions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Sdk.MorpheoOptions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Sdk.MorpheoOptions",
+      "Summary": "<p sourcefile=\"api/Morpheo.Sdk.MorpheoOptions.yml\" sourcestartlinenumber=\"1\">Configuration options for the Morpheo node.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Sdk.NodeRole.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Sdk.NodeRole.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Sdk.NodeRole",
+      "Summary": "<p sourcefile=\"api/Morpheo.Sdk.NodeRole.yml\" sourcestartlinenumber=\"1\">Specifies the role of the node in the network.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Sdk.PeerInfo.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Sdk.PeerInfo.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Sdk.PeerInfo",
+      "Summary": "<p sourcefile=\"api/Morpheo.Sdk.PeerInfo.yml\" sourcestartlinenumber=\"1\">Represents information about a peer node in the network.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Sdk.PrinterOptions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Sdk.PrinterOptions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Sdk.PrinterOptions",
+      "Summary": "<p sourcefile=\"api/Morpheo.Sdk.PrinterOptions.yml\" sourcestartlinenumber=\"1\">Configuration options for printers.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Sdk.RuntimeConfig.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Sdk.RuntimeConfig.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Sdk.RuntimeConfig",
+      "Summary": "<p sourcefile=\"api/Morpheo.Sdk.RuntimeConfig.yml\" sourcestartlinenumber=\"1\">Represents the runtime configuration for the application.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Sdk.SyncLogDto.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Sdk.SyncLogDto.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Sdk.SyncLogDto",
+      "Summary": "<p sourcefile=\"api/Morpheo.Sdk.SyncLogDto.yml\" sourcestartlinenumber=\"1\">Data Transfer Object representing a synchronization log entry.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Morpheo.Sdk.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Morpheo.Sdk.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Morpheo.Sdk",
+      "Summary": null
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "api/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/toc.html"
+        },
+        ".json": {
+          "relative_path": "api/toc.json"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "index.md",
+      "output": {
+        ".html": {
+          "relative_path": "index.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "toc.html"
+        },
+        ".json": {
+          "relative_path": "toc.json"
+        }
+      },
+      "version": ""
+    }
+  ],
+  "groups": [
+    {
+      "xrefmap": "xrefmap.yml"
+    }
+  ]
+}

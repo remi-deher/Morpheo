@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+
+  <head>
+    <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <title>Class DistributedCounter | Morpheo Framework </title>
+      <meta name="viewport" content="width=device-width">
+      <meta name="title" content="Class DistributedCounter | Morpheo Framework ">
+    
+    <meta name="description" content="Generic implementation of a Pn-Counter (Positive-Negative Counter). Allows managing quantities (Stocks, Balance) without conflicts.">
+      <link rel="shortcut icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
+      <link rel="stylesheet" href="../styles/docfx.css">
+      <link rel="stylesheet" href="../styles/main.css">
+      <meta property="docfx:navrel" content="../toc.html">
+      <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="../">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+
+        <div id="search-results">
+          <div class="search-list">Search Results for <span></span></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination" data-first=First data-prev=Previous data-next=Next data-last=Last></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Morpheo.Core.Crdt.DistributedCounter">
+
+
+
+  <h1 id="Morpheo_Core_Crdt_DistributedCounter" data-uid="Morpheo.Core.Crdt.DistributedCounter" class="text-break">Class DistributedCounter</h1>
+  <div class="markdown level0 summary"><p>Generic implementation of a Pn-Counter (Positive-Negative Counter).
+Allows managing quantities (Stocks, Balance) without conflicts.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+    <div class="level1"><span class="xref">DistributedCounter</span></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Morpheo.html">Morpheo</a>.<a class="xref" href="Morpheo.Core.html">Core</a>.<a class="xref" href="Morpheo.Core.Crdt.html">Crdt</a></h6>
+  <h6><strong>Assembly</strong>: Morpheo.Core.dll</h6>
+  <h5 id="Morpheo_Core_Crdt_DistributedCounter_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class DistributedCounter</code></pre>
+  </div>
+  <h3 id="properties">Properties
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/remi-deher/Morpheo/new/main/apiSpec/new?filename=Morpheo_Core_Crdt_DistributedCounter_N.md&amp;value=---%0Auid%3A%20Morpheo.Core.Crdt.DistributedCounter.N%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/remi-deher/Morpheo/blob/main/Morpheo.Core/Crdt/DistributedCounter.cs/#L16">View Source</a>
+  </span>
+  <a id="Morpheo_Core_Crdt_DistributedCounter_N_" data-uid="Morpheo.Core.Crdt.DistributedCounter.N*"></a>
+  <h4 id="Morpheo_Core_Crdt_DistributedCounter_N" data-uid="Morpheo.Core.Crdt.DistributedCounter.N">N</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonInclude]
+public Dictionary&lt;string, int&gt; N { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2">Dictionary</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/remi-deher/Morpheo/new/main/apiSpec/new?filename=Morpheo_Core_Crdt_DistributedCounter_P.md&amp;value=---%0Auid%3A%20Morpheo.Core.Crdt.DistributedCounter.P%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/remi-deher/Morpheo/blob/main/Morpheo.Core/Crdt/DistributedCounter.cs/#L12">View Source</a>
+  </span>
+  <a id="Morpheo_Core_Crdt_DistributedCounter_P_" data-uid="Morpheo.Core.Crdt.DistributedCounter.P*"></a>
+  <h4 id="Morpheo_Core_Crdt_DistributedCounter_P" data-uid="Morpheo.Core.Crdt.DistributedCounter.P">P</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonInclude]
+public Dictionary&lt;string, int&gt; P { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2">Dictionary</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/remi-deher/Morpheo/new/main/apiSpec/new?filename=Morpheo_Core_Crdt_DistributedCounter_Value.md&amp;value=---%0Auid%3A%20Morpheo.Core.Crdt.DistributedCounter.Value%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/remi-deher/Morpheo/blob/main/Morpheo.Core/Crdt/DistributedCounter.cs/#L20">View Source</a>
+  </span>
+  <a id="Morpheo_Core_Crdt_DistributedCounter_Value_" data-uid="Morpheo.Core.Crdt.DistributedCounter.Value*"></a>
+  <h4 id="Morpheo_Core_Crdt_DistributedCounter_Value" data-uid="Morpheo.Core.Crdt.DistributedCounter.Value">Value</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonIgnore]
+public int Value { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/remi-deher/Morpheo/new/main/apiSpec/new?filename=Morpheo_Core_Crdt_DistributedCounter_Decrement_System_String_System_Int32_.md&amp;value=---%0Auid%3A%20Morpheo.Core.Crdt.DistributedCounter.Decrement(System.String%2CSystem.Int32)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/remi-deher/Morpheo/blob/main/Morpheo.Core/Crdt/DistributedCounter.cs/#L29">View Source</a>
+  </span>
+  <a id="Morpheo_Core_Crdt_DistributedCounter_Decrement_" data-uid="Morpheo.Core.Crdt.DistributedCounter.Decrement*"></a>
+  <h4 id="Morpheo_Core_Crdt_DistributedCounter_Decrement_System_String_System_Int32_" data-uid="Morpheo.Core.Crdt.DistributedCounter.Decrement(System.String,System.Int32)">Decrement(string, int)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Decrement(string nodeId, int amount = 1)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">nodeId</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><span class="parametername">amount</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/remi-deher/Morpheo/new/main/apiSpec/new?filename=Morpheo_Core_Crdt_DistributedCounter_Increment_System_String_System_Int32_.md&amp;value=---%0Auid%3A%20Morpheo.Core.Crdt.DistributedCounter.Increment(System.String%2CSystem.Int32)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/remi-deher/Morpheo/blob/main/Morpheo.Core/Crdt/DistributedCounter.cs/#L23">View Source</a>
+  </span>
+  <a id="Morpheo_Core_Crdt_DistributedCounter_Increment_" data-uid="Morpheo.Core.Crdt.DistributedCounter.Increment*"></a>
+  <h4 id="Morpheo_Core_Crdt_DistributedCounter_Increment_System_String_System_Int32_" data-uid="Morpheo.Core.Crdt.DistributedCounter.Increment(System.String,System.Int32)">Increment(string, int)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Increment(string nodeId, int amount = 1)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">nodeId</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><span class="parametername">amount</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/remi-deher/Morpheo/new/main/apiSpec/new?filename=Morpheo_Core_Crdt_DistributedCounter_Merge_Morpheo_Core_Crdt_DistributedCounter_Morpheo_Core_Crdt_DistributedCounter_.md&amp;value=---%0Auid%3A%20Morpheo.Core.Crdt.DistributedCounter.Merge(Morpheo.Core.Crdt.DistributedCounter%2CMorpheo.Core.Crdt.DistributedCounter)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/remi-deher/Morpheo/blob/main/Morpheo.Core/Crdt/DistributedCounter.cs/#L39">View Source</a>
+  </span>
+  <a id="Morpheo_Core_Crdt_DistributedCounter_Merge_" data-uid="Morpheo.Core.Crdt.DistributedCounter.Merge*"></a>
+  <h4 id="Morpheo_Core_Crdt_DistributedCounter_Merge_Morpheo_Core_Crdt_DistributedCounter_Morpheo_Core_Crdt_DistributedCounter_" data-uid="Morpheo.Core.Crdt.DistributedCounter.Merge(Morpheo.Core.Crdt.DistributedCounter,Morpheo.Core.Crdt.DistributedCounter)">Merge(DistributedCounter, DistributedCounter)</h4>
+  <div class="markdown level1 summary"><p>Mathematical merge function (Commutative, Associative, Idempotent).
+P_final = Max(P_local, P_remote)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static DistributedCounter Merge(DistributedCounter local, DistributedCounter remote)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Morpheo.Core.Crdt.DistributedCounter.html">DistributedCounter</a></td>
+        <td><span class="parametername">local</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Morpheo.Core.Crdt.DistributedCounter.html">DistributedCounter</a></td>
+        <td><span class="parametername">remote</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Morpheo.Core.Crdt.DistributedCounter.html">DistributedCounter</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+</article>
+          </div>
+
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/remi-deher/Morpheo/new/main/apiSpec/new?filename=Morpheo_Core_Crdt_DistributedCounter.md&amp;value=---%0Auid%3A%20Morpheo.Core.Crdt.DistributedCounter%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Edit this page</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/remi-deher/Morpheo/blob/main/Morpheo.Core/Crdt/DistributedCounter.cs/#L9" class="contribution-link">View Source</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In this article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+      Copyright © 2025 DEHER Rémi - Propulsé par .NET 10
+      
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script type="text/javascript" src="../styles/docfx.vendor.min.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>
