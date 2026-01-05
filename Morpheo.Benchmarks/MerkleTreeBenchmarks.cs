@@ -8,11 +8,12 @@ using Morpheo.Sdk;
 
 namespace Morpheo.Benchmarks;
 
-
+[MarkdownExporterAttribute.GitHub]
+[MemoryDiagnoser]
 public class MerkleTreeBenchmarks
 {
-    private MerkleTreeService _merkleService;
-    private List<SyncLogDto> _logs;
+    private MerkleTreeService _merkleService = null!;
+    private List<SyncLogDto> _logs = null!;
 
     [Params(1000, 10000)]
     public int N;
@@ -32,7 +33,7 @@ public class MerkleTreeBenchmarks
                 "{\"key\": \"value\"}",
                 "UPDATE",
                 DateTime.UtcNow.Ticks,
-                null,
+                new Dictionary<string, long>(),
                 "node-A"
             ));
         }

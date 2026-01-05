@@ -6,13 +6,14 @@ using Morpheo.Core.Sync;
 
 namespace Morpheo.Benchmarks;
 
-
+[MarkdownExporterAttribute.GitHub]
+[MemoryDiagnoser]
 public class DeltaCompressionBenchmarks
 {
-    private DeltaCompressionService _deltaService;
-    private string _sourceJson;
-    private string _targetJson;
-    private string _patch;
+    private DeltaCompressionService _deltaService = null!;
+    private string _sourceJson = null!;
+    private string _targetJson = null!;
+    private string _patch = null!;
 
     [GlobalSetup]
     public void Setup()

@@ -11,9 +11,9 @@ public class VectorClockBenchmarks
     [Params(10, 100, 1000)]
     public int NodeCount;
 
-    private VectorClock _masterLocalClock;
-    private VectorClock _localClock;
-    private VectorClock _remoteClock;
+    private VectorClock _masterLocalClock = null!;
+    private VectorClock _localClock = null!;
+    private VectorClock _remoteClock = null!;
 
     [GlobalSetup]
     public void GlobalSetup()
