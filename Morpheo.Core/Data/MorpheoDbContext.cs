@@ -9,7 +9,6 @@ namespace Morpheo.Core.Data;
 /// <summary>
 /// Represents a synchronization log entry stored in the database.
 /// </summary>
-[Table("MorpheoSyncLogs")]
 public class SyncLog
 {
     public string Id { get; set; } = Guid.NewGuid().ToString();
@@ -22,14 +21,18 @@ public class SyncLog
     public bool IsDeleted { get; set; }
     public DateTime LastModified { get; set; } = DateTime.UtcNow;
 
-    // Storage for the Logical Clock State (Vector or HLC)
-    // Stored as a serialized string (JSON or "pt:lc")
-    public string ClockState { get; set; } = "{}";
-    
-    public SyncPriority Priority { get; set; } = SyncPriority.Normal;
-    
-    // Integrity check for Patches
-    public string? BaseContentHash { get; set; }
+    // Storage for the Vector Clock
+
+    // Stored as JSON string in the database
+    public string VectorClockJson { get; set; } = "{}";
+
+    // Used in code (Computed, not stored)
+    [NotMapped]
+    public VectorClock Vector
+    {
+        get => VectorClock.FromJson(VectorClockJson);
+        set => VectorClockJson = value.ToJson();
+    }
 }
 
 /// <summary>
@@ -37,11 +40,12 @@ public class SyncLog
 /// </summary>
 public class MorpheoDbContext : DbContext
 {
-    // Hybrid Storage: SQL is used as "Cold Store"
     public DbSet<SyncLog> SyncLogs { get; set; }
 
+    // Remote constructor required for some tools
     public MorpheoDbContext() { }
 
+    // Updated constructor to be generic
     public MorpheoDbContext(DbContextOptions<MorpheoDbContext> options) : base(options) { }
 
     protected MorpheoDbContext(DbContextOptions options) : base(options) { }
@@ -49,13 +53,9 @@ public class MorpheoDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        
-        modelBuilder.Entity<SyncLog>(entity =>
-        {
-            entity.HasKey(e => e.Id);
-            entity.HasIndex(e => e.Timestamp); // Fast range queries
-            entity.HasIndex(e => e.EntityId);  // Fast history lookup
-            entity.Property(e => e.JsonData).HasColumnType("TEXT"); // Force unlimited text
-        });
+        modelBuilder.Entity<SyncLog>().HasKey(l => l.Id);
+
+        // Index to speed up entity lookup
+        modelBuilder.Entity<SyncLog>().HasIndex(l => l.EntityId);
     }
 }

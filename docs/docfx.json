@@ -1,0 +1,53 @@
+{
+  "metadata": [
+    {
+      "src": [
+        {
+          "files": [
+            "Morpheo.Core/Morpheo.Core.csproj",
+            "Morpheo.Sdk/Morpheo.Sdk.csproj"
+          ],
+          "src": ".."
+        }
+      ],
+      "dest": "api",
+      "disableGitFeatures": false,
+      "disableDefaultFilter": false
+    }
+  ],
+  "build": {
+    "content": [
+      {
+        "files": [
+          "api/**.yml",
+          "api/index.md"
+        ]
+      },
+      {
+        "files": [
+          "articles/**.md",
+          "images/**",
+          "index.md",
+          "toc.yml"
+        ]
+      },
+      {
+        "files": ["README.md"],
+        "src": ".."
+      }
+    ],
+    "resource": [
+      {
+        "files": [
+          "images/**"
+        ]
+      }
+    ],
+    "output": "_site",
+    "globalMetadata": {
+      "_appTitle": "Morpheo Framework",
+      "_appFooter": "Copyright © 2025 DEHER Rémi - Propulsé par .NET 10",
+      "_enableSearch": true
+    }
+  }
+}

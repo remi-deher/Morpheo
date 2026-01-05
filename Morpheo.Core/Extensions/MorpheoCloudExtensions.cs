@@ -6,7 +6,7 @@ using Morpheo.Core.Configuration;
 using Morpheo.Core.Sync.Strategies;
 using Morpheo.Sdk;
 
-namespace Morpheo;
+namespace Morpheo.Core.Extensions;
 
 /// <summary>
 /// Extension methods for cloud connectivity.

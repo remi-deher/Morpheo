@@ -1,41 +1,43 @@
 ﻿namespace Morpheo.Sdk;
 
 /// <summary>
-/// Contract for peer discovery via UDP broadcast or multicast.
-/// Implementations must handle socket lifecycle and heartbeat timeouts.
+/// Defines the contract for network discovery services.
 /// </summary>
 public interface INetworkDiscovery
 {
     /// <summary>
-    /// Starts broadcasting presence packets asynchronously (non-blocking).
+    /// Starts broadcasting presence (Hello packets) in the background.
+    /// This method should not block execution.
     /// </summary>
-    /// <param name="myInfo">Local peer metadata to advertise.</param>
-    /// <param name="ct">Cancellation token for graceful shutdown.</param>
+    /// <param name="myInfo">The local peer information.</param>
+    /// <param name="ct">Cancellation token.</param>
     Task StartAdvertisingAsync(PeerInfo myInfo, CancellationToken ct);
 
     /// <summary>
-    /// Starts listening for discovery packets asynchronously (non-blocking).
+    /// Starts listening for incoming packets in the background.
+    /// This method should not block execution.
     /// </summary>
-    /// <param name="ct">Cancellation token for graceful shutdown.</param>
+    /// <param name="ct">Cancellation token.</param>
     Task StartListeningAsync(CancellationToken ct);
 
     /// <summary>
-    /// Releases UDP sockets and stops discovery threads immediately.
+    /// Stops the discovery service and releases resources (sockets).
     /// </summary>
     void Stop();
 
     /// <summary>
-    /// Fired when a new peer is discovered (after first Hello packet).
+    /// Event triggered when a new peer is found.
     /// </summary>
     event EventHandler<PeerInfo> PeerFound;
 
     /// <summary>
-    /// Fired when a peer times out (no heartbeat received within threshold).
+    /// Event triggered when a peer is lost.
     /// </summary>
     event EventHandler<PeerInfo> PeerLost;
 
     /// <summary>
-    /// Returns all currently active peers (passed heartbeat checks).
+    /// Retrieves the list of currently known peers.
     /// </summary>
+    /// <returns>A read-only list of peers.</returns>
     IReadOnlyList<PeerInfo> GetPeers();
 }

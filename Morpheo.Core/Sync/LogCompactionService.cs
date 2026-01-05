@@ -45,12 +45,16 @@ public class LogCompactionService : BackgroundService
 
     private async Task RunCompactionAsync()
     {
+        using var scope = _serviceProvider.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<MorpheoDbContext>();
+
         // Calculate threshold date
         var thresholdTick = DateTime.UtcNow.Subtract(_options.LogRetention).Ticks;
 
-        // Delete obsolete logs via Store
-        var store = _serviceProvider.GetRequiredService<ISyncLogStore>();
-        var logsDeleted = await store.DeleteOldLogsAsync(thresholdTick);
+        // Delete obsolete logs
+        var logsDeleted = await db.SyncLogs
+            .Where(l => l.Timestamp < thresholdTick)
+            .ExecuteDeleteAsync();
 
         if (logsDeleted > 0)
         {

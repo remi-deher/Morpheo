@@ -6,34 +6,24 @@ using Morpheo.Sdk.Blobs;
 using System;
 using System.IO;
 
-namespace Morpheo
+namespace Morpheo.Core.Extensions
 {
     /// <summary>
-    /// Configures blob storage for large file handling (Sidecar Pattern).
-    /// Prevents 1GB+ files from saturating RAM during sync.
+    /// Extension methods for configuring blob storage.
     /// </summary>
     public static class MorpheoBlobExtensions
     {
         /// <summary>
-        /// Registers filesystem-based blob storage with disk-backed metadata.
+        /// Adds a file system-based blob store to the DI container.
         /// </summary>
-        /// <param name="builder">Morpheo DI builder.</param>
-        /// <param name="path">Storage root directory (defaults to 'storage/blobs' relative to app base).</param>
+        /// <param name="builder">The Morpheo builder.</param>
+        /// <param name="path">The root directory for storing blobs. Defaults to 'storage/blobs'.</param>
+        /// <returns>The Morpheo builder.</returns>
         public static IMorpheoBuilder AddBlobStore(this IMorpheoBuilder builder, string? path = null)
         {
-            var storagePath = path;
-            if (string.IsNullOrEmpty(storagePath))
-            {
-                var appData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                storagePath = Path.Combine(appData, "Morpheo", "Blobs");
-            }
+            var storagePath = path ?? Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "storage", "blobs");
 
-            builder.Services.Configure<FileSystemBlobStoreOptions>(options =>
-            {
-                options.RootPath = storagePath;
-            });
-
-            builder.Services.TryAddSingleton<IMorpheoBlobStore, FileSystemBlobStore>();
+            builder.Services.TryAddSingleton<IMorpheoBlobStore>(sp => new FileSystemBlobStore(storagePath));
 
             return builder;
         }

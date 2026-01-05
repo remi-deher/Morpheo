@@ -16,10 +16,4 @@ public class DashboardOptions
     /// Default is "Morpheo Node".
     /// </summary>
     public string Title { get; set; } = "Morpheo Node";
-
-    /// <summary>
-    /// Gets or sets the absolute path to a custom folder serving the UI.
-    /// If null, the embedded UI is used.
-    /// </summary>
-    public string? CustomUiPath { get; set; }
 }

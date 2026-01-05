@@ -27,6 +27,10 @@ BundleArtifacts/
 *.msixbundle
 _pkg.dev/
 
+# Repertoire des paquets NuGet
+
+nupkgs/
+
 # Fichiers de configuration locale
 *.swp
 *.*~
@@ -48,3 +52,6 @@ TestResults/
 *.db
 *.db-shm
 *.db-wal
+
+# Benchmark results
+BenchmarkDotNet.Artifacts/

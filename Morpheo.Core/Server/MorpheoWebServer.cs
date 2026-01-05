@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using MessagePack;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting; // Added for ConfigureKestrel
 using Microsoft.AspNetCore.Http;
@@ -42,6 +41,7 @@ public class MorpheoWebServer : IMorpheoServer
 
         // Services
         builder.Services.AddSingleton(_serviceProvider.GetRequiredService<DataSyncService>());
+        builder.Services.AddSignalR();
         
         // Add Authorization if needed
         builder.Services.AddAuthorization();
@@ -49,33 +49,24 @@ public class MorpheoWebServer : IMorpheoServer
         _app = builder.Build();
 
         // Morpheo Authentication Middleware
-        // Morpheo Authentication Middleware
-        _app.UseMiddleware<MorpheoAuthMiddleware>();
+        _app.Use(async (context, next) =>
+        {
+            var auth = context.RequestServices.GetService<IRequestAuthenticator>();
+            if (auth != null)
+            {
+                if (!await auth.IsAuthorizedAsync(context))
+                {
+                    context.Response.StatusCode = 401;
+                    return;
+                }
+            }
+            await next();
+        });
 
         // Endpoint for receiving logs (Sync Push)
-        _app.MapPost("/morpheo/sync/push", async (HttpContext context, [FromServices] DataSyncService syncService) =>
+        _app.MapPost("/morpheo/sync/push", async ([FromBody] SyncLogDto dto, [FromServices] DataSyncService syncService) =>
         {
-            SyncLogDto? dto = null;
-
-            try 
-            {
-                if (context.Request.ContentType == "application/x-msgpack")
-                {
-                    dto = await MessagePackSerializer.DeserializeAsync<SyncLogDto>(context.Request.Body);
-                }
-                else 
-                {
-                    // Default to JSON
-                    dto = await context.Request.ReadFromJsonAsync<SyncLogDto>();
-                }
-            }
-            catch (Exception ex)
-            {
-                return Results.BadRequest($"Deserialization failed: {ex.Message}");
-            }
-
-            if (dto == null) return Results.BadRequest("Null DTO");
-            
+            if (dto == null) return Results.BadRequest();
             await syncService.ReceiveRemoteLogAsync(dto);
             return Results.Ok();
         });
@@ -112,64 +103,27 @@ public class MorpheoWebServer : IMorpheoServer
                 });
             });
 
-            // -------------------------
-            //     DASHBOARD (Custom vs Embedded)
-            // -------------------------
-            
-            bool useCustomUi = !string.IsNullOrWhiteSpace(dashboardOptions.CustomUiPath) 
-                               && Directory.Exists(dashboardOptions.CustomUiPath);
-
-            if (useCustomUi)
+            // Endpoint HTML
+            _app.MapGet(dashboardOptions.Path, async (HttpContext context) =>
             {
-                var customPath = dashboardOptions.CustomUiPath!;
-                // Serves static files from the custom folder (js, css, etc.)
-                _app.UseStaticFiles(new StaticFileOptions
+                var assembly = typeof(MorpheoWebServer).Assembly;
+                var resourceName = "Morpheo.Core.UI.index.html";
+
+                using var stream = assembly.GetManifestResourceStream(resourceName);
+                if (stream == null)
                 {
-                    FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(customPath),
-                    RequestPath = dashboardOptions.Path 
-                });
+                    return Results.NotFound("Dashboard UI not found in embedded resources.");
+                }
 
-                // Fallback for SPA routing (serving index.html)
-                _app.MapGet(dashboardOptions.Path, async (HttpContext context) =>
-                {
-                    var indexPath = Path.Combine(customPath, "index.html");
-                    if (File.Exists(indexPath))
-                    {
-                        var html = await File.ReadAllTextAsync(indexPath);
-                        // Optional: Inject variables even in custom UI if markers exist
-                        html = html.Replace("{{TITLE}}", dashboardOptions.Title)
-                                   .Replace("{{PATH}}", dashboardOptions.Path);
-                        return Results.Content(html, "text/html");
-                    }
-                    return Results.NotFound("Custom UI index.html not found.");
-                });
-            }
-            else
-            {
-                // EMBEDDED UI
-                
-                // Endpoint HTML
-                _app.MapGet(dashboardOptions.Path, async (HttpContext context) =>
-                {
-                    var assembly = typeof(MorpheoWebServer).Assembly;
-                    var resourceName = "Morpheo.Core.UI.index.html";
+                using var reader = new StreamReader(stream);
+                var html = await reader.ReadToEndAsync();
 
-                    using var stream = assembly.GetManifestResourceStream(resourceName);
-                    if (stream == null)
-                    {
-                        return Results.NotFound("Dashboard UI not found in embedded resources.");
-                    }
+                // Variable injection
+                html = html.Replace("{{TITLE}}", dashboardOptions.Title)
+                           .Replace("{{PATH}}", dashboardOptions.Path);
 
-                    using var reader = new StreamReader(stream);
-                    var html = await reader.ReadToEndAsync();
-
-                    // Variable injection
-                    html = html.Replace("{{TITLE}}", dashboardOptions.Title)
-                               .Replace("{{PATH}}", dashboardOptions.Path);
-
-                    return Results.Content(html, "text/html");
-                });
-            }
+                return Results.Content(html, "text/html");
+            });
 
             // -------------------------
             //     SYSTEM CONFIG API

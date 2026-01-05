@@ -22,25 +22,8 @@ public interface IMorpheoClient
     /// <summary>
     /// Requests missing history (Pull) from a target node.
     /// </summary>
+    /// <param name="target">The target peer information.</param>
+    /// <param name="sinceTick">The tick since when history is requested.</param>
+    /// <returns>A list of synchronization logs.</returns>
     Task<List<SyncLogDto>> GetHistoryAsync(PeerInfo target, long sinceTick);
-
-    /// <summary>
-    /// Requests missing history (Pull) from a target node for a specific time range.
-    /// </summary>
-    Task<List<SyncLogDto>> GetHistoryByRangeAsync(PeerInfo target, long startTick, long endTick);
-
-    /// <summary>
-    /// Gets the root of the Merkle Tree from the target node.
-    /// </summary>
-    Task<MerkleTreeNode?> GetMerkleRootAsync(PeerInfo target);
-
-    /// <summary>
-    /// Gets the children of a specific Merkle Tree node.
-    /// </summary>
-    Task<List<MerkleTreeNode>> GetMerkleChildrenAsync(PeerInfo target, string nodeHash);
-
-    /// <summary>
-    /// Gets a repository (Set) for a specific entity type, enabling local CRUD and reactive updates.
-    /// </summary>
-    IMorpheoSet<T> Set<T>() where T : MorpheoEntity;
 }

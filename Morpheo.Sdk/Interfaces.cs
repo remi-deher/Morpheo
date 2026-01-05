@@ -28,9 +28,4 @@ public interface IEntityTypeResolver
     /// <param name="entityName">The name of the entity.</param>
     /// <returns>The resolved Type, or null if not found.</returns>
     Type? ResolveType(string entityName);
-
-    /// <summary>
-    /// Gets the network-agnostic name for a given Type.
-    /// </summary>
-    string GetNetworkName(Type type);
 }

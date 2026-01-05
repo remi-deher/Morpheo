@@ -8,8 +8,10 @@ namespace Morpheo.Core.Discovery;
 /// </summary>
 public class NullNetworkDiscovery : INetworkDiscovery
 {
-    public event EventHandler<PeerInfo>? PeerFound { add { } remove { } }
-    public event EventHandler<PeerInfo>? PeerLost { add { } remove { } }
+#pragma warning disable CS0067
+    public event EventHandler<PeerInfo>? PeerFound;
+    public event EventHandler<PeerInfo>? PeerLost;
+#pragma warning restore CS0067
 
     public IReadOnlyList<PeerInfo> GetPeers() => Array.Empty<PeerInfo>();
 

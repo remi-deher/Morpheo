@@ -24,10 +24,4 @@ public class SimpleTypeResolver : IEntityTypeResolver
         _mapping.TryGetValue(entityName, out var type);
         return type;
     }
-
-    /// <inheritdoc/>
-    public string GetNetworkName(Type type)
-    {
-        return type.Name; // Fallback to class name
-    }
 }

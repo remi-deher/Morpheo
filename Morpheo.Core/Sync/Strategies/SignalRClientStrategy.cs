@@ -11,20 +11,29 @@ namespace Morpheo.Core.Sync.Strategies;
 /// </summary>
 public class SignalRClientStrategy : ISyncStrategyProvider, IDisposable, IAsyncDisposable
 {
-    private readonly HubConnection _connection;
+    private readonly IHubConnectionWrapper _connection;
     private readonly ILogger<SignalRClientStrategy> _logger;
 
+    // Production constructor
     public SignalRClientStrategy(
         string hubUrl,
         IServiceProvider serviceProvider,
-        ILogger<SignalRClientStrategy> logger)
-    {
-        _logger = logger;
-
-        _connection = new HubConnectionBuilder()
+        ILogger<SignalRClientStrategy> logger) 
+        : this(new SignalRHubConnectionWrapper(new HubConnectionBuilder()
             .WithUrl(hubUrl)
             .WithAutomaticReconnect()
-            .Build();
+            .Build()), serviceProvider, logger)
+    {
+    }
+
+    // Testable constructor
+    public SignalRClientStrategy(
+        IHubConnectionWrapper connection,
+        IServiceProvider serviceProvider,
+        ILogger<SignalRClientStrategy> logger)
+    {
+        _connection = connection;
+        _logger = logger;
 
         _connection.On<SyncLogDto>("ReceiveLog", async (log) =>
         {
@@ -62,6 +71,9 @@ public class SignalRClientStrategy : ISyncStrategyProvider, IDisposable, IAsyncD
         IEnumerable<PeerInfo> candidates,
         Func<PeerInfo, SyncLogDto, Task<bool>> sendFunc)
     {
+        // Wrapper doesn't expose HubConnectionState enum directly if we didn't map it,
+        // but we did map it in interface.
+        // Assuming IHubConnectionWrapper.State returns HubConnectionState or equivalent.
         if (_connection.State == HubConnectionState.Connected)
         {
             try

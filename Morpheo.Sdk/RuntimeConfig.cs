@@ -46,28 +46,4 @@ public class RuntimeConfig
     /// </summary>
     [JsonPropertyName("centralServerUrl")]
     public string? CentralServerUrl { get; set; }
-
-    /// <summary>
-    /// Gets or sets the security configuration.
-    /// </summary>
-    [JsonPropertyName("security")]
-    public SecurityConfig Security { get; set; } = new();
-}
-
-/// <summary>
-/// Security-specific configuration.
-/// </summary>
-public class SecurityConfig
-{
-    /// <summary>
-    /// Enrollment mode: "Auto", "Manual", "Secret".
-    /// </summary>
-    [JsonPropertyName("enrollmentMode")]
-    public string EnrollmentMode { get; set; } = "Auto";
-
-    /// <summary>
-    /// Shared secret for "Secret" enrollment mode.
-    /// </summary>
-    [JsonPropertyName("enrollmentSecret")]
-    public string EnrollmentSecret { get; set; } = "";
 }
