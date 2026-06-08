@@ -66,7 +66,7 @@ public class HttpSyncIntegrationTests : IAsyncLifetime
         _dbFiles.Add(dbPath);
         services.AddDbContext<MorpheoDbContext>(o => o.UseSqlite($"Data Source={dbPath}"));
 
-        services.AddSingleton<IEntityTypeResolver>(new SimpleTypeResolver());
+        services.AddSingleton<IEntityTypeResolver>(new Morpheo.Tests.Simulation.SimpleTypeResolver());
         services.AddSingleton<ConflictResolutionEngine>();
         services.AddSingleton<MerkleTreeService>();
         services.AddSingleton<ISyncRoutingStrategy, NullRoutingStrategy>();

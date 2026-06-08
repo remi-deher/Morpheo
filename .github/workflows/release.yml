@@ -1,0 +1,88 @@
+name: Release (NuGet)
+
+on:
+  # Publish when a version tag is pushed, e.g. `git tag v1.0.3 && git push --tags`.
+  push:
+    tags: [ "v*" ]
+  # Allow a manual run with an explicit version.
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to publish (e.g. 1.0.3, without the leading v)"
+        required: true
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  pack-and-publish:
+    name: Pack & Publish to NuGet
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.x
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            nuget-${{ runner.os }}-
+
+      # Derive the package version: tag name (stripped of the leading "v") for tag
+      # pushes, or the manual input for workflow_dispatch.
+      - name: Determine version
+        id: ver
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            VERSION="${{ github.event.inputs.version }}"
+          else
+            VERSION="${GITHUB_REF_NAME#v}"
+          fi
+          if [ -z "$VERSION" ]; then
+            echo "::error::Could not determine version."
+            exit 1
+          fi
+          echo "Publishing version: $VERSION"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Restore
+        run: dotnet restore Morpheo.sln
+
+      # Build the libraries once at the resolved version, then pack from that build.
+      - name: Build libraries
+        run: |
+          dotnet build Morpheo.Sdk/Morpheo.Sdk.csproj  -c Release --no-restore -p:Version=${{ steps.ver.outputs.version }}
+          dotnet build Morpheo.Core/Morpheo.Core.csproj -c Release --no-restore -p:Version=${{ steps.ver.outputs.version }}
+
+      - name: Pack
+        run: |
+          dotnet pack Morpheo.Sdk/Morpheo.Sdk.csproj  -c Release --no-build -p:Version=${{ steps.ver.outputs.version }} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -o ./artifacts
+          dotnet pack Morpheo.Core/Morpheo.Core.csproj -c Release --no-build -p:Version=${{ steps.ver.outputs.version }} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -o ./artifacts
+
+      - name: Upload packages as build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nupkg
+          path: ./artifacts/*.nupkg
+          retention-days: 14
+
+      - name: Push to NuGet
+        # --skip-duplicate makes re-runs safe: an already-published version is ignored
+        # rather than failing the job. Pushing a .nupkg also pushes its .snupkg symbols.
+        run: >
+          dotnet nuget push "./artifacts/*.nupkg"
+          --api-key "${{ secrets.NUGET_API_KEY }}"
+          --source "https://api.nuget.org/v3/index.json"
+          --skip-duplicate
