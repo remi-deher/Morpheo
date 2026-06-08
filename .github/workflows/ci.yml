@@ -15,6 +15,11 @@ concurrency:
 permissions:
   contents: read
 
+# Run JavaScript actions on Node 24 now (the newest runtime GitHub Actions supports),
+# ahead of the June 2026 default switch. Node 26 is not available on Actions runners.
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   build-and-test:
     name: Build & Test
