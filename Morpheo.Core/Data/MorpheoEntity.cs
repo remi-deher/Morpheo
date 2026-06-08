@@ -3,7 +3,7 @@
 namespace Morpheo.Core.Data;
 
 /// <summary>
-/// Base class for all entities that need to be synchronized between nodes (Android <-> Windows <-> Linux).
+/// Base class for all entities that need to be synchronized between nodes (Android, Windows, Linux).
 /// </summary>
 public abstract class MorpheoEntity
 {

@@ -6,7 +6,7 @@
 public interface IMorpheoClient
 {
     /// <summary>
-    /// Sends a print job to a target node asynchronously (Fire & Forget).
+    /// Sends a print job to a target node asynchronously (Fire and Forget).
     /// </summary>
     /// <param name="target">The target peer information.</param>
     /// <param name="content">The content to print.</param>
