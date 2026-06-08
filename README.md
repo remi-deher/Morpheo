@@ -150,8 +150,10 @@ Morpheo brise les silos en combinant le meilleur de chaque technologie :
 | :--- | :--- | :--- |
 | **Fiabilité** | SQLite / EF Core | **Solidité SQL** pour la persistance locale. |
 | **Résilience** | UDP Multicast | **Zéro Config** et découverte automatique des nœuds. |
-| **Efficience** | Merkle Trees | **Sync Optimisée** : transfert uniquement les deltas. |
+| **Efficience** | Merkle Trees | **Sync Optimisée** : transfert uniquement les deltas (conforme RFC 6902 JSON Patch). |
 | **Conflits** | Vector Clocks | **Résolution Mathématique** des écritures concurrentes. |
+| **Sécurité** | HMAC-SHA256 & Nonces | **Protection anti-rejeu** et authentification cryptographique inter-nœuds. |
+| **Observabilité** | OpenTelemetry / Health Checks | Sondes de vie/disponibilité (`/health/live`, `/health/ready`) et métriques/traces intégrées. |
 
 ---
 
@@ -245,9 +247,17 @@ morpheo.Configure(o => o.Capabilities = NodeCapabilities.PrintGateway);
 
 if (OperatingSystem.IsWindows())
 {
-    // Active le pont vers winspool.drv
-    morpheo.UseNativePrinting();
+    // Active le pont vers winspool.drv (Windows)
+    builder.Services.AddWindowsPrinting();
 }
+else if (OperatingSystem.IsLinux() || OperatingSystem.IsMacOS())
+{
+    // Active le pont vers CUPS (Linux / macOS)
+    builder.Services.AddCupsPrinting();
+}
+
+// Alternative agnostique qui détecte l'OS automatiquement :
+// builder.Services.AddNativePrinting();
 ```
 
 #### 2. Côté Client (La Tablette qui veut imprimer)
@@ -297,7 +307,7 @@ builder.Services.AddMorpheo(morpheo =>
 ```
 
 ### Exemple B : La Totale (Stratégie Mesh Hybride)
-Une configuration de production "Zero-Config" prête pour le déploiement réel.
+Une configuration de production robuste prête pour le déploiement réel.
 
 ```csharp
 using Morpheo;
@@ -307,23 +317,19 @@ builder.Services.AddMorpheo(morpheo =>
     // ... Config Identité ...
     morpheo.Configure(o => o.NodeName = "Store-POS-01");
 
-    // 1. Stockage Explicite (Optionnel, pour le contrôle total)
-    // Ici, on force un chemin spécifique dans LocalAppData pour être propre
-    var appData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-    morpheo.UseSqlite($"Data Source={Path.Combine(appData, "Morpheo", "store.db")}");
-    morpheo.UseFileLogStore(); // Logs haute performance
+    // 1. Stockage (SQLite par défaut, ou Postgres/SqlServer)
+    // morpheo.UsePostgres("Host=myhost;Database=morpheo;Username=dbuser;Password=dbpass");
+    morpheo.UseSqlite(); 
+    morpheo.UseFileLogStore(); // Logs LSM haute performance
 
     // 2. Réseau : Mesh P2P
-    // Active la découverte UDP + Serveur Web Kestrel interne
     morpheo.AddMesh();
 
-    // 3. Impression Native (Si sur Windows)
-    if (OperatingSystem.IsWindows())
-    {
-        // Enregistre les services d'impression Win32 (winspool.drv)
-        // Note: Accessible via builder.Services car c'est une extension IServiceCollection
-        builder.Services.AddWindowsPrinting();
-    }
+    // 3. Sécurité du Cluster (HMAC-SHA256 + Nonces anti-rejeu)
+    morpheo.AddClusterSecurity("MonSecretSuperSecuriseDeCluster123!");
+
+    // 4. Impression Native (Agnostique : winspool sur Windows, CUPS sur Linux/macOS)
+    builder.Services.AddNativePrinting();
 });
 ```
 
@@ -338,20 +344,26 @@ Comparé aux solutions classiques (SMB, Cloud Print), Morpheo offre une impressi
 dotnet add package Morpheo.Core
 ```
 
-### Configuration (Standard Node)
+### Configuration (Chargement via fichier JSON ou en code)
+Morpheo prend en charge le chargement dynamique de la configuration à partir d'un fichier `morpheo.runtime.json` ou la configuration fluide en code C#.
+
 ```csharp
 using Morpheo.Core;
+using Morpheo.Core.Extensions;
 
 var builder = Host.CreateDefaultBuilder();
 builder.ConfigureServices(services =>
 {
+    // Option A : Configuration fluide en code C#
     services.AddMorpheo(options => 
     {
         options.NodeName = "Terminal-01";
         options.DiscoveryPort = 5000;
-        // options.Role = NodeRole.StandardClient;
     })
-    .UseSqlite(); // Stockage Hybride (SQL + FileSystem)
+    .UseSqlite(); // Stockage local SQLite
+
+    // Option B : Chargement automatique depuis 'morpheo.runtime.json'
+    // services.AddMorpheo().LoadRuntimeConfiguration();
 });
 
 await builder.Build().RunAsync();
@@ -543,8 +555,10 @@ Morpheo breaks silos by combining the best of each technology:
 | :--- | :--- | :--- |
 | **Reliability** | SQLite / EF Core | **SQL Solidity** for local persistence. |
 | **Resilience** | UDP Multicast | **Zero Config** and automatic node discovery. |
-| **Efficiency** | Merkle Trees | **Optimized Sync**: transfers only deltas. |
+| **Efficiency** | Merkle Trees | **Optimized Sync**: transfers only deltas (RFC 6902 JSON Patch compliant). |
 | **Conflicts** | Vector Clocks | **Mathematical Resolution** of concurrent edits. |
+| **Security** | HMAC-SHA256 & Nonces | **Anti-replay protection** and cryptographic inter-node authentication. |
+| **Observability** | OpenTelemetry / Health Checks | Liveness/readiness probes (`/health/live`, `/health/ready`) and built-in metrics/traces. |
 
 ---
 
@@ -638,9 +652,17 @@ morpheo.Configure(o => o.Capabilities = NodeCapabilities.PrintGateway);
 
 if (OperatingSystem.IsWindows())
 {
-    // Enables the bridge to winspool.drv
-    morpheo.UseNativePrinting();
+    // Enables the bridge to winspool.drv (Windows)
+    builder.Services.AddWindowsPrinting();
 }
+else if (OperatingSystem.IsLinux() || OperatingSystem.IsMacOS())
+{
+    // Enables the bridge to CUPS (Linux / macOS)
+    builder.Services.AddCupsPrinting();
+}
+
+// OS-agnostic alternative that detects the OS automatically:
+// builder.Services.AddNativePrinting();
 ```
 
 #### 2. Client Side (The Tablet that wants to print)
@@ -690,7 +712,7 @@ builder.Services.AddMorpheo(morpheo =>
 ```
 
 ### Example B: The Full Package (Hybrid Mesh Strategy)
-A "Zero-Config" production setup ready for real-world deployment.
+A robust production configuration ready for real-world deployment.
 
 ```csharp
 using Morpheo;
@@ -700,23 +722,19 @@ builder.Services.AddMorpheo(morpheo =>
     // ... Identity Config ...
     morpheo.Configure(o => o.NodeName = "Store-POS-01");
 
-    // 1. Explicit Storage (Optional, for total control)
-    // Here, we force a specific path in LocalAppData
-    var appData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-    morpheo.UseSqlite($"Data Source={Path.Combine(appData, "Morpheo", "store.db")}");
-    morpheo.UseFileLogStore(); // High-performance logs
+    // 1. Storage (SQLite by default, or Postgres/SqlServer)
+    // morpheo.UsePostgres("Host=myhost;Database=morpheo;Username=dbuser;Password=dbpass");
+    morpheo.UseSqlite();
+    morpheo.UseFileLogStore(); // High-performance LSM logs
 
     // 2. Network: P2P Mesh
-    // Enables UDP discovery + Internal Kestrel Web Server
     morpheo.AddMesh();
 
-    // 3. Native Printing (If on Windows)
-    if (OperatingSystem.IsWindows())
-    {
-        // Registers Win32 print services (winspool.drv)
-        // Note: Accessible via builder.Services as it is an IServiceCollection extension
-        builder.Services.AddWindowsPrinting();
-    }
+    // 3. Cluster Security (HMAC-SHA256 + Anti-replay nonces)
+    morpheo.AddClusterSecurity("MySuperSecureClusterSharedSecret123!");
+
+    // 4. Native Printing (Agnostic: winspool on Windows, CUPS on Linux/macOS)
+    builder.Services.AddNativePrinting();
 });
 ```
 
@@ -731,20 +749,26 @@ Compared to classic solutions (SMB, Cloud Print), Morpheo offers **Real-Time**, 
 dotnet add package Morpheo.Core
 ```
 
-### Configuration (Standard Node)
+### Configuration (Loading via JSON file or code)
+Morpheo supports loading configuration dynamically from a `morpheo.runtime.json` file or configuring it fluently in C#.
+
 ```csharp
 using Morpheo.Core;
+using Morpheo.Core.Extensions;
 
 var builder = Host.CreateDefaultBuilder();
 builder.ConfigureServices(services =>
 {
+    // Option A: Fluent C# configuration
     services.AddMorpheo(options => 
     {
         options.NodeName = "Terminal-01";
         options.DiscoveryPort = 5000;
-        // options.Role = NodeRole.StandardClient;
     })
-    .UseSqlite(); // Hybrid Storage (SQL + FileSystem)
+    .UseSqlite(); // Local SQLite storage
+
+    // Option B: Automatic load from 'morpheo.runtime.json'
+    // services.AddMorpheo().LoadRuntimeConfiguration();
 });
 
 await builder.Build().RunAsync();
