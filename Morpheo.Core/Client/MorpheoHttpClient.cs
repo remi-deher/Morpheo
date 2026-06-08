@@ -119,4 +119,62 @@ public class MorpheoHttpClient : IMorpheoClient
             return new List<SyncLogDto>();
         }
     }
+
+    /// <inheritdoc/>
+    public async Task<string> GetDigestAsync(PeerInfo target)
+    {
+        var url = BuildUrl(target, "/api/sync/digest");
+        try
+        {
+            var client = _httpClientFactory.CreateClient();
+            client.Timeout = TimeSpan.FromSeconds(5);
+            var result = await client.GetFromJsonAsync<DigestResponse>(url);
+            return result?.Digest ?? string.Empty;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogDebug(ex, "Digest fetch failed from {PeerName}", target.Name);
+            return string.Empty;
+        }
+    }
+
+    /// <inheritdoc/>
+    public async Task<List<string>> GetManifestAsync(PeerInfo target)
+    {
+        var url = BuildUrl(target, "/api/sync/manifest");
+        try
+        {
+            var client = _httpClientFactory.CreateClient();
+            client.Timeout = TimeSpan.FromSeconds(15);
+            return await client.GetFromJsonAsync<List<string>>(url) ?? new List<string>();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogDebug(ex, "Manifest fetch failed from {PeerName}", target.Name);
+            return new List<string>();
+        }
+    }
+
+    /// <inheritdoc/>
+    public async Task<List<SyncLogDto>> GetLogsByIdsAsync(PeerInfo target, IReadOnlyList<string> ids)
+    {
+        if (ids == null || ids.Count == 0) return new List<SyncLogDto>();
+
+        var url = BuildUrl(target, "/api/sync/by-ids");
+        try
+        {
+            var client = _httpClientFactory.CreateClient();
+            client.Timeout = TimeSpan.FromSeconds(Math.Min(30, 5 + ids.Count / 100.0));
+            var response = await client.PostAsJsonAsync(url, ids);
+            if (!response.IsSuccessStatusCode) return new List<SyncLogDto>();
+            return await response.Content.ReadFromJsonAsync<List<SyncLogDto>>() ?? new List<SyncLogDto>();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogDebug(ex, "By-ids fetch failed from {PeerName}", target.Name);
+            return new List<SyncLogDto>();
+        }
+    }
+
+    private sealed record DigestResponse(string Digest);
 }

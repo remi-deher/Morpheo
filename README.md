@@ -363,6 +363,9 @@ await builder.Build().RunAsync();
 *   ✅ **Impression Linux (CUPS)** — `AddCupsPrinting()` / `AddNativePrinting()` (livré).
 *   ✅ **Providers PostgreSQL & SQL Server** — `UsePostgres()` / `UseSqlServer()` (livré).
 *   ✅ **Sécurité de cluster (HMAC + anti-replay)** — `AddClusterSecurity(psk)` (livré).
+*   ✅ **Anti-entropy Merkle** — réconciliation des logs manqués (robuste au décalage d'horloge) (livré).
+*   ✅ **Observabilité** — métriques + traces (`Meter`/`ActivitySource` "Morpheo", compatibles OpenTelemetry) (livré).
+*   ✅ **Health checks** — `/health/live` et `/health/ready` pour Docker/systemd/k8s (livré).
 *   **Moyen Terme** : Universal Hardware Mesh (Partage de ports COM/Série sur IP).
 *   **Long Terme** : Support WebAssembly (Blazor) pour P2P direct dans le navigateur.
 
@@ -753,6 +756,9 @@ await builder.Build().RunAsync();
 *   ✅ **Linux Printing (CUPS)** — `AddCupsPrinting()` / `AddNativePrinting()` (shipped).
 *   ✅ **PostgreSQL & SQL Server providers** — `UsePostgres()` / `UseSqlServer()` (shipped).
 *   ✅ **Cluster security (HMAC + anti-replay)** — `AddClusterSecurity(psk)` (shipped).
+*   ✅ **Merkle anti-entropy** — recovers logs missed by tick-based catch-up (clock-skew safe) (shipped).
+*   ✅ **Observability** — metrics + traces (`Meter`/`ActivitySource` "Morpheo", OpenTelemetry-ready) (shipped).
+*   ✅ **Health checks** — `/health/live` and `/health/ready` for Docker/systemd/k8s (shipped).
 *   **Mid Term**: Universal Hardware Mesh (COM/Serial port sharing over IP).
 *   **Long Term**: WebAssembly Support (Blazor) for pure browser P2P sync.
 

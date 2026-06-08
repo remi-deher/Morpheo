@@ -52,6 +52,13 @@ public class MorpheoWebServer : IMorpheoServer
         builder.Services.AddSignalR();
         builder.Services.AddAuthorization();
 
+        // Health probes for container/daemon orchestration.
+        //  - "live": process is up and serving (no dependency check).
+        //  - "ready": the node can actually serve — database reachable.
+        builder.Services.AddHealthChecks()
+            .AddCheck("self", () => Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult.Healthy(), tags: new[] { "live" })
+            .AddCheck<DatabaseHealthCheck>("database", tags: new[] { "ready" });
+
         // Transparently decompress gzip/deflate request bodies (large batch pushes)
         // and compress responses (large Cold Sync history pulls).
         builder.Services.AddRequestDecompression();
@@ -72,6 +79,13 @@ public class MorpheoWebServer : IMorpheoServer
         // Morpheo Authentication Middleware
         _app.Use(async (context, next) =>
         {
+            // Health probes must stay reachable without a signature (orchestrators can't sign).
+            if (context.Request.Path.StartsWithSegments("/health"))
+            {
+                await next();
+                return;
+            }
+
             var auth = context.RequestServices.GetService<IRequestAuthenticator>();
             if (auth != null)
             {
@@ -113,6 +127,40 @@ public class MorpheoWebServer : IMorpheoServer
         {
             var logs = await syncService.GetHistoryAsync(since, limit ?? DataSyncService.DefaultHistoryPageSize);
             return Results.Ok(logs);
+        });
+
+        // --- Anti-entropy (Merkle reconciliation) endpoints ---
+
+        // Merkle root digest over the local set of log Ids.
+        _app.MapGet("/api/sync/digest", async ([FromServices] DataSyncService syncService) =>
+        {
+            var digest = await syncService.ComputeLocalDigestAsync();
+            return Results.Ok(new { digest });
+        });
+
+        // Full manifest of locally held log Ids.
+        _app.MapGet("/api/sync/manifest", async ([FromServices] DataSyncService syncService) =>
+        {
+            var ids = await syncService.GetManifestAsync();
+            return Results.Ok(ids);
+        });
+
+        // Pull specific logs by Id (the events a peer has found it is missing).
+        _app.MapPost("/api/sync/by-ids", async ([FromBody] List<string> ids, [FromServices] DataSyncService syncService) =>
+        {
+            if (ids == null || ids.Count == 0) return Results.BadRequest();
+            var logs = await syncService.GetLogsByIdsAsync(ids);
+            return Results.Ok(logs);
+        });
+
+        // Health probe endpoints (unauthenticated, see middleware above).
+        _app.MapHealthChecks("/health/live", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+        {
+            Predicate = check => check.Tags.Contains("live")
+        });
+        _app.MapHealthChecks("/health/ready", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+        {
+            Predicate = check => check.Tags.Contains("ready")
         });
 
         // Endpoint SignalR

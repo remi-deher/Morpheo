@@ -2,6 +2,7 @@ using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Morpheo.Core.Data;
+using Morpheo.Core.Sync;
 using Morpheo.Sdk;
 
 namespace Morpheo.Tests.Simulation;
@@ -62,6 +63,42 @@ public class SimulatedMorpheoClient : IMorpheoClient
             l.Timestamp,
             l.Vector,
             "HistorySource" // Simplified
+        )).ToList();
+    }
+
+    public async Task<string> GetDigestAsync(PeerInfo target)
+    {
+        var provider = _simulator.GetProvider(target.Id);
+        if (provider == null) return string.Empty;
+
+        using var scope = provider.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<MorpheoDbContext>();
+        var ids = await db.SyncLogs.Select(l => l.Id).ToListAsync();
+        return new MerkleTreeService().ComputeRootHash(ids);
+    }
+
+    public async Task<List<string>> GetManifestAsync(PeerInfo target)
+    {
+        var provider = _simulator.GetProvider(target.Id);
+        if (provider == null) return new List<string>();
+
+        using var scope = provider.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<MorpheoDbContext>();
+        return await db.SyncLogs.Select(l => l.Id).ToListAsync();
+    }
+
+    public async Task<List<SyncLogDto>> GetLogsByIdsAsync(PeerInfo target, IReadOnlyList<string> ids)
+    {
+        var provider = _simulator.GetProvider(target.Id);
+        if (provider == null || ids == null || ids.Count == 0) return new List<SyncLogDto>();
+
+        var requested = ids.ToHashSet();
+        using var scope = provider.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<MorpheoDbContext>();
+
+        var logs = await db.SyncLogs.Where(l => requested.Contains(l.Id)).ToListAsync();
+        return logs.Select(l => new SyncLogDto(
+            l.Id, l.EntityId, l.EntityName, l.JsonData, l.Action, l.Timestamp, l.Vector, "HistorySource"
         )).ToList();
     }
 }

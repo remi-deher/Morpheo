@@ -36,4 +36,25 @@ public interface IMorpheoClient
     /// <param name="limit">Maximum number of logs to return in this page.</param>
     /// <returns>A single page of synchronization logs, ordered chronologically.</returns>
     Task<List<SyncLogDto>> GetHistoryAsync(PeerInfo target, long sinceTick, int limit = 500);
+
+    /// <summary>
+    /// Retrieves the peer's Merkle root digest over its set of log Ids, for a fast
+    /// equality check during anti-entropy reconciliation.
+    /// </summary>
+    /// <param name="target">The target peer information.</param>
+    /// <returns>The peer's root hash, or an empty string if it has no logs/unavailable.</returns>
+    Task<string> GetDigestAsync(PeerInfo target);
+
+    /// <summary>
+    /// Retrieves the peer's reconciliation manifest — the full set of log Ids it holds.
+    /// </summary>
+    /// <param name="target">The target peer information.</param>
+    Task<List<string>> GetManifestAsync(PeerInfo target);
+
+    /// <summary>
+    /// Pulls the specific logs identified by <paramref name="ids"/> from the peer.
+    /// </summary>
+    /// <param name="target">The target peer information.</param>
+    /// <param name="ids">The log Ids to fetch.</param>
+    Task<List<SyncLogDto>> GetLogsByIdsAsync(PeerInfo target, IReadOnlyList<string> ids);
 }

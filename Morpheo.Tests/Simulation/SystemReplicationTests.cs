@@ -256,6 +256,63 @@ public class SystemReplicationTests : IDisposable
         var db = scope.ServiceProvider.GetRequiredService<MorpheoDbContext>();
         (await db.SyncLogs.AnyAsync(l => l.EntityId == "from-future")).Should().BeFalse();
     }
+
+    [Fact]
+    public async Task AntiEntropy_ShouldRecover_TickSkewedLog_MissedByColdSync()
+    {
+        // This is the scenario pure tick-based Cold Sync cannot handle: NodeA holds a log
+        // whose timestamp is LOWER than NodeB's latest tick (clock skew). A "since > maxTick"
+        // pull would never return it; the Merkle reconciliation must catch it.
+
+        var nodeA = CreateNode("NodeA");
+        var nodeB = CreateNode("NodeB");
+
+        // 1. NodeB writes a recent log → its max tick is "now".
+        await nodeB.Service.BroadcastChangeAsync(new TestEntity { Id = "b-high", Content = "b" }, "UPDATE");
+
+        long bMaxTick;
+        using (var scope = nodeB.Provider.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<MorpheoDbContext>();
+            bMaxTick = await db.SyncLogs.MaxAsync(l => l.Timestamp);
+        }
+
+        // 2. Inject into NodeA a log with a LOWER tick than NodeB's max (the skew).
+        using (var scope = nodeA.Provider.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<MorpheoDbContext>();
+            db.SyncLogs.Add(new SyncLog
+            {
+                Id = Guid.NewGuid().ToString(),
+                EntityId = "a-skewed",
+                EntityName = nameof(TestEntity),
+                JsonData = "{\"Id\":\"a-skewed\",\"Content\":\"skew\"}",
+                Action = "UPDATE",
+                Timestamp = bMaxTick - 1000,
+                VectorClockJson = "{\"NodeA\":1}"
+            });
+            await db.SaveChangesAsync();
+        }
+
+        // 3. Trigger sync: NodeB discovers NodeA.
+        var peerA = new PeerInfo("NodeA", "NodeA", "127.0.0.1", 5555, NodeRole.StandardClient, Array.Empty<string>());
+        nodeB.Discovery.SimulatePeerFound(peerA);
+
+        // 4. NodeB must end up with the skewed log via anti-entropy reconciliation.
+        await WaitForConditionAsync(async () =>
+        {
+            using var scope = nodeB.Provider.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<MorpheoDbContext>();
+            return await db.SyncLogs.AnyAsync(l => l.EntityId == "a-skewed");
+        }, timeoutMs: 6000);
+
+        using (var scope = nodeB.Provider.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<MorpheoDbContext>();
+            (await db.SyncLogs.AnyAsync(l => l.EntityId == "a-skewed"))
+                .Should().BeTrue("anti-entropy should recover logs missed by tick-based Cold Sync");
+        }
+    }
 }
 
 // Helper for test entity

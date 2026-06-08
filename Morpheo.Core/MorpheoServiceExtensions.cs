@@ -75,6 +75,8 @@ public static class MorpheoServiceExtensions
 
         services.AddSingleton<Morpheo.Core.Diagnostics.MorpheoMetrics>();
 
+        services.AddSingleton<MerkleTreeService>();
+
         services.AddSingleton<ConflictResolutionEngine>();
 
         // Default strategy: Composite
