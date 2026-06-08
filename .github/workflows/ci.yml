@@ -35,7 +35,7 @@ jobs:
 
       # Manual NuGet cache keyed on the project files (no packages.lock.json required).
       - name: Cache NuGet packages
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.nuget/packages
           key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj') }}
