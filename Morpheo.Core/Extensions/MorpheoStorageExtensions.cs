@@ -39,6 +39,40 @@ public static class MorpheoStorageExtensions
     }
 
     /// <summary>
+    /// Configures the Morpheo node to use PostgreSQL as the internal storage provider.
+    /// </summary>
+    /// <param name="builder">The <see cref="IMorpheoBuilder"/> to configure.</param>
+    /// <param name="connectionString">A valid Npgsql connection string (host, database, credentials).</param>
+    /// <returns>The <see cref="IMorpheoBuilder"/> instance for chaining configurations.</returns>
+    public static IMorpheoBuilder UsePostgres(this IMorpheoBuilder builder, string connectionString)
+    {
+        if (string.IsNullOrWhiteSpace(connectionString))
+            throw new ArgumentException("A PostgreSQL connection string is required.", nameof(connectionString));
+
+        builder.Services.AddDbContext<MorpheoDbContext>(options =>
+            options.UseNpgsql(connectionString));
+
+        return builder;
+    }
+
+    /// <summary>
+    /// Configures the Morpheo node to use Microsoft SQL Server as the internal storage provider.
+    /// </summary>
+    /// <param name="builder">The <see cref="IMorpheoBuilder"/> to configure.</param>
+    /// <param name="connectionString">A valid SQL Server connection string.</param>
+    /// <returns>The <see cref="IMorpheoBuilder"/> instance for chaining configurations.</returns>
+    public static IMorpheoBuilder UseSqlServer(this IMorpheoBuilder builder, string connectionString)
+    {
+        if (string.IsNullOrWhiteSpace(connectionString))
+            throw new ArgumentException("A SQL Server connection string is required.", nameof(connectionString));
+
+        builder.Services.AddDbContext<MorpheoDbContext>(options =>
+            options.UseSqlServer(connectionString));
+
+        return builder;
+    }
+
+    /// <summary>
     /// Registers an external database context to be synchronized by the Morpheo framework.
     /// </summary>
     /// <typeparam name="TContext">The type of the external <see cref="DbContext"/> to synchronize.</typeparam>

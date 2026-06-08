@@ -360,7 +360,9 @@ await builder.Build().RunAsync();
 ---
 
 ## 🗺️ Roadmap & Futur
-*   **Court Terme** : Support Impression Linux (CUPS/IPP).
+*   ✅ **Impression Linux (CUPS)** — `AddCupsPrinting()` / `AddNativePrinting()` (livré).
+*   ✅ **Providers PostgreSQL & SQL Server** — `UsePostgres()` / `UseSqlServer()` (livré).
+*   ✅ **Sécurité de cluster (HMAC + anti-replay)** — `AddClusterSecurity(psk)` (livré).
 *   **Moyen Terme** : Universal Hardware Mesh (Partage de ports COM/Série sur IP).
 *   **Long Terme** : Support WebAssembly (Blazor) pour P2P direct dans le navigateur.
 
@@ -748,7 +750,9 @@ await builder.Build().RunAsync();
 ---
 
 ## 🗺️ Roadmap & Future
-*   **Short Term**: Linux Printing Support (CUPS/IPP).
+*   ✅ **Linux Printing (CUPS)** — `AddCupsPrinting()` / `AddNativePrinting()` (shipped).
+*   ✅ **PostgreSQL & SQL Server providers** — `UsePostgres()` / `UseSqlServer()` (shipped).
+*   ✅ **Cluster security (HMAC + anti-replay)** — `AddClusterSecurity(psk)` (shipped).
 *   **Mid Term**: Universal Hardware Mesh (COM/Serial port sharing over IP).
 *   **Long Term**: WebAssembly Support (Blazor) for pure browser P2P sync.
 

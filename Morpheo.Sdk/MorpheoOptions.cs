@@ -68,6 +68,13 @@ public class MorpheoOptions
     public bool UseSecureConnection { get; set; } = false;
 
     /// <summary>
+    /// Gets or sets the cluster shared secret (PSK) used to sign and authenticate
+    /// inter-node requests (HMAC-SHA256). When null or empty, requests are not signed
+    /// and the node accepts unauthenticated traffic. Set this via <c>AddClusterSecurity()</c>.
+    /// </summary>
+    public string? ClusterSecret { get; set; }
+
+    /// <summary>
     /// Gets or sets the duration to keep synchronization logs before cleanup.
     /// Default is 30 days.
     /// </summary>

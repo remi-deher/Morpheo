@@ -201,6 +201,61 @@ public class SystemReplicationTests : IDisposable
             logC!.JsonData.Should().Contain("From C");
         }
     }
+    [Fact]
+    public async Task GetHistoryAsync_ShouldRespectLimit()
+    {
+        var nodeA = CreateNode("NodeA");
+
+        await nodeA.Service.BroadcastChangeAsync(new TestEntity { Id = "d1", Content = "1" }, "UPDATE");
+        await nodeA.Service.BroadcastChangeAsync(new TestEntity { Id = "d2", Content = "2" }, "UPDATE");
+        await nodeA.Service.BroadcastChangeAsync(new TestEntity { Id = "d3", Content = "3" }, "UPDATE");
+
+        var page = await nodeA.Service.GetHistoryAsync(0, limit: 2);
+
+        page.Should().HaveCount(2);
+        // Chronological order — the first two by timestamp.
+        page.Should().BeInAscendingOrder(l => l.Timestamp);
+    }
+
+    [Fact]
+    public async Task ReceiveRemoteBatchAsync_ShouldApplyAllEntries()
+    {
+        var nodeB = CreateNode("NodeB");
+
+        var now = DateTime.UtcNow.Ticks;
+        var batch = new List<SyncLogDto>
+        {
+            new(Guid.NewGuid().ToString(), "batch-1", nameof(TestEntity), "{\"Id\":\"batch-1\",\"Content\":\"a\"}", "UPDATE", now + 1, new() { ["NodeX"] = 1 }, "NodeX"),
+            new(Guid.NewGuid().ToString(), "batch-2", nameof(TestEntity), "{\"Id\":\"batch-2\",\"Content\":\"b\"}", "UPDATE", now + 2, new() { ["NodeX"] = 1 }, "NodeX"),
+        };
+
+        await nodeB.Service.ReceiveRemoteBatchAsync(batch);
+
+        using var scope = nodeB.Provider.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<MorpheoDbContext>();
+        (await db.SyncLogs.AnyAsync(l => l.EntityId == "batch-1")).Should().BeTrue();
+        (await db.SyncLogs.AnyAsync(l => l.EntityId == "batch-2")).Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task ReceiveRemoteLogAsync_ShouldReject_FutureSchemaVersion()
+    {
+        var nodeB = CreateNode("NodeB");
+
+        var future = new SyncLogDto(
+            Guid.NewGuid().ToString(), "from-future", nameof(TestEntity),
+            "{\"Id\":\"from-future\",\"Content\":\"x\"}", "UPDATE",
+            DateTime.UtcNow.Ticks, new() { ["NodeX"] = 1 }, "NodeX")
+        {
+            SchemaVersion = SyncLogDto.CurrentSchemaVersion + 1
+        };
+
+        await nodeB.Service.ReceiveRemoteLogAsync(future);
+
+        using var scope = nodeB.Provider.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<MorpheoDbContext>();
+        (await db.SyncLogs.AnyAsync(l => l.EntityId == "from-future")).Should().BeFalse();
+    }
 }
 
 // Helper for test entity

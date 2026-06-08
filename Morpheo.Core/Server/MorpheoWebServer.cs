@@ -52,7 +52,22 @@ public class MorpheoWebServer : IMorpheoServer
         builder.Services.AddSignalR();
         builder.Services.AddAuthorization();
 
+        // Transparently decompress gzip/deflate request bodies (large batch pushes)
+        // and compress responses (large Cold Sync history pulls).
+        builder.Services.AddRequestDecompression();
+        builder.Services.AddResponseCompression(o =>
+        {
+            o.EnableForHttps = true;
+            o.MimeTypes = Microsoft.AspNetCore.ResponseCompression.ResponseCompressionDefaults.MimeTypes
+                .Concat(new[] { "application/json" });
+        });
+
         _app = builder.Build();
+
+        // Decompression must run BEFORE authentication so the HMAC is verified against
+        // the decompressed body — the same bytes the client signed.
+        _app.UseRequestDecompression();
+        _app.UseResponseCompression();
 
         // Morpheo Authentication Middleware
         _app.Use(async (context, next) =>
@@ -85,10 +100,18 @@ public class MorpheoWebServer : IMorpheoServer
             return Results.Ok();
         });
 
-        // Endpoint for Cold Sync history pull
-        _app.MapGet("/api/sync/history", async ([FromQuery] long since, [FromServices] DataSyncService syncService) =>
+        // Endpoint for receiving multiple logs in one request (batched push)
+        _app.MapPost("/api/sync/batch", async ([FromBody] List<SyncLogDto> dtos, [FromServices] DataSyncService syncService) =>
         {
-            var logs = await syncService.GetHistoryAsync(since);
+            if (dtos == null || dtos.Count == 0) return Results.BadRequest();
+            await syncService.ReceiveRemoteBatchAsync(dtos);
+            return Results.Ok();
+        });
+
+        // Endpoint for Cold Sync history pull
+        _app.MapGet("/api/sync/history", async ([FromQuery] long since, [FromQuery] int? limit, [FromServices] DataSyncService syncService) =>
+        {
+            var logs = await syncService.GetHistoryAsync(since, limit ?? DataSyncService.DefaultHistoryPageSize);
             return Results.Ok(logs);
         });
 
@@ -123,7 +146,7 @@ public class MorpheoWebServer : IMorpheoServer
                 {
                     nodeName = _options.NodeName,
                     port = _options.DiscoveryPort,
-                    dbType = "Unknown" // Placeholder for now, could be improved by checking DbContext connection
+                    dbType = ResolveDatabaseProvider()
                 });
             });
 
@@ -188,6 +211,28 @@ public class MorpheoWebServer : IMorpheoServer
             throw new InvalidOperationException($"Failed to capture valid port from Kestrel. Got: {port}");
         }
         LocalPort = port;
+    }
+
+    /// <summary>
+    /// Reports the friendly name of the EF Core provider backing the sync store,
+    /// resolved from the parent DI container (where MorpheoDbContext is registered).
+    /// </summary>
+    private string ResolveDatabaseProvider()
+    {
+        try
+        {
+            using var scope = _serviceProvider.CreateScope();
+            var db = scope.ServiceProvider.GetService<Morpheo.Core.Data.MorpheoDbContext>();
+            var provider = db?.Database.ProviderName;
+            if (string.IsNullOrEmpty(provider)) return "Unknown";
+
+            // Map "Microsoft.EntityFrameworkCore.Sqlite" -> "Sqlite"
+            return provider.Split('.').LastOrDefault() ?? provider;
+        }
+        catch
+        {
+            return "Unknown";
+        }
     }
 
     /// <inheritdoc/>

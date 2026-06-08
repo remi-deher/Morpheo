@@ -25,7 +25,10 @@ public class SimulatedMorpheoClient : IMorpheoClient
         return Task.CompletedTask;
     }
 
-    public async Task<List<SyncLogDto>> GetHistoryAsync(PeerInfo target, long sinceTick)
+    public Task<bool> SendSyncBatchAsync(PeerInfo target, IReadOnlyList<SyncLogDto> logs)
+        => Task.FromResult(true);
+
+    public async Task<List<SyncLogDto>> GetHistoryAsync(PeerInfo target, long sinceTick, int limit = 500)
     {
         // Cold Sync Simulation:
         // 1. Find the target node in the simulator.
@@ -42,9 +45,12 @@ public class SimulatedMorpheoClient : IMorpheoClient
         using var scope = provider.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<MorpheoDbContext>();
         
+        if (limit <= 0) limit = 500;
+
         var logs = await db.SyncLogs
             .Where(l => l.Timestamp > sinceTick)
             .OrderBy(l => l.Timestamp)
+            .Take(limit)
             .ToListAsync();
 
         return logs.Select(l => new SyncLogDto(

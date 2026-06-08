@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Morpheo.Sdk;
 using Morpheo.Core.Data;
+using Morpheo.Core.Diagnostics;
 
 namespace Morpheo.Core.Sync;
 
@@ -19,6 +20,7 @@ public class DataSyncService
     private readonly ILogger<DataSyncService> _logger;
     private readonly ConflictResolutionEngine _conflictEngine;
     private readonly ISyncRoutingStrategy _routingStrategy;
+    private readonly MorpheoMetrics? _metrics;
 
     private readonly List<PeerInfo> _peers = new();
     
@@ -34,7 +36,8 @@ public class DataSyncService
         MorpheoOptions options,
         ILogger<DataSyncService> logger,
         ConflictResolutionEngine conflictEngine,
-        ISyncRoutingStrategy routingStrategy)
+        ISyncRoutingStrategy routingStrategy,
+        MorpheoMetrics? metrics = null)
     {
         _serviceProvider = serviceProvider;
         _client = client;
@@ -43,12 +46,16 @@ public class DataSyncService
         _logger = logger;
         _conflictEngine = conflictEngine;
         _routingStrategy = routingStrategy;
+        _metrics = metrics;
 
-        _discovery.PeerLost += (s, p) => { lock (_peers) { _peers.RemoveAll(x => x.Id == p.Id); } };
+        _discovery.PeerLost += (s, p) =>
+        {
+            lock (_peers) { _peers.RemoveAll(x => x.Id == p.Id); UpdatePeerMetric(); }
+        };
 
         _discovery.PeerFound += (s, peer) =>
         {
-            lock (_peers) { if (!_peers.Any(x => x.Id == peer.Id)) _peers.Add(peer); }
+            lock (_peers) { if (!_peers.Any(x => x.Id == peer.Id)) { _peers.Add(peer); UpdatePeerMetric(); } }
 
             // Wait a bit before starting sync to let the server start
             Task.Run(async () =>
@@ -62,16 +69,38 @@ public class DataSyncService
     // --- 0. HISTORY (Cold Sync source) ---
 
     /// <summary>
-    /// Returns all sync logs newer than <paramref name="sinceTick"/> for a Cold Sync pull.
+    /// Default maximum number of logs returned by a single <see cref="GetHistoryAsync"/> page.
+    /// Keeps Cold Sync bounded so a node that has been offline for a long time cannot
+    /// force the source node to materialize its entire history in one allocation.
     /// </summary>
-    public async Task<List<SyncLogDto>> GetHistoryAsync(long sinceTick)
+    public const int DefaultHistoryPageSize = 500;
+
+    /// <summary>
+    /// Hard ceiling on the page size a caller may request, to protect the source node
+    /// from an over-large <c>limit</c> query parameter.
+    /// </summary>
+    public const int MaxHistoryPageSize = 2000;
+
+    /// <summary>
+    /// Returns a single page of sync logs newer than <paramref name="sinceTick"/> for a
+    /// Cold Sync pull, ordered chronologically. The caller paginates by re-issuing the
+    /// request with <paramref name="sinceTick"/> set to the <c>Timestamp</c> of the last
+    /// item received — the tick itself is the cursor.
+    /// </summary>
+    /// <param name="sinceTick">Exclusive lower bound on the log timestamp (tick).</param>
+    /// <param name="limit">Maximum number of logs to return; clamped to [1, <see cref="MaxHistoryPageSize"/>].</param>
+    public async Task<List<SyncLogDto>> GetHistoryAsync(long sinceTick, int limit = DefaultHistoryPageSize)
     {
+        if (limit <= 0) limit = DefaultHistoryPageSize;
+        if (limit > MaxHistoryPageSize) limit = MaxHistoryPageSize;
+
         using var scope = _serviceProvider.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<MorpheoDbContext>();
 
         var logs = await db.SyncLogs
             .Where(l => l.Timestamp > sinceTick)
             .OrderBy(l => l.Timestamp)
+            .Take(limit)
             .ToListAsync();
 
         return logs.Select(l => new SyncLogDto(
@@ -121,6 +150,8 @@ public class DataSyncService
 
         db.SyncLogs.Add(log);
         await db.SaveChangesAsync();
+
+        _metrics?.RecordBroadcast();
 
         // Launch broadcast via strategy
         _ = Task.Run(() => PushToPeers(log));
@@ -173,6 +204,21 @@ public class DataSyncService
     public async Task ReceiveRemoteLogAsync(SyncLogDto remoteDto)
     {
         if (remoteDto == null) return;
+
+        // Protocol-version gate. A payload that predates the field deserializes to 0,
+        // which we treat as the original v1 wire format. A value greater than what we
+        // implement means the sender speaks a newer, possibly breaking, dialect — we
+        // reject it loudly rather than misinterpret its fields.
+        var dtoVersion = remoteDto.SchemaVersion == 0 ? 1 : remoteDto.SchemaVersion;
+        if (dtoVersion > SyncLogDto.CurrentSchemaVersion)
+        {
+            _logger.LogWarning(
+                "Rejected log {LogId} from {OriginNode}: schema v{RemoteVersion} is newer than supported v{LocalVersion}. Upgrade this node.",
+                remoteDto.Id, remoteDto.OriginNodeId, dtoVersion, SyncLogDto.CurrentSchemaVersion);
+            return;
+        }
+
+        _metrics?.RecordReceived();
         var appliedLog = await ApplyRemoteChangeAsync(remoteDto);
 
         if (appliedLog != null)
@@ -180,6 +226,23 @@ public class DataSyncService
             // RELAY: If we accepted the change, propagate it to other strategies.
             // Beware of loops! VectorClock normally protects us.
             _ = Task.Run(() => PushToPeers(appliedLog));
+        }
+    }
+
+    /// <summary>
+    /// Receives and processes a batch of log entries from a remote node, in order.
+    /// Used by the batch push endpoint and bulk catch-up paths.
+    /// </summary>
+    /// <param name="remoteDtos">The received log DTOs.</param>
+    public async Task ReceiveRemoteBatchAsync(IReadOnlyList<SyncLogDto> remoteDtos)
+    {
+        if (remoteDtos == null) return;
+
+        // Process in timestamp order so causally-earlier changes are applied first,
+        // mirroring how a single live stream would have arrived.
+        foreach (var dto in remoteDtos.OrderBy(d => d.Timestamp))
+        {
+            await ReceiveRemoteLogAsync(dto);
         }
     }
 
@@ -231,6 +294,7 @@ public class DataSyncService
                     if (finalJsonData != localLog.JsonData)
                     {
                         shouldApply = true;
+                        _metrics?.RecordConflictResolved();
                         _logger.LogInformation($"Conflict resolved (Merge/LWW) for {remoteDto.EntityName}");
                     }
                     break;
@@ -254,6 +318,7 @@ public class DataSyncService
             db.SyncLogs.Add(newLog);
             await db.SaveChangesAsync();
 
+            _metrics?.RecordApplied();
             DataReceived?.Invoke(this, newLog);
             return newLog;
         }
@@ -264,6 +329,7 @@ public class DataSyncService
 
     private async Task SynchronizeWithPeerAsync(PeerInfo peer)
     {
+        var sw = System.Diagnostics.Stopwatch.StartNew();
         try
         {
             long lastTick = 0;
@@ -278,14 +344,43 @@ public class DataSyncService
 
             // Note: For Cold Sync, we generally pull from any available peer.
             // We could also use a strategy here, but P2P is often enough.
-            var batch = await _client.GetHistoryAsync(peer, lastTick);
-            if (batch != null && batch.Count > 0)
+            //
+            // Pull page by page. The source caps each response at DefaultHistoryPageSize,
+            // so a node that missed a huge amount of history catches up incrementally
+            // instead of forcing a single unbounded transfer (OOM risk on both ends).
+            int totalReceived = 0;
+            int pages = 0;
+            const int safetyPageCap = 10_000; // Defensive: never loop forever on a misbehaving peer.
+
+            while (pages < safetyPageCap)
             {
+                var batch = await _client.GetHistoryAsync(peer, lastTick, DefaultHistoryPageSize);
+                if (batch == null || batch.Count == 0)
+                    break;
+
                 foreach (var logDto in batch)
                 {
                     await ReceiveRemoteLogAsync(logDto);
+                    // Advance the cursor by the highest tick seen so the next page
+                    // resumes exactly where this one stopped.
+                    if (logDto.Timestamp > lastTick) lastTick = logDto.Timestamp;
                 }
-                _logger.LogInformation($"COLD SYNC: {batch.Count} elements received from {peer.Name}.");
+
+                totalReceived += batch.Count;
+                pages++;
+
+                // A short page means we have drained the peer's backlog.
+                if (batch.Count < DefaultHistoryPageSize)
+                    break;
+            }
+
+            if (totalReceived > 0)
+            {
+                sw.Stop();
+                _metrics?.RecordColdSync(totalReceived, sw.Elapsed.TotalMilliseconds);
+                _logger.LogInformation(
+                    "COLD SYNC: {Count} elements received from {PeerName} across {Pages} page(s).",
+                    totalReceived, peer.Name, pages);
             }
         }
         catch (Exception ex)
@@ -293,4 +388,7 @@ public class DataSyncService
             _logger.LogError(ex, "Cold Sync Error with {PeerName}", peer.Name);
         }
     }
+
+    // Must be called while holding the _peers lock.
+    private void UpdatePeerMetric() => _metrics?.SetPeerCount(_peers.Count);
 }

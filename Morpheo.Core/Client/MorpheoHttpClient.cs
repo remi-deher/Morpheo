@@ -77,9 +77,36 @@ public class MorpheoHttpClient : IMorpheoClient
     }
 
     /// <inheritdoc/>
-    public async Task<List<SyncLogDto>> GetHistoryAsync(PeerInfo target, long sinceTick)
+    public async Task<bool> SendSyncBatchAsync(PeerInfo target, IReadOnlyList<SyncLogDto> logs)
     {
-        var url = BuildUrl(target, $"/api/sync/history?since={sinceTick}");
+        if (logs == null || logs.Count == 0) return true;
+
+        try
+        {
+            var client = _httpClientFactory.CreateClient();
+            // Scale the timeout modestly with batch size so large catch-ups are not cut off.
+            client.Timeout = TimeSpan.FromSeconds(Math.Min(30, 2 + logs.Count / 100.0));
+            var url = BuildUrl(target, "/api/sync/batch");
+
+            var response = await client.PostAsJsonAsync(url, logs);
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogWarning("Sync Batch Error to {PeerName}: {StatusCode}", target.Name, response.StatusCode);
+                return false;
+            }
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogDebug(ex, "Sync batch failed to {PeerName} (Expected if disconnected)", target.Name);
+            return false;
+        }
+    }
+
+    /// <inheritdoc/>
+    public async Task<List<SyncLogDto>> GetHistoryAsync(PeerInfo target, long sinceTick, int limit = 500)
+    {
+        var url = BuildUrl(target, $"/api/sync/history?since={sinceTick}&limit={limit}");
         try
         {
             var client = _httpClientFactory.CreateClient();

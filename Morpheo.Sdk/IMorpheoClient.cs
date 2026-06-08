@@ -20,10 +20,20 @@ public interface IMorpheoClient
     Task SendSyncUpdateAsync(PeerInfo target, SyncLogDto log);
 
     /// <summary>
+    /// Sends multiple synchronization updates to a target node in a single request.
+    /// Reduces network round-trips when many entities change in a short window.
+    /// </summary>
+    /// <param name="target">The target peer information.</param>
+    /// <param name="logs">The synchronization log entries to push together.</param>
+    /// <returns><c>true</c> if the batch was accepted by the peer; otherwise <c>false</c>.</returns>
+    Task<bool> SendSyncBatchAsync(PeerInfo target, IReadOnlyList<SyncLogDto> logs);
+
+    /// <summary>
     /// Requests missing history (Pull) from a target node.
     /// </summary>
     /// <param name="target">The target peer information.</param>
     /// <param name="sinceTick">The tick since when history is requested.</param>
-    /// <returns>A list of synchronization logs.</returns>
-    Task<List<SyncLogDto>> GetHistoryAsync(PeerInfo target, long sinceTick);
+    /// <param name="limit">Maximum number of logs to return in this page.</param>
+    /// <returns>A single page of synchronization logs, ordered chronologically.</returns>
+    Task<List<SyncLogDto>> GetHistoryAsync(PeerInfo target, long sinceTick, int limit = 500);
 }
