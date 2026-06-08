@@ -1,6 +1,6 @@
 # Morpheo Framework
 
-![Build Status](https://img.shields.io/badge/build-passing-brightgreen) ![NuGet Version](https://img.shields.io/nuget/v/Morpheo.Core?label=Morpheo.Core) ![License](https://img.shields.io/badge/license-MIT-blue) ![.NET 10](https://img.shields.io/badge/.NET-10.0-purple)
+[![CI](https://github.com/remi-deher/Morpheo/actions/workflows/ci.yml/badge.svg)](https://github.com/remi-deher/Morpheo/actions/workflows/ci.yml) [![CodeQL](https://github.com/remi-deher/Morpheo/actions/workflows/codeql.yml/badge.svg)](https://github.com/remi-deher/Morpheo/actions/workflows/codeql.yml) ![NuGet Version](https://img.shields.io/nuget/v/Morpheo.Core?label=Morpheo.Core) ![License](https://img.shields.io/badge/license-MIT-blue) ![.NET 10](https://img.shields.io/badge/.NET-10.0-purple)
 
 **Morpheo est un Framework de Synchronisation de Données Distribuées (.NET 10).**
 
@@ -390,7 +390,7 @@ Projet sous licence MIT - voir le fichier `LICENSE`.
 
 # Morpheo Framework (English)
 
-![Build Status](https://img.shields.io/badge/build-passing-brightgreen) ![NuGet Version](https://img.shields.io/nuget/v/Morpheo.Core?label=Morpheo.Core) ![License](https://img.shields.io/badge/license-MIT-blue) ![.NET 10](https://img.shields.io/badge/.NET-10.0-purple)
+[![CI](https://github.com/remi-deher/Morpheo/actions/workflows/ci.yml/badge.svg)](https://github.com/remi-deher/Morpheo/actions/workflows/ci.yml) [![CodeQL](https://github.com/remi-deher/Morpheo/actions/workflows/codeql.yml/badge.svg)](https://github.com/remi-deher/Morpheo/actions/workflows/codeql.yml) ![NuGet Version](https://img.shields.io/nuget/v/Morpheo.Core?label=Morpheo.Core) ![License](https://img.shields.io/badge/license-MIT-blue) ![.NET 10](https://img.shields.io/badge/.NET-10.0-purple)
 
 **Morpheo is a Distributed Data Synchronization Framework (.NET 10).**
 
