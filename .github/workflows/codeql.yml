@@ -12,6 +12,8 @@ on:
       - '.gitignore'
       - '.gitattributes'
       - '.github/workflows/docs.yml'
+      - '.github/dependabot.yml'
+      - '.claude/**'
   pull_request:
     branches: [ "main" ]
     paths-ignore:
@@ -23,6 +25,8 @@ on:
       - '.gitignore'
       - '.gitattributes'
       - '.github/workflows/docs.yml'
+      - '.github/dependabot.yml'
+      - '.claude/**'
   schedule:
     # Weekly scan (Mondays 06:00 UTC) to catch advisories in already-merged code.
     - cron: "0 6 * * 1"

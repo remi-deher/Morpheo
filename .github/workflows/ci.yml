@@ -12,6 +12,8 @@ on:
       - '.gitignore'
       - '.gitattributes'
       - '.github/workflows/docs.yml'
+      - '.github/dependabot.yml'
+      - '.claude/**'
   pull_request:
     branches: [ "main" ]
     paths-ignore:
@@ -23,6 +25,8 @@ on:
       - '.gitignore'
       - '.gitattributes'
       - '.github/workflows/docs.yml'
+      - '.github/dependabot.yml'
+      - '.claude/**'
   workflow_dispatch:
 
 # Cancel superseded runs on the same ref (e.g. rapid pushes to a PR branch).
