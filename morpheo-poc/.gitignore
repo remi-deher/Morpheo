@@ -1,0 +1,15 @@
+# Ignore build folders
+bin/
+obj/
+
+# Ignore local database files
+*.db
+*.db-shm
+*.db-wal
+morpheo.db
+
+# Ignore generated runtime configuration files
+morpheo.runtime.json
+
+# Ignore logs
+*.log

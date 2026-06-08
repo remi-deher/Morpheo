@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Morpheo.Core\Morpheo.Core.csproj" />
+    <ProjectReference Include="..\..\Morpheo.Sdk\Morpheo.Sdk.csproj" />
+  </ItemGroup>
+
+</Project>
