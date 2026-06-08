@@ -17,4 +17,9 @@ public class ManualNetworkDiscovery : INetworkDiscovery
     {
         PeerFound?.Invoke(this, peer);
     }
+
+    public void SimulatePeerLost(PeerInfo peer)
+    {
+        PeerLost?.Invoke(this, peer);
+    }
 }
