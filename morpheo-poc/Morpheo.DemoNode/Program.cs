@@ -173,6 +173,7 @@ app.MapPost("/api/notes", async ([FromBody] TextNote note, DataSyncService syncS
 {
     if (string.IsNullOrEmpty(note.Id)) note.Id = Guid.NewGuid().ToString();
     await syncService.BroadcastChangeAsync(note, "UPDATE");
+    ClusterEventNotifier.Notify("notes");
     return Results.Ok(note);
 });
 
@@ -180,7 +181,54 @@ app.MapDelete("/api/notes/{id}", async (string id, DataSyncService syncService) 
 {
     var note = new TextNote { Id = id };
     await syncService.BroadcastChangeAsync(note, "DELETE");
+    ClusterEventNotifier.Notify("notes");
     return Results.Ok(new { message = $"Note {id} deleted" });
+});
+
+// Event Stream (Server-Sent Events) for real-time dashboard updates
+app.MapGet("/api/events/stream", async (HttpContext context, CancellationToken ct) =>
+{
+    context.Response.Headers.ContentType = "text/event-stream";
+    context.Response.Headers.CacheControl = "no-cache";
+    context.Response.Headers.Connection = "keep-alive";
+
+    // Send initial handshake
+    await context.Response.WriteAsync("data: connected\n\n", ct);
+    await context.Response.Body.FlushAsync(ct);
+
+    var channel = System.Threading.Channels.Channel.CreateUnbounded<string>(new System.Threading.Channels.UnboundedChannelOptions
+    {
+        SingleWriter = false,
+        SingleReader = true
+    });
+
+    Action<string> handler = (eventType) =>
+    {
+        channel.Writer.TryWrite(eventType);
+    };
+
+    ClusterEventNotifier.OnEvent += handler;
+
+    try
+    {
+        while (await channel.Reader.WaitToReadAsync(ct))
+        {
+            while (channel.Reader.TryRead(out var eventType))
+            {
+                await context.Response.WriteAsync($"data: {eventType}\n\n", ct);
+                await context.Response.Body.FlushAsync(ct);
+            }
+        }
+    }
+    catch (OperationCanceledException)
+    {
+        // Expected when client disconnects
+    }
+    finally
+    {
+        ClusterEventNotifier.OnEvent -= handler;
+        channel.Writer.Complete();
+    }
 });
 
 // File Exchanger
@@ -238,6 +286,7 @@ app.MapPost("/api/files/upload", async (HttpRequest request, IMorpheoBlobStore b
     };
 
     await syncService.BroadcastChangeAsync(sharedFile, "UPDATE");
+    ClusterEventNotifier.Notify("files");
 
     return Results.Ok(sharedFile);
 });
@@ -325,6 +374,8 @@ app.MapPost("/api/print", async ([FromBody] PrintRequest request, IPrintGateway 
         Timestamp = DateTime.UtcNow
     });
 
+    ClusterEventNotifier.Notify("prints");
+
     return Results.Ok();
 });
 
@@ -357,6 +408,20 @@ app.MapGet("/api/status", async (MorpheoOptions options, DataSyncService syncSer
         logsCount = logCount
     });
 });
+
+// Subscribe to sync logs to notify SSE clients of updates
+var syncService = app.Services.GetRequiredService<DataSyncService>();
+syncService.DataReceived += (sender, log) =>
+{
+    if (log.EntityName == "TextNote")
+    {
+        ClusterEventNotifier.Notify("notes");
+    }
+    else if (log.EntityName == "SharedFile")
+    {
+        ClusterEventNotifier.Notify("files");
+    }
+};
 
 await app.RunAsync();
 
@@ -462,5 +527,18 @@ public class EmulatedPrinterService : IPrintGateway
         var text = System.Text.Encoding.UTF8.GetString(content);
         _logger.LogInformation($"[PRINTER EMULATOR] Printing to '{printerName}' ({content.Length} bytes): {text}");
         return Task.CompletedTask;
+    }
+}
+
+/// <summary>
+/// Thread-safe event notifier to bridge local/remote sync updates with SSE clients.
+/// </summary>
+public static class ClusterEventNotifier
+{
+    public static event Action<string>? OnEvent;
+
+    public static void Notify(string eventType)
+    {
+        OnEvent?.Invoke(eventType);
     }
 }
