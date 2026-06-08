@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Morpheo Node Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+      --glass-bg: rgba(255, 255, 255, 0.03);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --glass-glow: rgba(99, 102, 241, 0.15);
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --secondary: #ec4899;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --sidebar-width: 280px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    body {
+      background: var(--bg-gradient);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Layout */
+    .container {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar - Glassmorphism */
+    aside {
+      width: var(--sidebar-width);
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(20px);
+      border-right: 1px solid var(--glass-border);
+      padding: 2rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      height: 100vh;
+      z-index: 10;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.25rem;
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+    }
+
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      background: linear-gradient(to right, #ffffff, #c7d2fe);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .logo-text p {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .node-badge {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      font-size: 0.875rem;
+    }
+
+    .badge-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.25rem;
+    }
+
+    .badge-label {
+      color: var(--text-muted);
+    }
+
+    .badge-val {
+      font-weight: 600;
+    }
+
+    .status-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background-color: var(--success);
+      border-radius: 50%;
+      margin-right: 0.5rem;
+      box-shadow: 0 0 10px var(--success);
+    }
+
+    /* Sidebar Navigation */
+    nav {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .nav-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      text-align: left;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      transition: all 0.3s ease;
+    }
+
+    .nav-btn:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text);
+    }
+
+    .nav-btn.active {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
+    }
+
+    /* Main Content */
+    main {
+      flex: 1;
+      margin-left: var(--sidebar-width);
+      padding: 2.5rem;
+      max-width: 1200px;
+      width: calc(100% - var(--sidebar-width));
+    }
+
+    .header-panel {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .header-panel h2 {
+      font-size: 2rem;
+      font-weight: 600;
+    }
+
+    /* Tab Contents */
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.4s ease-out forwards;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Glass Cards */
+    .card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card:hover {
+      border-color: rgba(99, 102, 241, 0.25);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .card:hover::before {
+      opacity: 1;
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Forms */
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      background: rgba(15, 23, 42, 0.4);
+      border: 1px solid var(--glass-border);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      color: var(--text);
+      font-size: 1rem;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 10px rgba(99, 102, 241, 0.2);
+    }
+
+    .btn {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .btn:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 5px 15px rgba(99, 102, 241, 0.3);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--glass-border);
+      color: var(--text);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      box-shadow: none;
+      transform: none;
+    }
+
+    .btn-danger {
+      background: var(--danger);
+    }
+    .btn-danger:hover {
+      background: #dc2626;
+      box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3);
+    }
+
+    /* Grid Layouts */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 900px) {
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Notes/Text Exchange board */
+    .notes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .note-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 150px;
+      transition: all 0.3s ease;
+    }
+
+    .note-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(99, 102, 241, 0.2);
+    }
+
+    .note-content {
+      font-size: 1rem;
+      line-height: 1.5;
+      margin-bottom: 1rem;
+      white-space: pre-wrap;
+    }
+
+    .note-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding-top: 0.75rem;
+    }
+
+    .note-author {
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .delete-btn {
+      background: transparent;
+      border: none;
+      color: var(--danger);
+      cursor: pointer;
+      font-size: 0.75rem;
+      font-weight: 600;
+      opacity: 0.6;
+      transition: opacity 0.3s;
+    }
+
+    .delete-btn:hover {
+      opacity: 1;
+    }
+
+    /* File Sync */
+    .upload-zone {
+      border: 2px dashed var(--glass-border);
+      border-radius: 12px;
+      padding: 2rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.01);
+      margin-bottom: 1.5rem;
+    }
+
+    .upload-zone:hover {
+      border-color: var(--primary);
+      background: rgba(99, 102, 241, 0.02);
+    }
+
+    .upload-icon {
+      font-size: 2rem;
+      margin-bottom: 0.75rem;
+      display: block;
+    }
+
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.95rem;
+    }
+
+    th, td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--glass-border);
+    }
+
+    th {
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.5px;
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.01);
+    }
+
+    .file-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.25rem 0.5rem;
+      border-radius: 6px;
+    }
+
+    .status-cached {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--success);
+    }
+
+    .status-remote {
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--warning);
+    }
+
+    /* Print Jobs */
+    .print-grid {
+      display: grid;
+      grid-template-columns: 350px 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 900px) {
+      .print-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .print-log {
+      max-height: 500px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .print-job-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--glass-border);
+      border-radius: 10px;
+      padding: 1rem;
+      font-size: 0.875rem;
+    }
+
+    .job-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+      color: var(--text-muted);
+      font-size: 0.75rem;
+    }
+
+    .job-printer {
+      color: var(--secondary);
+      font-weight: 600;
+    }
+
+    .job-content {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--glass-border);
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+      font-family: monospace;
+      white-space: pre-wrap;
+      word-break: break-all;
+      margin-top: 0.5rem;
+      font-size: 0.8rem;
+      color: #34d399;
+    }
+
+    /* Peers/Cluster Configuration */
+    .peers-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .peer-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--glass-border);
+      border-radius: 10px;
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .peer-name {
+      font-weight: 600;
+      font-size: 1.05rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .peer-meta {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    .peer-cap {
+      display: inline-block;
+      background: rgba(99, 102, 241, 0.1);
+      color: var(--primary);
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      margin-right: 0.25rem;
+    }
+
+    /* Notifications */
+    #notif-toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(10px);
+      padding: 1rem 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      display: none;
+      align-items: center;
+      gap: 0.75rem;
+      animation: slideUp 0.3s ease-out;
+      z-index: 100;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(100px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Sidebar -->
+    <aside>
+      <div class="logo-container">
+        <div class="logo-icon">M</div>
+        <div class="logo-text">
+          <h1>Morpheo</h1>
+          <p>Distributed Sync PoC</p>
+        </div>
+      </div>
+
+      <div class="node-badge">
+        <div class="badge-row">
+          <span class="badge-label">Noeud :</span>
+          <span class="badge-val" id="node-name-badge">Chargement...</span>
+        </div>
+        <div class="badge-row">
+          <span class="badge-label">Statut :</span>
+          <span class="badge-val"><span class="status-dot"></span>Actif</span>
+        </div>
+        <div class="badge-row" style="margin-top: 0.5rem;">
+          <span class="badge-label">Mode :</span>
+          <span class="badge-val" id="node-mode-badge" style="color: var(--secondary);">...</span>
+        </div>
+      </div>
+
+      <nav>
+        <button class="nav-btn active" onclick="switchTab('notes-tab', this)">
+          <span>📝</span> Notes Board
+        </button>
+        <button class="nav-btn" onclick="switchTab('files-tab', this)">
+          <span>📁</span> Partage de Fichiers
+        </button>
+        <button class="nav-btn" onclick="switchTab('print-tab', this)">
+          <span>🖨️</span> Impression Émulée
+        </button>
+        <button class="nav-btn" onclick="switchTab('settings-tab', this)">
+          <span>⚙️</span> Config / Pairs
+        </button>
+      </nav>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main>
+
+      <!-- TAB 1: NOTES -->
+      <div id="notes-tab" class="tab-content active">
+        <div class="header-panel">
+          <h2>Notes Board</h2>
+          <button class="btn btn-secondary" onclick="loadNotes()">🔄 Actualiser</button>
+        </div>
+
+        <div class="grid-2">
+          <!-- Create Note -->
+          <div class="card">
+            <div class="card-title">Ajouter une Note</div>
+            <form id="note-form" onsubmit="createNote(event)">
+              <div class="form-group">
+                <label for="note-author">Votre Nom / Auteur</label>
+                <input type="text" id="note-author" placeholder="Ex: Client 1" required>
+              </div>
+              <div class="form-group">
+                <label for="note-content">Contenu de la Note</label>
+                <textarea id="note-content" rows="4" placeholder="Tapez du texte à synchroniser..." required></textarea>
+              </div>
+              <button type="submit" class="btn">Propager la note 🚀</button>
+            </form>
+          </div>
+
+          <!-- Note Stats / Info -->
+          <div class="card">
+            <div class="card-title">Synchronisation de Données</div>
+            <p style="color: var(--text-muted); line-height: 1.6; margin-bottom: 1rem;">
+              Chaque note créée est encapsulée dans une transaction immuable de log, horodatée et signée à l'aide d'une <strong>Horloge Vectorielle (Vector Clock)</strong>.
+            </p>
+            <p style="color: var(--text-muted); line-height: 1.6;">
+              Morpheo synchronise ces logs en arrière-plan. Si des modifications concurrentes se produisent sur le même objet, l'algorithme de résolution applique la règle <em>LWW (Last Write Wins)</em>.
+            </p>
+          </div>
+        </div>
+
+        <!-- Notes grid -->
+        <div class="card">
+          <div class="card-title">Notes Synchronisées <span id="notes-count" style="font-size: 0.9rem; color: var(--text-muted);">0</span></div>
+          <div class="notes-grid" id="notes-container">
+            <!-- Dynamic notes -->
+          </div>
+        </div>
+      </div>
+
+
+      <!-- TAB 2: FILES -->
+      <div id="files-tab" class="tab-content">
+        <div class="header-panel">
+          <h2>Partage de Fichiers P2P</h2>
+          <button class="btn btn-secondary" onclick="loadFiles()">🔄 Actualiser</button>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Transférer un Fichier</div>
+          <p style="color: var(--text-muted); margin-bottom: 1rem;">
+            Sélectionnez un fichier pour le stocker localement dans le <code>IMorpheoBlobStore</code> de ce nœud. Morpheo diffusera les métadonnées (ID de Blob, Nom, Taille) à tous les pairs.
+          </p>
+          <div class="upload-zone" onclick="document.getElementById('file-input').click()" id="drop-zone">
+            <span class="upload-icon">📤</span>
+            <p>Glissez-déposez un fichier ici ou <strong>cliquez pour parcourir</strong></p>
+            <input type="file" id="file-input" style="display: none;" onchange="uploadFile(this.files[0])">
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Fichiers Disponibles sur le Réseau</div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Nom du Fichier</th>
+                  <th>Taille</th>
+                  <th>Uploadeur Original</th>
+                  <th>Date de publication</th>
+                  <th>Disponibilité</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="files-table-body">
+                <!-- Dynamic files -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- TAB 3: PRINTING -->
+      <div id="print-tab" class="tab-content">
+        <div class="header-panel">
+          <h2>Impression Émulée</h2>
+          <button class="btn btn-secondary" onclick="loadPrintJobs()">🔄 Actualiser</button>
+        </div>
+
+        <div class="print-grid">
+          <!-- Left side: Send print job & local printers -->
+          <div>
+            <div class="card">
+              <div class="card-title">Envoyer un Ordre d'Impression</div>
+              <form id="print-form" onsubmit="sendPrintJob(event)">
+                <div class="form-group">
+                  <label for="print-peer">Sélectionner un Nœud Récepteur</label>
+                  <select id="print-peer" required>
+                    <option value="">-- Choisir un Nœud --</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="print-printer">Nom de l'Imprimante</label>
+                  <input type="text" id="print-printer" value="Virtual-Zebra-01" placeholder="Ex: Virtual-Zebra-01" required>
+                </div>
+                <div class="form-group">
+                  <label for="print-content">Contenu du ticket (Texte ou ZPL)</label>
+                  <textarea id="print-content" rows="6" placeholder="Contenu brut à imprimer..." required>^XA^FO50,50^ADN,36,20^FDHello from Morpheo^FS^XZ</textarea>
+                </div>
+                <button type="submit" class="btn">Envoyer le Job d'Impression 🖨️</button>
+              </form>
+            </div>
+
+            <div class="card">
+              <div class="card-title">Imprimantes Émulées Locales</div>
+              <ul style="list-style: none; padding-left: 0.5rem; color: var(--text-muted); line-height: 1.8;">
+                <li>🖨️ <strong>Virtual-Zebra-01</strong> (Imprimante Étiquettes)</li>
+                <li>🖨️ <strong>Virtual-Receipt-02</strong> (Imprimante Ticket Caisse)</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Right side: Printed queue history -->
+          <div class="card">
+            <div class="card-title">Historique des Impressions reçues par ce nœud</div>
+            <div class="print-log" id="print-jobs-container">
+              <!-- Dynamic jobs -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- TAB 4: SETTINGS / PEERS -->
+      <div id="settings-tab" class="tab-content">
+        <div class="header-panel">
+          <h2>Config & Topologie du Réseau</h2>
+        </div>
+
+        <div class="grid-2">
+          <!-- Configuration -->
+          <div class="card">
+            <div class="card-title">Configuration Dynamique du Nœud</div>
+            <form id="config-form" onsubmit="saveConfig(event)">
+              <div class="form-group">
+                <label for="conf-name">Nom du Nœud</label>
+                <input type="text" id="conf-name" required>
+              </div>
+              <div class="form-group">
+                <label for="conf-port">Port de Découverte Morpheo</label>
+                <input type="number" id="conf-port" required>
+              </div>
+              <div class="form-group">
+                <label for="conf-db">Type de Base de Données</label>
+                <select id="conf-db" required>
+                  <option value="Sqlite">SQLite</option>
+                  <option value="Postgres">PostgreSQL</option>
+                  <option value="SqlServer">Microsoft SQL Server</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="conf-conn">Chaîne de connexion DB</label>
+                <input type="text" id="conf-conn">
+              </div>
+              <div class="form-group">
+                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                  <input type="checkbox" id="conf-mesh" style="width: auto;"> Activer la découverte locale P2P Mesh (UDP)
+                </label>
+              </div>
+              <div class="form-group">
+                <label for="conf-url">URL du Serveur Central (Optionnelle)</label>
+                <input type="text" id="conf-url" placeholder="http://server:5000">
+              </div>
+              <button type="submit" class="btn">Sauvegarder & Redémarrer ⚙️</button>
+            </form>
+          </div>
+
+          <!-- Discovered Peers -->
+          <div class="card">
+            <div class="card-title">Pairs Découverts sur le LAN <button class="btn btn-secondary" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;" onclick="loadPeers()">🔄</button></div>
+            <div class="peers-list" id="peers-container">
+              <!-- Dynamic peers -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="notif-toast">
+    <span id="notif-icon">🔔</span>
+    <span id="notif-text">Notification...</span>
+  </div>
+
+  <script>
+    // Tab switching
+    function switchTab(tabId, btn) {
+      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      
+      document.getElementById(tabId).classList.add('active');
+      btn.classList.add('active');
+
+      if (tabId === 'notes-tab') loadNotes();
+      if (tabId === 'files-tab') loadFiles();
+      if (tabId === 'print-tab') {
+        loadPrintJobs();
+        loadPeers();
+      }
+      if (tabId === 'settings-tab') {
+        loadConfig();
+        loadPeers();
+      }
+    }
+
+    // Helper: Toast notification
+    function notify(text, icon = '🔔') {
+      const toast = document.getElementById('notif-toast');
+      document.getElementById('notif-icon').innerText = icon;
+      document.getElementById('notif-text').innerText = text;
+      toast.style.display = 'flex';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 4000);
+    }
+
+    // Load Node status
+    async function loadStatus() {
+      try {
+        const res = await fetch('/api/status');
+        const data = await res.json();
+        document.getElementById('node-name-badge').innerText = data.nodeName;
+        document.getElementById('node-mode-badge').innerText = data.mode.toUpperCase();
+      } catch (err) {
+        console.error("Erreur de chargement du statut", err);
+      }
+    }
+
+    // Load Notes
+    async function loadNotes() {
+      try {
+        const res = await fetch('/api/notes');
+        const notes = await res.json();
+        
+        document.getElementById('notes-count').innerText = notes.length;
+        const container = document.getElementById('notes-container');
+        container.innerHTML = '';
+
+        if (notes.length === 0) {
+          container.innerHTML = '<p style="grid-column: 1/-1; color: var(--text-muted); text-align: center; padding: 2rem 0;">Aucune note synchronisée. Écrivez la première note à gauche !</p>';
+          return;
+        }
+
+        notes.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).forEach(note => {
+          const date = new Date(note.createdAt).toLocaleTimeString();
+          const card = document.createElement('div');
+          card.className = 'note-card';
+          card.innerHTML = `
+            <div class="note-content">${escapeHtml(note.content)}</div>
+            <div class="note-footer">
+              <div>Auteur: <span class="note-author">${escapeHtml(note.author)}</span></div>
+              <div>${date}</div>
+              <button class="delete-btn" onclick="deleteNote('${note.id}')">Supprimer</button>
+            </div>
+          `;
+          container.appendChild(card);
+        });
+      } catch (err) {
+        notify("Erreur lors de la récupération des notes", '❌');
+      }
+    }
+
+    // Create Note
+    async function createNote(e) {
+      e.preventDefault();
+      const author = document.getElementById('note-author').value;
+      const content = document.getElementById('note-content').value;
+
+      try {
+        const res = await fetch('/api/notes', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ author, content, createdAt: new Date() })
+        });
+        if (res.ok) {
+          document.getElementById('note-content').value = '';
+          notify("Note publiée et diffusée !", '🚀');
+          loadNotes();
+        }
+      } catch (err) {
+        notify("Échec de l'envoi de la note", '❌');
+      }
+    }
+
+    // Delete Note
+    async function deleteNote(id) {
+      try {
+        const res = await fetch(`/api/notes/${id}`, { method: 'DELETE' });
+        if (res.ok) {
+          notify("Ordre de suppression diffusé", '🗑️');
+          loadNotes();
+        }
+      } catch (err) {
+        notify("Échec de la suppression", '❌');
+      }
+    }
+
+    // Load Files
+    async function loadFiles() {
+      try {
+        const res = await fetch('/api/files');
+        const files = await res.json();
+        const tbody = document.getElementById('files-table-body');
+        tbody.innerHTML = '';
+
+        if (files.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 2rem;">Aucun fichier partagé sur le réseau.</td></tr>';
+          return;
+        }
+
+        files.forEach(file => {
+          const sizeKb = (file.sizeBytes / 1024).toFixed(1);
+          const date = new Date(file.uploadedAt).toLocaleString();
+          
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td style="font-weight: 600;">📁 ${escapeHtml(file.fileName)}</td>
+            <td>${sizeKb} KB</td>
+            <td>${escapeHtml(file.uploader)}</td>
+            <td>${date}</td>
+            <td><span class="file-status status-cached">Disponible</span></td>
+            <td>
+              <a href="/api/files/download/${file.blobId}" target="_blank" class="btn" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">
+                📥 Télécharger
+              </a>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        notify("Échec du chargement des fichiers", '❌');
+      }
+    }
+
+    // Upload File
+    async function uploadFile(file) {
+      if (!file) return;
+      const uploader = document.getElementById('node-name-badge').innerText;
+
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('uploader', uploader);
+
+      notify("Envoi du fichier en cours...", '⏳');
+
+      try {
+        const res = await fetch('/api/files/upload', {
+          method: 'POST',
+          body: formData
+        });
+        if (res.ok) {
+          notify("Fichier importé et synchronisé !", '✅');
+          loadFiles();
+        } else {
+          notify("Échec de l'upload", '❌');
+        }
+      } catch (err) {
+        notify("Échec de connexion avec le serveur", '❌');
+      }
+    }
+
+    // Load Peers
+    async function loadPeers() {
+      try {
+        const res = await fetch('/api/peers');
+        const peers = await res.json();
+        const container = document.getElementById('peers-container');
+        const select = document.getElementById('print-peer');
+        
+        container.innerHTML = '';
+        // Keep initial option
+        select.innerHTML = '<option value="">-- Choisir un Nœud --</option>';
+
+        if (peers.length === 0) {
+          container.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 1rem 0;">Aucun pair découvert sur le réseau local.</p>';
+          return;
+        }
+
+        peers.forEach(peer => {
+          // Add to system config list
+          const card = document.createElement('div');
+          card.className = 'peer-card';
+          card.innerHTML = `
+            <div>
+              <div class="peer-name">🟢 ${escapeHtml(peer.name)}</div>
+              <div class="peer-meta">Adresse: ${peer.ipAddress}:${peer.port}</div>
+            </div>
+            <div>
+              ${peer.tags.map(tag => `<span class="peer-cap">${escapeHtml(tag)}</span>`).join('')}
+            </div>
+          `;
+          container.appendChild(card);
+
+          // Add to printing targets list
+          const opt = document.createElement('option');
+          opt.value = JSON.stringify(peer);
+          opt.innerText = `${peer.name} (${peer.ipAddress}:${peer.port})`;
+          select.appendChild(opt);
+        });
+      } catch (err) {
+        console.error("Échec de récupération des pairs", err);
+      }
+    }
+
+    // Load Print Jobs
+    async function loadPrintJobs() {
+      try {
+        const res = await fetch('/api/print/jobs');
+        const jobs = await res.json();
+        const container = document.getElementById('print-jobs-container');
+        container.innerHTML = '';
+
+        if (jobs.length === 0) {
+          container.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 3rem 0;">Aucun job d\'impression reçu par ce nœud.</p>';
+          return;
+        }
+
+        jobs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).forEach(job => {
+          const date = new Date(job.timestamp).toLocaleTimeString();
+          const card = document.createElement('div');
+          card.className = 'print-job-card';
+          card.innerHTML = `
+            <div class="job-header">
+              <span>Émetteur: <strong>${escapeHtml(job.sender)}</strong></span>
+              <span>Reçu à: ${date}</span>
+            </div>
+            <div>Imprimante : <span class="job-printer">${escapeHtml(job.printerName)}</span></div>
+            <pre class="job-content">${escapeHtml(job.content)}</pre>
+          `;
+          container.appendChild(card);
+        });
+      } catch (err) {
+        notify("Échec de récupération de la file d'impression", '❌');
+      }
+    }
+
+    // Send Print Job
+    async function sendPrintJob(e) {
+      e.preventDefault();
+      const peerJson = document.getElementById('print-peer').value;
+      if (!peerJson) {
+        notify("Veuillez sélectionner un nœud cible", '⚠️');
+        return;
+      }
+
+      const peer = JSON.parse(peerJson);
+      const printerName = document.getElementById('print-printer').value;
+      const content = document.getElementById('print-content').value;
+      const sender = document.getElementById('node-name-badge').innerText;
+
+      try {
+        const res = await fetch('/api/print/send', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            peerId: peer.id,
+            peerName: peer.name,
+            peerIp: peer.ipAddress,
+            peerPort: peer.port,
+            printerName,
+            content,
+            sender
+          })
+        });
+
+        if (res.ok) {
+          notify(`Ordre d'impression envoyé à ${peer.name} !`, '✅');
+        } else {
+          notify("Échec de l'envoi d'impression", '❌');
+        }
+      } catch (err) {
+        notify("Erreur lors de l'appel d'impression", '❌');
+      }
+    }
+
+    // Load Config Form
+    async function loadConfig() {
+      try {
+        const res = await fetch('/dashboard/api/sys/config');
+        if (!res.ok) return;
+        const config = await res.json();
+        
+        document.getElementById('conf-name').value = config.nodeName;
+        document.getElementById('conf-port').value = config.httpPort;
+        document.getElementById('conf-db').value = config.databaseType;
+        document.getElementById('conf-conn').value = config.connectionString;
+        document.getElementById('conf-mesh').checked = config.enableMesh;
+        document.getElementById('conf-url').value = config.centralServerUrl || '';
+      } catch (err) {
+        notify("Échec du chargement des paramètres", '❌');
+      }
+    }
+
+    // Save Config
+    async function saveConfig(e) {
+      e.preventDefault();
+      const nodeName = document.getElementById('conf-name').value;
+      const httpPort = parseInt(document.getElementById('conf-port').value);
+      const databaseType = document.getElementById('conf-db').value;
+      const connectionString = document.getElementById('conf-conn').value;
+      const enableMesh = document.getElementById('conf-mesh').checked;
+      const centralServerUrl = document.getElementById('conf-url').value || null;
+
+      try {
+        // 1. Save Config
+        const resSave = await fetch('/dashboard/api/sys/config', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nodeName, httpPort, databaseType, connectionString, enableMesh, centralServerUrl })
+        });
+
+        if (resSave.ok) {
+          notify("Configuration enregistrée ! Redémarrage...", '⚙️');
+          
+          // 2. Trigger Restart
+          setTimeout(async () => {
+            await fetch('/dashboard/api/sys/restart', { method: 'POST' });
+            // Refresh loop to wait for reboot
+            let checking = setInterval(async () => {
+              try {
+                const check = await fetch('/api/status');
+                if (check.ok) {
+                  clearInterval(checking);
+                  notify("Le nœud a redémarré avec succès !", '🟢');
+                  loadStatus();
+                  loadConfig();
+                }
+              } catch {}
+            }, 2000);
+          }, 1000);
+        }
+      } catch (err) {
+        notify("Erreur de sauvegarde", '❌');
+      }
+    }
+
+    // Utility: Escape HTML
+    function escapeHtml(text) {
+      if (!text) return '';
+      return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    // Drag and Drop Upload Setup
+    const dropZone = document.getElementById('drop-zone');
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.style.borderColor = 'var(--primary)';
+    });
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.style.borderColor = 'var(--glass-border)';
+    });
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.style.borderColor = 'var(--glass-border)';
+      if (e.dataTransfer.files.length > 0) {
+        uploadFile(e.dataTransfer.files[0]);
+      }
+    });
+
+    // Boot
+    loadStatus();
+    loadNotes();
+  </script>
+</body>
+</html>

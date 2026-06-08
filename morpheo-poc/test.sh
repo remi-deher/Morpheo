@@ -9,19 +9,22 @@
 COMMAND=$1
 ARG1=$2
 ARG2=$3
+ARG3=$4
 
 show_help() {
   echo "Morpheo CLI Testing Utility"
   echo "Usage:"
   echo "  ./test.sh add <node> \"Todo Title\"       - Add a todo on node (1, 2, 3 or server)"
-  echo "  ./test.sh list <node>                     - List todos on node (1, 2, 3 or server)"
+  echo "  ./test.sh list <node>                     - List todos on node"
+  echo "  ./test.sh add-note <node> \"Author\" \"Msg\" - Post a note on the shared board"
+  echo "  ./test.sh list-notes <node>               - List all notes on the shared board"
   echo "  ./test.sh delete <node> <todo_id>         - Delete a todo on node"
   echo "  ./test.sh status                          - Show status of all nodes"
   echo ""
   echo "Examples:"
   echo "  ./test.sh add 1 \"Complete presentation\""
-  echo "  ./test.sh list 2"
-  echo "  ./test.sh status"
+  echo "  ./test.sh add-note 2 \"Alice\" \"Hello mesh!\""
+  echo "  ./test.sh list-notes 3"
 }
 
 get_port() {
@@ -64,6 +67,34 @@ case "$COMMAND" in
     fi
     echo "Todos on node $ARG1 (port $PORT):"
     curl -s "http://localhost:$PORT/api/todos"
+    echo ""
+    echo ""
+    ;;
+
+  add-note)
+    PORT=$(get_port "$ARG1")
+    if [ -z "$PORT" ]; then
+      echo "Error: Invalid node name. Use 1, 2, 3, or server."
+      exit 1
+    fi
+    if [ -z "$ARG2" ] || [ -z "$ARG3" ]; then
+      echo "Error: Author and Content are required. Example: ./test.sh add-note 1 \"Alice\" \"Hello!\""
+      exit 1
+    fi
+    JSON="{\"author\":\"$ARG2\",\"content\":\"$ARG3\",\"createdAt\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"}"
+    echo "Adding Note on node $ARG1 (port $PORT) from author '$ARG2'..."
+    curl -X POST -H "Content-Type: application/json" -d "$JSON" "http://localhost:$PORT/api/notes"
+    echo ""
+    ;;
+
+  list-notes)
+    PORT=$(get_port "$ARG1")
+    if [ -z "$PORT" ]; then
+      echo "Error: Invalid node name. Use 1, 2, 3, or server."
+      exit 1
+    fi
+    echo "Notes on node $ARG1 (port $PORT):"
+    curl -s "http://localhost:$PORT/api/notes"
     echo ""
     echo ""
     ;;

@@ -12,4 +12,10 @@
     <ProjectReference Include="..\..\Morpheo.Sdk\Morpheo.Sdk.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="index.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
