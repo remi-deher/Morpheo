@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -406,8 +406,22 @@ public class DataSyncService
                 VectorClockJson = JsonSerializer.Serialize(remoteDto.VectorClock)
             };
 
-            db.SyncLogs.Add(newLog);
-            await db.SaveChangesAsync();
+            try
+            {
+                db.SyncLogs.Add(newLog);
+                await db.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
+            {
+                using var checkScope = _serviceProvider.CreateScope();
+                var checkDb = checkScope.ServiceProvider.GetRequiredService<MorpheoDbContext>();
+                if (await checkDb.SyncLogs.AnyAsync(l => l.Id == remoteDto.Id))
+                {
+                    _logger.LogDebug("Duplicate log {LogId} insertion prevented by database constraint.", remoteDto.Id);
+                    return null;
+                }
+                throw;
+            }
 
             _metrics?.RecordApplied();
             DataReceived?.Invoke(this, newLog);

@@ -124,6 +124,24 @@ app.MapGet("/", async () =>
     return Results.NotFound("Dashboard index.html not found.");
 });
 
+// System Config API on port 80 for the Web UI
+app.MapGet("/dashboard/api/sys/config", (MorpheoConfigManager manager) =>
+{
+    return Results.Ok(manager.Load());
+});
+
+app.MapPost("/dashboard/api/sys/config", ([FromBody] RuntimeConfig config, MorpheoConfigManager manager) =>
+{
+    manager.Save(config);
+    return Results.Ok();
+});
+
+app.MapPost("/dashboard/api/sys/restart", (Microsoft.Extensions.Hosting.IHostApplicationLifetime lifetime) =>
+{
+    lifetime.StopApplication();
+    return Results.Ok("Stopping application...");
+});
+
 // Notes CRUD
 app.MapGet("/api/notes", async (MorpheoDbContext db) =>
 {

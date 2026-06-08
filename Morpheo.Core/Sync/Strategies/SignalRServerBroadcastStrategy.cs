@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.SignalR;
+using Microsoft.AspNetCore.SignalR;
 using Morpheo.Core.SignalR;
 using Morpheo.Sdk;
 
@@ -24,7 +24,8 @@ public class SignalRServerBroadcastStrategy : ISyncStrategyProvider
     {
         // Broadcast to all connected SignalR clients (server-side announcement)
         // This complements the sendFunc which routes to specific P2P/HTTP peers
-        await _hubContext.Clients.All.SendAsync("ReceiveLog", log);
+        var hubContext = SignalRHubContextLocator.HubContext ?? _hubContext;
+        await hubContext.Clients.All.SendAsync("ReceiveLog", log);
 
         // Additionally, propagate to explicitly targeted peers via the routing strategy
         var peersArray = candidates.ToArray();
@@ -34,4 +35,12 @@ public class SignalRServerBroadcastStrategy : ISyncStrategyProvider
             await Task.WhenAll(tasks);
         }
     }
+}
+
+/// <summary>
+/// Service locator to bridge parent DI container and child DI container for SignalR server hub context.
+/// </summary>
+public static class SignalRHubContextLocator
+{
+    public static IHubContext<MorpheoSyncHub>? HubContext { get; set; }
 }

@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting; // Added for ConfigureKestrel
 using Microsoft.AspNetCore.Http;
@@ -74,6 +74,10 @@ public class MorpheoWebServer : IMorpheoServer
 
         _app = builder.Build();
 
+        // Register the active HubContext to bridge parent and child DI containers
+        Morpheo.Core.Sync.Strategies.SignalRHubContextLocator.HubContext = 
+            _app.Services.GetService<Microsoft.AspNetCore.SignalR.IHubContext<Morpheo.Core.SignalR.MorpheoSyncHub>>();
+
         // Decompression must run BEFORE authentication so the HMAC is verified against
         // the decompressed body — the same bytes the client signed.
         _app.UseRequestDecompression();
@@ -82,8 +86,9 @@ public class MorpheoWebServer : IMorpheoServer
         // Morpheo Authentication Middleware
         _app.Use(async (context, next) =>
         {
-            // Health probes must stay reachable without a signature (orchestrators can't sign).
-            if (context.Request.Path.StartsWithSegments("/health"))
+            // Health probes and SignalR Hub must stay reachable without a signature
+            // (SignalR Hub upgrade requests cannot be signed dynamically due to dynamic query parameters).
+            if (context.Request.Path.StartsWithSegments("/health") || context.Request.Path.StartsWithSegments("/morpheo/hub"))
             {
                 await next();
                 return;
