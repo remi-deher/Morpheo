@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+
+  <head>
+    <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <title>Class MorpheoMetrics | Morpheo Framework </title>
+      <meta name="viewport" content="width=device-width">
+      <meta name="title" content="Class MorpheoMetrics | Morpheo Framework ">
+    
+    <meta name="description" content="Centralised metric instruments for a Morpheo node, built on the BCL  API. Any OpenTelemetry exporter (or dotnet-counters) can subscribe to the meter named  without Morpheo taking a dependency on the OpenTelemetry SDK.  To export with OpenTelemetry, the host app simply does: services.AddOpenTelemetry().WithMetrics(m =&amp;gt; m.AddMeter(MorpheoMetrics.MeterName));">
+      <link rel="shortcut icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
+      <link rel="stylesheet" href="../styles/docfx.css">
+      <link rel="stylesheet" href="../styles/main.css">
+      <meta property="docfx:navrel" content="../toc.html">
+      <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="../">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+
+        <div id="search-results">
+          <div class="search-list">Search Results for <span></span></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination" data-first=First data-prev=Previous data-next=Next data-last=Last></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Morpheo.Core.Diagnostics.MorpheoMetrics">
+
+
+
+  <h1 id="Morpheo_Core_Diagnostics_MorpheoMetrics" data-uid="Morpheo.Core.Diagnostics.MorpheoMetrics" class="text-break">Class MorpheoMetrics</h1>
+  <div class="markdown level0 summary"><p>Centralised metric instruments for a Morpheo node, built on the BCL
+<a class="xref" href="https://learn.microsoft.com/dotnet/api/system">System.Diagnostics.Metrics</a> API. Any OpenTelemetry exporter (or
+<code>dotnet-counters</code>) can subscribe to the meter named <a class="xref" href="Morpheo.Core.Diagnostics.MorpheoMetrics.html#Morpheo_Core_Diagnostics_MorpheoMetrics_MeterName">MeterName</a>
+without Morpheo taking a dependency on the OpenTelemetry SDK.</p>
+<p>
+To export with OpenTelemetry, the host app simply does:
+<pre><code class="lang-csharp">services.AddOpenTelemetry().WithMetrics(m =&gt; m.AddMeter(MorpheoMetrics.MeterName));</code></pre>
+
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+    <div class="level1"><span class="xref">MorpheoMetrics</span></div>
+  </div>
+  <div class="implements">
+    <h5>Implements</h5>
+    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Morpheo.html">Morpheo</a>.<a class="xref" href="Morpheo.Core.html">Core</a>.<a class="xref" href="Morpheo.Core.Diagnostics.html">Diagnostics</a></h6>
+  <h6><strong>Assembly</strong>: Morpheo.Core.dll</h6>
+  <h5 id="Morpheo_Core_Diagnostics_MorpheoMetrics_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public sealed class MorpheoMetrics : IDisposable</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/remi-deher/Morpheo/new/main/apiSpec/new?filename=Morpheo_Core_Diagnostics_MorpheoMetrics__ctor.md&amp;value=---%0Auid%3A%20Morpheo.Core.Diagnostics.MorpheoMetrics.%23ctor%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/remi-deher/Morpheo/blob/main/Morpheo.Core/Diagnostics/MorpheoMetrics.cs/#L34">View Source</a>
+  </span>
+  <a id="Morpheo_Core_Diagnostics_MorpheoMetrics__ctor_" data-uid="Morpheo.Core.Diagnostics.MorpheoMetrics.#ctor*"></a>
+  <h4 id="Morpheo_Core_Diagnostics_MorpheoMetrics__ctor" data-uid="Morpheo.Core.Diagnostics.MorpheoMetrics.#ctor">MorpheoMetrics()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public MorpheoMetrics()</code></pre>
+  </div>
+  <h3 id="fields">Fields
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/remi-deher/Morpheo/new/main/apiSpec/new?filename=Morpheo_Core_Diagnostics_MorpheoMetrics_MeterName.md&amp;value=---%0Auid%3A%20Morpheo.Core.Diagnostics.MorpheoMetrics.MeterName%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/remi-deher/Morpheo/blob/main/Morpheo.Core/Diagnostics/MorpheoMetrics.cs/#L21">View Source</a>
+  </span>
+  <h4 id="Morpheo_Core_Diagnostics_MorpheoMetrics_MeterName" data-uid="Morpheo.Core.Diagnostics.MorpheoMetrics.MeterName">MeterName</h4>
+  <div class="markdown level1 summary"><p>The meter name to subscribe to from an OpenTelemetry pipeline.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const string MeterName = &quot;Morpheo&quot;</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/remi-deher/Morpheo/new/main/apiSpec/new?filename=Morpheo_Core_Diagnostics_MorpheoMetrics_Dispose.md&amp;value=---%0Auid%3A%20Morpheo.Core.Diagnostics.MorpheoMetrics.Dispose%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/remi-deher/Morpheo/blob/main/Morpheo.Core/Diagnostics/MorpheoMetrics.cs/#L60">View Source</a>
+  </span>
+  <a id="Morpheo_Core_Diagnostics_MorpheoMetrics_Dispose_" data-uid="Morpheo.Core.Diagnostics.MorpheoMetrics.Dispose*"></a>
+  <h4 id="Morpheo_Core_Diagnostics_MorpheoMetrics_Dispose" data-uid="Morpheo.Core.Diagnostics.MorpheoMetrics.Dispose">Dispose()</h4>
+  <div class="markdown level1 summary"><p>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Dispose()</code></pre>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/remi-deher/Morpheo/new/main/apiSpec/new?filename=Morpheo_Core_Diagnostics_MorpheoMetrics_RecordApplied.md&amp;value=---%0Auid%3A%20Morpheo.Core.Diagnostics.MorpheoMetrics.RecordApplied%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/remi-deher/Morpheo/blob/main/Morpheo.Core/Diagnostics/MorpheoMetrics.cs/#L50">View Source</a>
+  </span>
+  <a id="Morpheo_Core_Diagnostics_MorpheoMetrics_RecordApplied_" data-uid="Morpheo.Core.Diagnostics.MorpheoMetrics.RecordApplied*"></a>
+  <h4 id="Morpheo_Core_Diagnostics_MorpheoMetrics_RecordApplied" data-uid="Morpheo.Core.Diagnostics.MorpheoMetrics.RecordApplied">RecordApplied()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void RecordApplied()</code></pre>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/remi-deher/Morpheo/new/main/apiSpec/new?filename=Morpheo_Core_Diagnostics_MorpheoMetrics_RecordBroadcast.md&amp;value=---%0Auid%3A%20Morpheo.Core.Diagnostics.MorpheoMetrics.RecordBroadcast%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/remi-deher/Morpheo/blob/main/Morpheo.Core/Diagnostics/MorpheoMetrics.cs/#L48">View Source</a>
+  </span>
+  <a id="Morpheo_Core_Diagnostics_MorpheoMetrics_RecordBroadcast_" data-uid="Morpheo.Core.Diagnostics.MorpheoMetrics.RecordBroadcast*"></a>
+  <h4 id="Morpheo_Core_Diagnostics_MorpheoMetrics_RecordBroadcast" data-uid="Morpheo.Core.Diagnostics.MorpheoMetrics.RecordBroadcast">RecordBroadcast()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void RecordBroadcast()</code></pre>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/remi-deher/Morpheo/new/main/apiSpec/new?filename=Morpheo_Core_Diagnostics_MorpheoMetrics_RecordColdSync_System_Int32_System_Double_.md&amp;value=---%0Auid%3A%20Morpheo.Core.Diagnostics.MorpheoMetrics.RecordColdSync(System.Int32%2CSystem.Double)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/remi-deher/Morpheo/blob/main/Morpheo.Core/Diagnostics/MorpheoMetrics.cs/#L52">View Source</a>
+  </span>
+  <a id="Morpheo_Core_Diagnostics_MorpheoMetrics_RecordColdSync_" data-uid="Morpheo.Core.Diagnostics.MorpheoMetrics.RecordColdSync*"></a>
+  <h4 id="Morpheo_Core_Diagnostics_MorpheoMetrics_RecordColdSync_System_Int32_System_Double_" data-uid="Morpheo.Core.Diagnostics.MorpheoMetrics.RecordColdSync(System.Int32,System.Double)">RecordColdSync(int, double)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void RecordColdSync(int logCount, double durationMs)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><span class="parametername">logCount</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></td>
+        <td><span class="parametername">durationMs</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/remi-deher/Morpheo/new/main/apiSpec/new?filename=Morpheo_Core_Diagnostics_MorpheoMetrics_RecordConflictResolved.md&amp;value=---%0Auid%3A%20Morpheo.Core.Diagnostics.MorpheoMetrics.RecordConflictResolved%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/remi-deher/Morpheo/blob/main/Morpheo.Core/Diagnostics/MorpheoMetrics.cs/#L51">View Source</a>
+  </span>
+  <a id="Morpheo_Core_Diagnostics_MorpheoMetrics_RecordConflictResolved_" data-uid="Morpheo.Core.Diagnostics.MorpheoMetrics.RecordConflictResolved*"></a>
+  <h4 id="Morpheo_Core_Diagnostics_MorpheoMetrics_RecordConflictResolved" data-uid="Morpheo.Core.Diagnostics.MorpheoMetrics.RecordConflictResolved">RecordConflictResolved()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void RecordConflictResolved()</code></pre>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/remi-deher/Morpheo/new/main/apiSpec/new?filename=Morpheo_Core_Diagnostics_MorpheoMetrics_RecordReceived.md&amp;value=---%0Auid%3A%20Morpheo.Core.Diagnostics.MorpheoMetrics.RecordReceived%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/remi-deher/Morpheo/blob/main/Morpheo.Core/Diagnostics/MorpheoMetrics.cs/#L49">View Source</a>
+  </span>
+  <a id="Morpheo_Core_Diagnostics_MorpheoMetrics_RecordReceived_" data-uid="Morpheo.Core.Diagnostics.MorpheoMetrics.RecordReceived*"></a>
+  <h4 id="Morpheo_Core_Diagnostics_MorpheoMetrics_RecordReceived" data-uid="Morpheo.Core.Diagnostics.MorpheoMetrics.RecordReceived">RecordReceived()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void RecordReceived()</code></pre>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/remi-deher/Morpheo/new/main/apiSpec/new?filename=Morpheo_Core_Diagnostics_MorpheoMetrics_SetPeerCount_System_Int64_.md&amp;value=---%0Auid%3A%20Morpheo.Core.Diagnostics.MorpheoMetrics.SetPeerCount(System.Int64)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/remi-deher/Morpheo/blob/main/Morpheo.Core/Diagnostics/MorpheoMetrics.cs/#L58">View Source</a>
+  </span>
+  <a id="Morpheo_Core_Diagnostics_MorpheoMetrics_SetPeerCount_" data-uid="Morpheo.Core.Diagnostics.MorpheoMetrics.SetPeerCount*"></a>
+  <h4 id="Morpheo_Core_Diagnostics_MorpheoMetrics_SetPeerCount_System_Int64_" data-uid="Morpheo.Core.Diagnostics.MorpheoMetrics.SetPeerCount(System.Int64)">SetPeerCount(long)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetPeerCount(long count)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></td>
+        <td><span class="parametername">count</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a>
+  </div>
+
+</article>
+          </div>
+
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/remi-deher/Morpheo/new/main/apiSpec/new?filename=Morpheo_Core_Diagnostics_MorpheoMetrics.md&amp;value=---%0Auid%3A%20Morpheo.Core.Diagnostics.MorpheoMetrics%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Edit this page</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/remi-deher/Morpheo/blob/main/Morpheo.Core/Diagnostics/MorpheoMetrics.cs/#L18" class="contribution-link">View Source</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In this article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+      Copyright © 2025 DEHER Rémi - Propulsé par .NET 10
+      
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script type="text/javascript" src="../styles/docfx.vendor.min.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>
