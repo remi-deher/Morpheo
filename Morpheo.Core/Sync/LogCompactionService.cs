@@ -48,7 +48,7 @@ public class LogCompactionService : BackgroundService
         using var scope = _serviceProvider.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<MorpheoDbContext>();
 
-        // Calculate threshold date
+        // Calculate threshold date in ticks (SyncLog.Timestamp is stored as DateTime.UtcNow.Ticks)
         var thresholdTick = DateTime.UtcNow.Subtract(_options.LogRetention).Ticks;
 
         // Delete obsolete logs
@@ -58,7 +58,7 @@ public class LogCompactionService : BackgroundService
 
         if (logsDeleted > 0)
         {
-            _logger.LogInformation($"Compaction: {logsDeleted} old logs deleted.");
+            _logger.LogInformation("Compaction: {LogCount} old logs deleted", logsDeleted);
         }
     }
 }

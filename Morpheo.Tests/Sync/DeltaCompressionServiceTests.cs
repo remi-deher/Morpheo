@@ -1,74 +1,227 @@
 using FluentAssertions;
+using System.Text.Json.Nodes;
 using Morpheo.Core.Sync;
 
 namespace Morpheo.Tests.Sync;
 
 public class DeltaCompressionServiceTests
 {
-    private readonly DeltaCompressionService _service;
+    private readonly DeltaCompressionService _service = new();
 
-    public DeltaCompressionServiceTests()
+    // -------------------------------------------------------------------------
+    //  CreatePatch — granularity
+    // -------------------------------------------------------------------------
+
+    [Fact]
+    public void CreatePatch_ShouldReturnEmptyArray_WhenDocumentsAreIdentical()
     {
-        _service = new DeltaCompressionService();
+        var json = "{\"a\": 1, \"b\": \"hello\"}";
+        var patch = _service.CreatePatch(json, json);
+        var ops = JsonNode.Parse(patch)!.AsArray();
+        ops.Should().BeEmpty();
     }
 
     [Fact]
-    public void CreatePatch_ShouldReturnValidPatch_WhenJsonAreDifferent()
+    public void CreatePatch_ShouldProduceReplace_WhenScalarFieldChanges()
     {
-        // Arrange
-        var original = "{\"prop\": \"old\"}";
-        var modified = "{\"prop\": \"new\"}";
+        var original = "{\"name\": \"Alice\", \"age\": 30}";
+        var modified = "{\"name\": \"Alice\", \"age\": 31}";
 
-        // Act
-        var patch = _service.CreatePatch(original, modified);
+        var ops = ParseOps(_service.CreatePatch(original, modified));
 
-        // Assert
-        patch.Should().NotBeNullOrEmpty();
-        // Since we know our strategy is replacement, it should resemble modified, 
-        // but strictly we just want to know if it's a valid patch that ApplyPatch can use.
-        // Let's just check it's not empty.
-        patch.Should().NotBe("null");
+        ops.Should().HaveCount(1);
+        ops[0]["op"]!.GetValue<string>().Should().Be("replace");
+        ops[0]["path"]!.GetValue<string>().Should().Be("/age");
+        ops[0]["value"]!.GetValue<int>().Should().Be(31);
     }
 
     [Fact]
-    public void ApplyPatch_ShouldReconstituteFinalJson()
+    public void CreatePatch_ShouldProduceAdd_WhenFieldIsAdded()
     {
-        // Arrange
-        var original = "{\"id\": 1, \"value\": \"test\"}";
-        var modified = "{\"id\": 1, \"value\": \"updated\"}";
-        var patch = _service.CreatePatch(original, modified);
+        var original = "{\"a\": 1}";
+        var modified = "{\"a\": 1, \"b\": \"new\"}";
 
-        // Act
-        var result = _service.ApplyPatch(original, patch);
+        var ops = ParseOps(_service.CreatePatch(original, modified));
 
-        // Assert
-        // We compare normalized JSON strings or use a JSON parser to compare. 
-        // Simple string compare might fail due to formatting, so we can use FluentAssertions with strict ordering or just parse it?
-        // FluentAssertions has BeEquivalentTo for objects, but for strings we need to be careful.
-        // Given our implementation returns stringified JsonNode, formatting should be standard.
-        // But to be safe, let's just check that it parses to the expected property.
-        
-        result.Should().Contain("\"updated\"");
-        
-        // Better: parse both and compare
-        var resultNode = System.Text.Json.Nodes.JsonNode.Parse(result);
-        var expectedNode = System.Text.Json.Nodes.JsonNode.Parse(modified);
-        
-        // Use ToString equality for simple nodes
-        resultNode!.ToJsonString().Should().Be(expectedNode!.ToJsonString());
+        ops.Should().ContainSingle(o =>
+            o["op"]!.GetValue<string>() == "add" &&
+            o["path"]!.GetValue<string>() == "/b" &&
+            o["value"]!.GetValue<string>() == "new");
+    }
+
+    [Fact]
+    public void CreatePatch_ShouldProduceRemove_WhenFieldIsRemoved()
+    {
+        var original = "{\"a\": 1, \"b\": \"old\"}";
+        var modified = "{\"a\": 1}";
+
+        var ops = ParseOps(_service.CreatePatch(original, modified));
+
+        ops.Should().ContainSingle(o =>
+            o["op"]!.GetValue<string>() == "remove" &&
+            o["path"]!.GetValue<string>() == "/b");
+    }
+
+    [Fact]
+    public void CreatePatch_ShouldNotTouchUnchangedFields()
+    {
+        var original = "{\"x\": 1, \"y\": 2, \"z\": 3}";
+        var modified = "{\"x\": 1, \"y\": 99, \"z\": 3}";
+
+        var ops = ParseOps(_service.CreatePatch(original, modified));
+
+        ops.Should().HaveCount(1);
+        ops[0]["path"]!.GetValue<string>().Should().Be("/y");
+    }
+
+    [Fact]
+    public void CreatePatch_ShouldDiffNestedObjects()
+    {
+        var original = "{\"user\": {\"name\": \"Alice\", \"role\": \"admin\"}}";
+        var modified = "{\"user\": {\"name\": \"Alice\", \"role\": \"viewer\"}}";
+
+        var ops = ParseOps(_service.CreatePatch(original, modified));
+
+        ops.Should().HaveCount(1);
+        ops[0]["op"]!.GetValue<string>().Should().Be("replace");
+        ops[0]["path"]!.GetValue<string>().Should().Be("/user/role");
+        ops[0]["value"]!.GetValue<string>().Should().Be("viewer");
+    }
+
+    [Fact]
+    public void CreatePatch_ShouldHandleArrayElementChange()
+    {
+        var original = "{\"tags\": [\"a\", \"b\", \"c\"]}";
+        var modified = "{\"tags\": [\"a\", \"X\", \"c\"]}";
+
+        var ops = ParseOps(_service.CreatePatch(original, modified));
+
+        ops.Should().ContainSingle(o =>
+            o["op"]!.GetValue<string>() == "replace" &&
+            o["path"]!.GetValue<string>() == "/tags/1");
+    }
+
+    [Fact]
+    public void CreatePatch_ShouldHandleArrayElementAdded()
+    {
+        var original = "{\"items\": [1, 2]}";
+        var modified = "{\"items\": [1, 2, 3]}";
+
+        var ops = ParseOps(_service.CreatePatch(original, modified));
+
+        ops.Should().ContainSingle(o =>
+            o["op"]!.GetValue<string>() == "add" &&
+            o["path"]!.GetValue<string>() == "/items/-");
+    }
+
+    [Fact]
+    public void CreatePatch_ShouldHandleArrayElementRemoved()
+    {
+        var original = "{\"items\": [1, 2, 3]}";
+        var modified = "{\"items\": [1, 2]}";
+
+        var ops = ParseOps(_service.CreatePatch(original, modified));
+
+        ops.Should().ContainSingle(o =>
+            o["op"]!.GetValue<string>() == "remove" &&
+            o["path"]!.GetValue<string>() == "/items/2");
+    }
+
+    [Fact]
+    public void CreatePatch_ShouldEscapeSlashAndTildeInKeys()
+    {
+        // RFC 6901: '/' → '~1', '~' → '~0'
+        var original = "{}";
+        var modified = "{\"a/b\": 1, \"c~d\": 2}";
+
+        var ops = ParseOps(_service.CreatePatch(original, modified));
+
+        ops.Should().Contain(o => o["path"]!.GetValue<string>() == "/a~1b");
+        ops.Should().Contain(o => o["path"]!.GetValue<string>() == "/c~0d");
     }
 
     [Fact]
     public void CreatePatch_ShouldThrowException_WhenJsonIsInvalid()
     {
-        // Arrange
-        var invalidJson = "{ invalid }";
-
-        // Act
-        Action act = () => _service.CreatePatch(invalidJson, "{}");
-
-        // Assert
-        act.Should().Throw<ArgumentException>()
-            .WithMessage("*Invalid JSON*");
+        Action act = () => _service.CreatePatch("{ invalid }", "{}");
+        act.Should().Throw<ArgumentException>().WithMessage("*Invalid JSON*");
     }
+
+    // -------------------------------------------------------------------------
+    //  ApplyPatch — round-trip
+    // -------------------------------------------------------------------------
+
+    [Fact]
+    public void ApplyPatch_ShouldReconstituteFinalJson_AfterRoundTrip()
+    {
+        var original = "{\"id\": 1, \"value\": \"test\", \"count\": 5}";
+        var modified = "{\"id\": 1, \"value\": \"updated\", \"count\": 5}";
+
+        var patch  = _service.CreatePatch(original, modified);
+        var result = _service.ApplyPatch(original, patch);
+
+        JsonNode.DeepEquals(
+            JsonNode.Parse(result),
+            JsonNode.Parse(modified)
+        ).Should().BeTrue();
+    }
+
+    [Fact]
+    public void ApplyPatch_ShouldBeIdentity_WhenPatchIsEmptyArray()
+    {
+        var original = "{\"a\": 1}";
+        var result   = _service.ApplyPatch(original, "[]");
+
+        JsonNode.DeepEquals(
+            JsonNode.Parse(result),
+            JsonNode.Parse(original)
+        ).Should().BeTrue();
+    }
+
+    [Fact]
+    public void ApplyPatch_ShouldHandleAddRemoveReplace_Complex()
+    {
+        var original = "{\"a\": 1, \"b\": 2, \"c\": {\"x\": 10}}";
+        var modified = "{\"a\": 99, \"c\": {\"x\": 10, \"y\": 20}, \"d\": \"new\"}";
+
+        var patch  = _service.CreatePatch(original, modified);
+        var result = _service.ApplyPatch(original, patch);
+
+        JsonNode.DeepEquals(
+            JsonNode.Parse(result),
+            JsonNode.Parse(modified)
+        ).Should().BeTrue();
+    }
+
+    [Fact]
+    public void ApplyPatch_ShouldHandleArrayRoundTrip()
+    {
+        var original = "{\"tags\": [\"alpha\", \"beta\", \"gamma\"]}";
+        var modified = "{\"tags\": [\"alpha\", \"DELTA\", \"gamma\", \"epsilon\"]}";
+
+        var patch  = _service.CreatePatch(original, modified);
+        var result = _service.ApplyPatch(original, patch);
+
+        JsonNode.DeepEquals(
+            JsonNode.Parse(result),
+            JsonNode.Parse(modified)
+        ).Should().BeTrue();
+    }
+
+    [Fact]
+    public void ApplyPatch_ShouldThrowException_WhenJsonIsInvalid()
+    {
+        Action act = () => _service.ApplyPatch("{ bad }", "[]");
+        act.Should().Throw<ArgumentException>().WithMessage("*Invalid JSON*");
+    }
+
+    // -------------------------------------------------------------------------
+    //  Helper
+    // -------------------------------------------------------------------------
+
+    private static List<JsonObject> ParseOps(string patch)
+        => JsonNode.Parse(patch)!
+                   .AsArray()
+                   .Select(n => (JsonObject)n!)
+                   .ToList();
 }

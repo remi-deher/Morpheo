@@ -8,7 +8,7 @@ namespace Morpheo.Core.Sync;
 /// A file-based persistence store for sync logs.
 /// Mimics a Write-Ahead Log (WAL) or simple append-only file storage.
 /// </summary>
-public class FileLogStore : IDisposable
+public class FileLogStore : IDisposable, IAsyncDisposable
 {
     private readonly string _basePath;
     private readonly string _logFile;
@@ -81,8 +81,10 @@ public class FileLogStore : IDisposable
 
     public async Task AddLogAsync(SyncLogDto log)
     {
+        // Validate before acquiring lock to prevent deadlock
+        if (log == null) throw new ArgumentNullException(nameof(log));
         if (!_started) throw new InvalidOperationException("Store not started");
-        
+
         await _lock.WaitAsync();
         try
         {
@@ -147,7 +149,25 @@ public class FileLogStore : IDisposable
 
     public void Dispose()
     {
-        StopAsync().GetAwaiter().GetResult();
-        _lock.Dispose();
+        try
+        {
+            StopAsync().GetAwaiter().GetResult();
+        }
+        finally
+        {
+            _lock?.Dispose();
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            await StopAsync();
+        }
+        finally
+        {
+            _lock?.Dispose();
+        }
     }
 }

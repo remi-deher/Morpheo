@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Morpheo.Sdk;
 using Morpheo.Core.Data;
 
@@ -15,13 +16,16 @@ public class ExternalDbSyncStrategy<TContext> : ISyncStrategyProvider
 {
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly SimpleTypeResolver _typeResolver;
+    private readonly ILogger<ExternalDbSyncStrategy<TContext>> _logger;
 
     public ExternalDbSyncStrategy(
         IServiceScopeFactory scopeFactory,
-        SimpleTypeResolver typeResolver)
+        SimpleTypeResolver typeResolver,
+        ILogger<ExternalDbSyncStrategy<TContext>> logger)
     {
         _scopeFactory = scopeFactory;
         _typeResolver = typeResolver;
+        _logger = logger;
     }
 
     /// <inheritdoc/>
@@ -59,9 +63,10 @@ public class ExternalDbSyncStrategy<TContext> : ISyncStrategyProvider
 
             await db.SaveChangesAsync();
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            // Silently ignore errors to not block main flow.
+            _logger.LogWarning(ex, "Failed to propagate sync to external database for entity {EntityName}", log.EntityName);
+            // Do not rethrow to avoid blocking main sync flow
         }
     }
 }

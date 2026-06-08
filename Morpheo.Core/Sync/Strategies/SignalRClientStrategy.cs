@@ -89,14 +89,30 @@ public class SignalRClientStrategy : ISyncStrategyProvider, IDisposable, IAsyncD
 
     public void Dispose()
     {
-        _ = DisposeAsync();
+        // Synchronously wait for async disposal
+        // This is necessary for IDisposable.Dispose() contract
+        try
+        {
+            DisposeAsync().GetAwaiter().GetResult();
+        }
+        catch (Exception)
+        {
+            // Suppress exceptions during dispose
+        }
     }
 
     public async ValueTask DisposeAsync()
     {
         if (_connection != null)
         {
-            await _connection.DisposeAsync();
+            try
+            {
+                await _connection.DisposeAsync();
+            }
+            catch (Exception)
+            {
+                // Suppress exceptions during dispose
+            }
         }
     }
 }

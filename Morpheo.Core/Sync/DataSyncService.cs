@@ -53,10 +53,37 @@ public class DataSyncService
             // Wait a bit before starting sync to let the server start
             Task.Run(async () =>
             {
-                await Task.Delay(new Random().Next(1000, 3000));
+                await Task.Delay(Random.Shared.Next(1000, 3000));
                 await SynchronizeWithPeerAsync(peer);
             });
         };
+    }
+
+    // --- 0. HISTORY (Cold Sync source) ---
+
+    /// <summary>
+    /// Returns all sync logs newer than <paramref name="sinceTick"/> for a Cold Sync pull.
+    /// </summary>
+    public async Task<List<SyncLogDto>> GetHistoryAsync(long sinceTick)
+    {
+        using var scope = _serviceProvider.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<MorpheoDbContext>();
+
+        var logs = await db.SyncLogs
+            .Where(l => l.Timestamp > sinceTick)
+            .OrderBy(l => l.Timestamp)
+            .ToListAsync();
+
+        return logs.Select(l => new SyncLogDto(
+            l.Id,
+            l.EntityId,
+            l.EntityName,
+            l.JsonData,
+            l.Action,
+            l.Timestamp,
+            l.Vector,
+            _options.NodeName
+        )).ToList();
     }
 
     // --- 1. SEND (SMART ROUTING) ---
@@ -263,7 +290,7 @@ public class DataSyncService
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Cold Sync Error with {peer.Name}: {ex.Message}");
+            _logger.LogError(ex, "Cold Sync Error with {PeerName}", peer.Name);
         }
     }
 }

@@ -34,14 +34,23 @@ public class MorpheoNode : IHostedService
     {
         _logger.LogInformation("Starting Morpheo Node: {NodeName} (Port {Port})", _options.NodeName, _options.DiscoveryPort);
 
+        // Warn if no network is configured
+        if (_discovery is NullNetworkDiscovery)
+        {
+            _logger.LogWarning("No network discovery configured. Node is in LOCAL-ONLY mode. Call .AddMesh() or .AddSignalRClient() to enable network synchronization.");
+        }
+
         // 1. Start Web Server (to receive syncs)
         await _server.StartAsync(cancellationToken);
 
-        // 2. Start Discovery (to find peers)
+        // 2. Determine local IP address for discovery
+        var localIp = GetLocalIpAddress();
+
+        // 3. Start Discovery (to find peers)
         var peerInfo = new PeerInfo(
             _options.NodeName,
             _options.NodeName,
-            "0.0.0.0", // Will be replaced by actual IP
+            localIp,
             _options.DiscoveryPort,
             NodeRole.StandardClient,
             Array.Empty<string>()
@@ -49,6 +58,21 @@ public class MorpheoNode : IHostedService
 
         await _discovery.StartListeningAsync(cancellationToken);
         await _discovery.StartAdvertisingAsync(peerInfo, cancellationToken);
+    }
+
+    private static string GetLocalIpAddress()
+    {
+        try
+        {
+            using var socket = new System.Net.Sockets.Socket(System.Net.Sockets.AddressFamily.InterNetwork, System.Net.Sockets.SocketType.Dgram, 0);
+            socket.Connect("8.8.8.8", 65432);
+            var endPoint = socket.LocalEndPoint as System.Net.IPEndPoint;
+            return endPoint?.Address.ToString() ?? "127.0.0.1";
+        }
+        catch
+        {
+            return "127.0.0.1";
+        }
     }
 
     /// <inheritdoc/>

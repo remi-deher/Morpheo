@@ -2,7 +2,6 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Moq;
 using Morpheo.Core.Data;
 using Morpheo.Core.Sync;
 using Morpheo.Sdk;
@@ -145,15 +144,14 @@ public class SystemReplicationTests : IDisposable
         var nodeB = CreateNode("NodeB"); // This one will go offline
         var nodeC = CreateNode("NodeC");
 
-        // 1. Initial State: All connected.
-        // 2. Disconnect B
+        // 1. Disconnect B before any data is written
         _simulator.Disconnect("NodeB");
 
-        // 3. A and C generate data
+        // 2. A and C generate data while B is offline
         await nodeA.Service.BroadcastChangeAsync(new TestEntity { Id = "doc-A", Content = "From A" }, "UPDATE");
         await nodeC.Service.BroadcastChangeAsync(new TestEntity { Id = "doc-C", Content = "From C" }, "UPDATE");
 
-        // 4. Verify A has C's data (connected)
+        // 3. Verify A has C's data (they are still connected to each other)
         await WaitForConditionAsync(async () =>
         {
             using var scope = nodeA.Provider.CreateScope();
@@ -161,35 +159,47 @@ public class SystemReplicationTests : IDisposable
             return await db.SyncLogs.AnyAsync(l => l.EntityId == "doc-C");
         });
 
-        // 5. Verify B is empty (Disconnected)
+        // 4. Verify B is empty (was disconnected during writes)
         using (var scope = nodeB.Provider.CreateScope())
         {
             var db = scope.ServiceProvider.GetRequiredService<MorpheoDbContext>();
             var count = await db.SyncLogs.CountAsync();
-            count.Should().Be(0); 
+            count.Should().Be(0);
         }
 
-        // 6. Reconnect B
+        // 5. Reconnect B
         _simulator.Reconnect("NodeB");
 
-        // 7. Trigger Re-Sync (Cold Sync)
-        // In real life, Discovery triggers this. Here we manually invoke the sync logic.
-        // We simulate that NodeB "Discovers" NodeA and NodeC
-        // Access private method? No, we can't. 
-        // We can simulate it by firing the PeerFound event on the Mock Discovery?
-        // But we instantiated Mock discovery in CreateNode and didn't keep reference.
-        // Let's rely on constructing PeerInfo and calling... DataSyncService has private handlers.
-        // Actually, Simulating PeerFound is the best way.
-        
-        // Wait, I need access to the Mock<INetworkDiscovery> of NodeB to raise the event.
-        // Refactor CreateNode to return mock? Or just use reflection/public method?
-        // DataSyncService treats Discovery events.
-        
-        // ALTERNATIVE: Since we can't easily trigger the private event handler without the mock ref,
-        // We will assume that in a System Test we might need to expose a "ForceSync(peer)" method 
-        // OR we refactor CreateNode to give us the mock.
-        
-        // Let's compromise: I will just instantiate a ManualDiscovery (fake implementation) instead of Mock.
+        // 6. Trigger Cold Sync by simulating peer discovery
+        // In production, UdpDiscoveryService fires PeerFound which triggers SynchronizeWithPeerAsync.
+        // ManualNetworkDiscovery.SimulatePeerFound replicates this event.
+        var peerA = new PeerInfo("NodeA", "NodeA", "127.0.0.1", 5555, NodeRole.StandardClient, Array.Empty<string>());
+        var peerC = new PeerInfo("NodeC", "NodeC", "127.0.0.1", 5556, NodeRole.StandardClient, Array.Empty<string>());
+        nodeB.Discovery.SimulatePeerFound(peerA);
+        nodeB.Discovery.SimulatePeerFound(peerC);
+
+        // 7. Wait for B to catch up with both docs
+        await WaitForConditionAsync(async () =>
+        {
+            using var scope = nodeB.Provider.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<MorpheoDbContext>();
+            return await db.SyncLogs.AnyAsync(l => l.EntityId == "doc-A")
+                && await db.SyncLogs.AnyAsync(l => l.EntityId == "doc-C");
+        }, timeoutMs: 5000);
+
+        // 8. Assert B has caught up with all missed data
+        using (var scope = nodeB.Provider.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<MorpheoDbContext>();
+
+            var logA = await db.SyncLogs.FirstOrDefaultAsync(l => l.EntityId == "doc-A");
+            logA.Should().NotBeNull();
+            logA!.JsonData.Should().Contain("From A");
+
+            var logC = await db.SyncLogs.FirstOrDefaultAsync(l => l.EntityId == "doc-C");
+            logC.Should().NotBeNull();
+            logC!.JsonData.Should().Contain("From C");
+        }
     }
 }
 

@@ -36,14 +36,20 @@ public class MorpheoWebServer : IMorpheoServer
         // Kestrel Configuration
         builder.WebHost.ConfigureKestrel(serverOptions =>
         {
-            serverOptions.ListenAnyIP(_options.DiscoveryPort); // Using DiscoveryPort for now based on options update
+            serverOptions.ListenAnyIP(_options.DiscoveryPort);
         });
 
-        // Services
-        builder.Services.AddSingleton(_serviceProvider.GetRequiredService<DataSyncService>());
+        // Register parent services to the new service provider
+        // This ensures we reuse instances from the parent DI container
+        builder.Services.AddSingleton(sp => _serviceProvider.GetRequiredService<DataSyncService>());
+        builder.Services.AddSingleton(sp => _serviceProvider.GetRequiredService<IRequestAuthenticator>());
+        // IMorpheoBlobStore is optional — only registered if AddBlobStore() was called
+        var blobStore = _serviceProvider.GetService<Morpheo.Sdk.Blobs.IMorpheoBlobStore>();
+        if (blobStore != null)
+            builder.Services.AddSingleton(blobStore);
+        builder.Services.AddSingleton(sp => _options);
+
         builder.Services.AddSignalR();
-        
-        // Add Authorization if needed
         builder.Services.AddAuthorization();
 
         _app = builder.Build();
@@ -64,6 +70,14 @@ public class MorpheoWebServer : IMorpheoServer
         });
 
         // Endpoint for receiving logs (Sync Push)
+        // NOTE: Using both /api/sync and /morpheo/sync/push for backward compatibility
+        _app.MapPost("/api/sync", async ([FromBody] SyncLogDto dto, [FromServices] DataSyncService syncService) =>
+        {
+            if (dto == null) return Results.BadRequest();
+            await syncService.ReceiveRemoteLogAsync(dto);
+            return Results.Ok();
+        });
+
         _app.MapPost("/morpheo/sync/push", async ([FromBody] SyncLogDto dto, [FromServices] DataSyncService syncService) =>
         {
             if (dto == null) return Results.BadRequest();
@@ -71,12 +85,22 @@ public class MorpheoWebServer : IMorpheoServer
             return Results.Ok();
         });
 
+        // Endpoint for Cold Sync history pull
+        _app.MapGet("/api/sync/history", async ([FromQuery] long since, [FromServices] DataSyncService syncService) =>
+        {
+            var logs = await syncService.GetHistoryAsync(since);
+            return Results.Ok(logs);
+        });
+
         // Endpoint SignalR
         _app.MapHub<Morpheo.Core.SignalR.MorpheoSyncHub>("/morpheo/hub");
 
-        // Endpoint for serving Blobs
-        _app.MapGet("/morpheo/blobs/{id}", async (string id, [FromServices] Morpheo.Sdk.Blobs.IMorpheoBlobStore blobStore) =>
+        // Endpoint for serving Blobs (only active if AddBlobStore() was called)
+        _app.MapGet("/morpheo/blobs/{id}", async (string id, HttpContext httpContext) =>
         {
+            var blobStore = httpContext.RequestServices.GetService<Morpheo.Sdk.Blobs.IMorpheoBlobStore>();
+            if (blobStore == null) return Results.NotFound("Blob store not configured.");
+
             var stream = await blobStore.GetBlobStreamAsync(id);
             if (stream == null) return Results.NotFound();
 
@@ -156,14 +180,30 @@ public class MorpheoWebServer : IMorpheoServer
         }
 
         await _app.StartAsync(ct);
-        
+
         // Capture effective port if dynamic (0)
-        LocalPort = _app.Urls.Select(u => new Uri(u).Port).FirstOrDefault();
+        var port = _app.Urls.Select(u => new Uri(u).Port).FirstOrDefault(0);
+        if (port <= 0 || port > 65535)
+        {
+            throw new InvalidOperationException($"Failed to capture valid port from Kestrel. Got: {port}");
+        }
+        LocalPort = port;
     }
 
     /// <inheritdoc/>
     public async Task StopAsync(CancellationToken ct)
     {
-        if (_app != null) await _app.StopAsync(ct);
+        if (_app != null)
+        {
+            try
+            {
+                await _app.StopAsync(ct);
+            }
+            finally
+            {
+                await _app.DisposeAsync();
+                _app = null;
+            }
+        }
     }
 }

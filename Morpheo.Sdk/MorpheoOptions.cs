@@ -82,10 +82,19 @@ public class MorpheoOptions
     /// <summary>
     /// Validates the configuration options.
     /// </summary>
-    /// <exception cref="ArgumentException">Thrown when the port is invalid.</exception>
+    /// <exception cref="ArgumentException">Thrown when the configuration is invalid.</exception>
     public void Validate()
     {
+        if (string.IsNullOrWhiteSpace(NodeName))
+            throw new ArgumentException("NodeName cannot be empty or whitespace.");
+
         if (DiscoveryPort < 1 || DiscoveryPort > 65535)
-            throw new ArgumentException("Morpheo port must be between 1 and 65535.");
+            throw new ArgumentException("DiscoveryPort must be between 1 and 65535.");
+
+        if (LogRetention <= TimeSpan.Zero)
+            throw new ArgumentException("LogRetention must be greater than zero.");
+
+        if (CompactionInterval <= TimeSpan.Zero)
+            throw new ArgumentException("CompactionInterval must be greater than zero.");
     }
 }

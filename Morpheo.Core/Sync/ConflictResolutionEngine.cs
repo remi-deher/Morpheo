@@ -5,7 +5,7 @@ using Morpheo.Sdk;
 namespace Morpheo.Core.Sync;
 
 /// <summary>
-/// Providies the core logic for resolving data conflicts between local and remote entity states during synchronization.
+/// Provides the core logic for resolving data conflicts between local and remote entity states during synchronization.
 /// </summary>
 public class ConflictResolutionEngine
 {

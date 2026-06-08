@@ -51,7 +51,7 @@ public class MorpheoHttpClient : IMorpheoClient
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Print Error to {target.Name}: {ex.Message}");
+            _logger.LogError(ex, "Print Error to {PeerName}", target.Name);
         }
     }
 
@@ -70,9 +70,9 @@ public class MorpheoHttpClient : IMorpheoClient
                 _logger.LogWarning($"Sync Push Error to {target.Name}: {response.StatusCode}");
             }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            _logger.LogDebug($"Sync failed to {target.Name} (Expected if disconnected)");
+            _logger.LogDebug(ex, "Sync failed to {PeerName} (Expected if disconnected)", target.Name);
         }
     }
 
@@ -88,7 +88,7 @@ public class MorpheoHttpClient : IMorpheoClient
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Cold Sync Failed to {target.Name}: {ex.Message}");
+            _logger.LogError(ex, "Cold Sync Failed to {PeerName}", target.Name);
             return new List<SyncLogDto>();
         }
     }

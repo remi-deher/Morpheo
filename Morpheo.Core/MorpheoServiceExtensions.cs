@@ -41,16 +41,19 @@ public static class MorpheoServiceExtensions
         configure?.Invoke(builder);
 
         // 3. Core Infrastructure Services
+        // Register as both Singleton (for direct resolution) and IHostedService (for lifecycle management)
         services.AddSingleton<MorpheoNode>();
-        
+        services.AddHostedService(sp => sp.GetRequiredService<MorpheoNode>());
+
         // Registering Null/NoOp versions by default
         services.TryAddSingleton<INetworkDiscovery, NullNetworkDiscovery>();
         services.TryAddSingleton<IMorpheoServer, NullMorpheoServer>();
-        
+
         services.AddHttpClient();
         services.AddSingleton<IMorpheoClient, MorpheoHttpClient>();
-        
+
         services.AddSingleton<DatabaseInitializer>();
+        services.AddHostedService<DatabaseInitializationService>();
 
         // 4. Synchronization Engine
         var typeResolver = new SimpleTypeResolver();
