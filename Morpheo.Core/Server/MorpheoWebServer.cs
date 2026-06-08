@@ -42,7 +42,10 @@ public class MorpheoWebServer : IMorpheoServer
         // Register parent services to the new service provider
         // This ensures we reuse instances from the parent DI container
         builder.Services.AddSingleton(sp => _serviceProvider.GetRequiredService<DataSyncService>());
-        builder.Services.AddSingleton(sp => _serviceProvider.GetRequiredService<IRequestAuthenticator>());
+        // IRequestAuthenticator is optional — tests that build their own ServiceProvider may omit it.
+        var auth = _serviceProvider.GetService<IRequestAuthenticator>();
+        if (auth != null)
+            builder.Services.AddSingleton(auth);
         // IMorpheoBlobStore is optional — only registered if AddBlobStore() was called
         var blobStore = _serviceProvider.GetService<Morpheo.Sdk.Blobs.IMorpheoBlobStore>();
         if (blobStore != null)

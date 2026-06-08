@@ -10,25 +10,33 @@ namespace Morpheo.Core.Data;
 public class DatabaseInitializationService : IHostedService
 {
     private readonly DatabaseInitializer _initializer;
-    private readonly MorpheoDbContext _context;
+    private readonly IServiceScopeFactory _scopeFactory;
     private readonly ILogger<DatabaseInitializationService> _logger;
 
     public DatabaseInitializationService(
         DatabaseInitializer initializer,
-        MorpheoDbContext context,
+        IServiceScopeFactory scopeFactory,
         ILogger<DatabaseInitializationService> logger)
     {
         _initializer = initializer;
-        _context = context;
+        _scopeFactory = scopeFactory;
         _logger = logger;
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
+        using var scope = _scopeFactory.CreateScope();
+        var context = scope.ServiceProvider.GetService<MorpheoDbContext>();
+        if (context is null)
+        {
+            _logger.LogDebug("No MorpheoDbContext registered — skipping database initialization.");
+            return;
+        }
+
         try
         {
             _logger.LogInformation("Initializing Morpheo database...");
-            await _initializer.InitializeAsync(_context);
+            await _initializer.InitializeAsync(context);
             _logger.LogInformation("Database initialization completed successfully.");
         }
         catch (Exception ex)
