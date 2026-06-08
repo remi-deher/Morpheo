@@ -3,8 +3,26 @@ name: CI
 on:
   push:
     branches: [ "main" ]
+    paths-ignore:
+      - 'README.md'
+      - 'README copy.md'
+      - 'TESTS.md'
+      - 'docs/**'
+      - 'LICENSE'
+      - '.gitignore'
+      - '.gitattributes'
+      - '.github/workflows/docs.yml'
   pull_request:
     branches: [ "main" ]
+    paths-ignore:
+      - 'README.md'
+      - 'README copy.md'
+      - 'TESTS.md'
+      - 'docs/**'
+      - 'LICENSE'
+      - '.gitignore'
+      - '.gitattributes'
+      - '.github/workflows/docs.yml'
   workflow_dispatch:
 
 # Cancel superseded runs on the same ref (e.g. rapid pushes to a PR branch).
