@@ -41,7 +41,7 @@ public class SystemReplicationTests : IDisposable
     private NodeContext CreateNode(string nodeId)
     {
         var services = new ServiceCollection();
-        
+
         // 1. Temp Storage
         var tempPath = Path.Combine(Path.GetTempPath(), "MorpheoSystemTests", nodeId, Guid.NewGuid().ToString());
         Directory.CreateDirectory(tempPath);
@@ -59,7 +59,7 @@ public class SystemReplicationTests : IDisposable
         services.AddSingleton<ConflictResolutionEngine>();
         services.AddSingleton<IEntityTypeResolver>(new SimpleTypeResolver());
         services.AddLogging(logging => logging.AddConsole());
-        
+
         var discovery = new ManualNetworkDiscovery();
         services.AddSingleton<INetworkDiscovery>(discovery);
 
@@ -81,14 +81,14 @@ public class SystemReplicationTests : IDisposable
         }
 
         var service = provider.GetRequiredService<DataSyncService>();
-        
+
         // Register to simulator
         _simulator.Register(nodeId, service, provider);
 
-        return new NodeContext 
-        { 
-            Service = service, 
-            Provider = provider, 
+        return new NodeContext
+        {
+            Service = service,
+            Provider = provider,
             NodeId = nodeId,
             Discovery = discovery
         };
@@ -109,7 +109,7 @@ public class SystemReplicationTests : IDisposable
     {
         // Actually, with InMemoryNetworkSimulator broadcast, A -> C happens directly.
         // But verifying that C receives data from A confirms propagation.
-        
+
         // Arrange
         var nodeA = CreateNode("NodeA");
         var nodeB = CreateNode("NodeB");

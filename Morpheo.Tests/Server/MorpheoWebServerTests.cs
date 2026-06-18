@@ -32,10 +32,10 @@ public class MorpheoWebServerTests : IAsyncDisposable
 
         // 1. Setup Core Dependencies
         services.AddLogging(logging => logging.AddConsole());
-        
+
         // Options with Port 0 for dynamic port allocation
-        var options = new MorpheoOptions 
-        { 
+        var options = new MorpheoOptions
+        {
             NodeName = "TestNode",
             DiscoveryPort = 0 // Let Kestrel choose a free port
         };
@@ -44,7 +44,7 @@ public class MorpheoWebServerTests : IAsyncDisposable
         // Database (Sqlite File for persistence across requests)
         _dbPath = System.IO.Path.GetTempFileName();
         services.AddDbContext<MorpheoDbContext>(opt => opt.UseSqlite($"Data Source={_dbPath}"));
-        
+
         // DataSync and its heavy dependencies
         services.AddSingleton<ConflictResolutionEngine>();
         services.AddSingleton<IEntityTypeResolver>(new SimpleTypeResolver());
@@ -77,7 +77,7 @@ public class MorpheoWebServerTests : IAsyncDisposable
         await _server.StopAsync(CancellationToken.None);
         _client.Dispose();
         await _serviceProvider.DisposeAsync();
-        
+
         if (System.IO.File.Exists(_dbPath))
         {
             try { System.IO.File.Delete(_dbPath); } catch { }
@@ -89,7 +89,7 @@ public class MorpheoWebServerTests : IAsyncDisposable
     {
         // Act: Start Server
         await _server.StartAsync(CancellationToken.None);
-        
+
         var port = _server.LocalPort;
         port.Should().BeGreaterThan(0, "Server should bind to a real port");
 
@@ -99,7 +99,7 @@ public class MorpheoWebServerTests : IAsyncDisposable
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         response.Content.Headers.ContentType!.MediaType.Should().Be("text/html");
-        
+
         var content = await response.Content.ReadAsStringAsync();
         content.Should().Contain("<html"); // Basic check for HTML
         content.Should().Contain("Test Dashboard"); // Title injection check
@@ -110,7 +110,7 @@ public class MorpheoWebServerTests : IAsyncDisposable
     {
         // Act: Start Server
         await _server.StartAsync(CancellationToken.None);
-        
+
         var port = _server.LocalPort;
 
         // Request Stats

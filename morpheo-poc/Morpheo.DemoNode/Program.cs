@@ -8,6 +8,8 @@ using Morpheo.Core.Extensions;
 using Morpheo.Core.Sync;
 using Morpheo.Sdk;
 using Morpheo.Sdk.Blobs;
+using Morpheo.Usb;
+using Morpheo.Usb.Platform.Mock;
 using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -87,6 +89,16 @@ builder.Services.AddMorpheo(morpheo =>
 
 // Register the custom EmulatedPrinterService to capture raw prints
 builder.Services.Replace(ServiceDescriptor.Singleton<IPrintGateway, EmulatedPrinterService>());
+
+// Register USB mock subsystem
+var mockUsbRoot = Environment.GetEnvironmentVariable("MOCK_USB_ROOT") ?? "/app/data/mock-usb";
+builder.Services.AddMorpheoUsb(opts =>
+{
+    opts.MockStorageRoot  = mockUsbRoot;
+    opts.EnableStorage    = true;
+    opts.EnablePrinting   = true;
+    opts.UseMockDriver    = true;
+});
 
 builder.Services.AddCors(options =>
 {
@@ -357,27 +369,7 @@ app.MapGet("/api/files/download/{blobId}", async (string blobId, IMorpheoBlobSto
     return Results.File(stream, metadata.ContentType, metadata.FileName);
 });
 
-// Network Print Emulator
-app.MapPost("/api/print", async ([FromBody] PrintRequest request, IPrintGateway printGateway) =>
-{
-    // Network prints are received here (triggered by SendPrintJobAsync from another peer)
-    var printer = "Virtual-Zebra-01"; // Default virtual printer for network jobs
-    var contentBytes = System.Text.Encoding.UTF8.GetBytes(request.Content);
-    await printGateway.PrintAsync(printer, contentBytes);
-
-    EmulatedPrinter.PrintJobs.Add(new PrintJobRecord
-    {
-        Id = Guid.NewGuid().ToString(),
-        PrinterName = printer,
-        Content = request.Content,
-        Sender = request.Sender,
-        Timestamp = DateTime.UtcNow
-    });
-
-    ClusterEventNotifier.Notify("prints");
-
-    return Results.Ok();
-});
+// Network Print Emulator (POST /api/print is now handled directly on the sync/discovery port 5000 in MorpheoWebServer)
 
 app.MapGet("/api/print/jobs", () => Results.Ok(EmulatedPrinter.PrintJobs));
 
@@ -385,8 +377,98 @@ app.MapPost("/api/print/send", async ([FromBody] SendPrintJobRequest req, IMorph
 {
     // Sends a print job to a target node
     var target = new PeerInfo(req.PeerId, req.PeerName, req.PeerIp, req.PeerPort, NodeRole.StandardClient, Array.Empty<string>());
-    await client.SendPrintJobAsync(target, req.Content);
+    await client.SendPrintJobAsync(target, req.Content, req.PrinterName);
     return Results.Ok(new { message = $"Print job sent to {req.PeerName}" });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  MOCK USB CONTROL ENDPOINTS  (port CLIENT_PORT → accessible from the Web UI)
+// ─────────────────────────────────────────────────────────────────────────────
+
+// List all mock devices
+app.MapGet("/api/usb/devices", async (IUsbDeviceEnumerator enumerator) =>
+    Results.Ok(await enumerator.EnumerateAsync()));
+
+// Add (insert) a new mock USB device at runtime
+app.MapPost("/api/usb/mock/add", ([FromBody] MockDeviceRequest req, MockUsbDriver driver) =>
+{
+    var device = new UsbDeviceInfo
+    {
+        Id           = req.Id ?? $"mock-{req.DeviceClass.ToString().ToLower()}-{Guid.NewGuid().ToString()[..8]}",
+        Label        = req.Label,
+        VendorId     = req.VendorId ?? "0x0000",
+        ProductId    = req.ProductId ?? "0x0000",
+        Manufacturer = req.Manufacturer,
+        ProductName  = req.ProductName,
+        DeviceClass  = req.DeviceClass,
+        CapacityBytes = req.CapacityBytes,
+        SerialNumber = req.SerialNumber,
+        IsMock       = true,
+    };
+    driver.AddDevice(device);
+    ClusterEventNotifier.Notify("usb");
+    return Results.Ok(device);
+});
+
+// Eject (remove) a mock USB device at runtime
+app.MapDelete("/api/usb/mock/eject/{deviceId}", (string deviceId, MockUsbDriver driver) =>
+{
+    var ejected = driver.EjectDevice(deviceId);
+    if (!ejected) return Results.NotFound($"Device {deviceId} not found.");
+    ClusterEventNotifier.Notify("usb");
+    return Results.Ok(new { ejected = deviceId });
+});
+
+// List files on a mock storage device
+app.MapGet("/api/usb/storage/{deviceId}/files", async (string deviceId, IUsbDriver driver) =>
+    Results.Ok(await driver.ListFilesAsync(deviceId)));
+
+// Upload a file to a mock storage device
+app.MapPost("/api/usb/storage/{deviceId}/files", async (string deviceId, HttpRequest req, IUsbDriver driver) =>
+{
+    if (!req.HasFormContentType) return Results.BadRequest("Multipart form expected.");
+    var form = await req.ReadFormAsync();
+    var file = form.Files.GetFile("file");
+    if (file == null) return Results.BadRequest("No file in form.");
+    using var stream = file.OpenReadStream();
+    var path = "/" + file.FileName.Replace("..", "__");
+    var written = await driver.WriteFileAsync(deviceId, path, stream, file.ContentType);
+    ClusterEventNotifier.Notify("usb");
+    return Results.Ok(new { path, written });
+});
+
+// Download a file from a mock storage device
+app.MapGet("/api/usb/storage/{deviceId}/files/{**filePath}", async (string deviceId, string filePath, IUsbDriver driver) =>
+{
+    var stream = await driver.ReadFileAsync(deviceId, "/" + filePath);
+    if (stream == null) return Results.NotFound("File not found on device.");
+    return Results.File(stream, "application/octet-stream", Path.GetFileName(filePath));
+});
+
+// Delete a file from a mock storage device
+app.MapDelete("/api/usb/storage/{deviceId}/files/{**filePath}", async (string deviceId, string filePath, IUsbDriver driver) =>
+{
+    await driver.DeleteFileAsync(deviceId, "/" + filePath);
+    ClusterEventNotifier.Notify("usb");
+    return Results.Ok();
+});
+
+// List print jobs in the mock spooler for a printer device
+app.MapGet("/api/usb/print/{deviceId}/jobs", (string deviceId, MockUsbDriver driver) =>
+    Results.Ok(driver.GetPrintJobs(deviceId)));
+
+// Clear the mock print spooler
+app.MapDelete("/api/usb/print/{deviceId}/jobs", (string deviceId, MockUsbDriver driver) =>
+{
+    driver.ClearPrintJobs(deviceId);
+    return Results.Ok();
+});
+
+// Get printer status
+app.MapGet("/api/usb/print/{deviceId}/status", async (string deviceId, IUsbDriver driver) =>
+{
+    var status = await driver.GetPrinterStatusAsync(deviceId);
+    return status is null ? Results.NotFound() : Results.Ok(status);
 });
 
 // Peers list
@@ -423,6 +505,10 @@ syncService.DataReceived += (sender, log) =>
     }
 };
 
+var discovery = app.Services.GetRequiredService<INetworkDiscovery>();
+discovery.PeerFound += (sender, peer) => { ClusterEventNotifier.Notify("peers"); };
+discovery.PeerLost += (sender, peer) => { ClusterEventNotifier.Notify("peers"); };
+
 await app.RunAsync();
 
 // Helper method to write remote blob directly into local storage
@@ -455,6 +541,19 @@ static async Task CacheRemoteBlobAsync(string blobsDir, string blobId, Stream co
 //  MODELS & SERVICES
 // -------------------------
 
+public class MockDeviceRequest
+{
+    public string? Id            { get; set; }
+    public required string Label { get; set; }
+    public string? VendorId      { get; set; }
+    public string? ProductId     { get; set; }
+    public string? Manufacturer  { get; set; }
+    public string? ProductName   { get; set; }
+    public UsbDeviceClass DeviceClass { get; set; } = UsbDeviceClass.Storage;
+    public long?  CapacityBytes  { get; set; }
+    public string? SerialNumber  { get; set; }
+}
+
 public class TodoItem : MorpheoEntity
 {
     public string Title { get; set; } = string.Empty;
@@ -482,6 +581,7 @@ public class PrintRequest
 {
     public string Content { get; set; } = string.Empty;
     public string Sender { get; set; } = string.Empty;
+    public string PrinterName { get; set; } = string.Empty;
 }
 
 public class SendPrintJobRequest
@@ -511,10 +611,12 @@ public class PrintJobRecord
 public class EmulatedPrinterService : IPrintGateway
 {
     private readonly ILogger<EmulatedPrinterService> _logger;
+    private readonly IServiceProvider _serviceProvider;
 
-    public EmulatedPrinterService(ILogger<EmulatedPrinterService> logger)
+    public EmulatedPrinterService(ILogger<EmulatedPrinterService> logger, IServiceProvider serviceProvider)
     {
         _logger = logger;
+        _serviceProvider = serviceProvider;
     }
 
     public Task<IEnumerable<string>> GetLocalPrintersAsync()
@@ -522,11 +624,66 @@ public class EmulatedPrinterService : IPrintGateway
         return Task.FromResult<IEnumerable<string>>(new[] { "Virtual-Zebra-01", "Virtual-Receipt-02" });
     }
 
-    public Task PrintAsync(string printerName, byte[] content)
+    public async Task PrintAsync(string printerName, byte[] content)
     {
         var text = System.Text.Encoding.UTF8.GetString(content);
-        _logger.LogInformation($"[PRINTER EMULATOR] Printing to '{printerName}' ({content.Length} bytes): {text}");
-        return Task.CompletedTask;
+        var contentToLog = text;
+        var sender = "Local";
+        var resolvedPrinterName = printerName;
+
+        try
+        {
+            // Try to deserialize if it's a JSON payload (passed from the remote endpoint via MorpheoWebServer)
+            var request = JsonSerializer.Deserialize<PrintRequest>(text, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            if (request != null && !string.IsNullOrEmpty(request.Content))
+            {
+                contentToLog = request.Content;
+                sender = request.Sender;
+                if (!string.IsNullOrEmpty(request.PrinterName))
+                {
+                    resolvedPrinterName = request.PrinterName;
+                }
+            }
+        }
+        catch
+        {
+            // Not a JSON payload, treat it as raw print
+        }
+
+        _logger.LogInformation($"[PRINTER EMULATOR] Printing to '{resolvedPrinterName}' ({content.Length} bytes): {contentToLog}");
+
+        EmulatedPrinter.PrintJobs.Add(new PrintJobRecord
+        {
+            Id = Guid.NewGuid().ToString(),
+            PrinterName = resolvedPrinterName,
+            Content = contentToLog,
+            Sender = sender,
+            Timestamp = DateTime.UtcNow
+        });
+
+        ClusterEventNotifier.Notify("prints");
+
+        // Forward to matching mock/virtual USB printer if one is connected!
+        var usbDriver = _serviceProvider.GetService<IUsbDriver>();
+        var usbEnumerator = _serviceProvider.GetService<IUsbDeviceEnumerator>();
+        if (usbDriver != null && usbEnumerator != null)
+        {
+            var devices = await usbEnumerator.EnumerateAsync();
+            var printerDevice = devices.FirstOrDefault(d => 
+                d.DeviceClass == UsbDeviceClass.Printer && 
+                (d.Id.Equals(resolvedPrinterName, StringComparison.OrdinalIgnoreCase) || 
+                 d.Label.Contains(resolvedPrinterName, StringComparison.OrdinalIgnoreCase) ||
+                 d.ProductName.Contains(resolvedPrinterName, StringComparison.OrdinalIgnoreCase) ||
+                 resolvedPrinterName.Contains(d.Id, StringComparison.OrdinalIgnoreCase)));
+
+            if (printerDevice != null)
+            {
+                _logger.LogInformation($"[PRINTER EMULATOR] Forwarding network print job to USB printer: {printerDevice.Label} ({printerDevice.Id})");
+                var rawBytes = System.Text.Encoding.UTF8.GetBytes(contentToLog);
+                await usbDriver.SendPrintJobAsync(printerDevice.Id, rawBytes);
+                ClusterEventNotifier.Notify("usb");
+            }
+        }
     }
 }
 

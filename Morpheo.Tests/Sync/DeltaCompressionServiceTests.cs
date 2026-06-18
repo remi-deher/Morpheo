@@ -157,7 +157,7 @@ public class DeltaCompressionServiceTests
         var original = "{\"id\": 1, \"value\": \"test\", \"count\": 5}";
         var modified = "{\"id\": 1, \"value\": \"updated\", \"count\": 5}";
 
-        var patch  = _service.CreatePatch(original, modified);
+        var patch = _service.CreatePatch(original, modified);
         var result = _service.ApplyPatch(original, patch);
 
         JsonNode.DeepEquals(
@@ -170,7 +170,7 @@ public class DeltaCompressionServiceTests
     public void ApplyPatch_ShouldBeIdentity_WhenPatchIsEmptyArray()
     {
         var original = "{\"a\": 1}";
-        var result   = _service.ApplyPatch(original, "[]");
+        var result = _service.ApplyPatch(original, "[]");
 
         JsonNode.DeepEquals(
             JsonNode.Parse(result),
@@ -184,7 +184,7 @@ public class DeltaCompressionServiceTests
         var original = "{\"a\": 1, \"b\": 2, \"c\": {\"x\": 10}}";
         var modified = "{\"a\": 99, \"c\": {\"x\": 10, \"y\": 20}, \"d\": \"new\"}";
 
-        var patch  = _service.CreatePatch(original, modified);
+        var patch = _service.CreatePatch(original, modified);
         var result = _service.ApplyPatch(original, patch);
 
         JsonNode.DeepEquals(
@@ -199,7 +199,7 @@ public class DeltaCompressionServiceTests
         var original = "{\"tags\": [\"alpha\", \"beta\", \"gamma\"]}";
         var modified = "{\"tags\": [\"alpha\", \"DELTA\", \"gamma\", \"epsilon\"]}";
 
-        var patch  = _service.CreatePatch(original, modified);
+        var patch = _service.CreatePatch(original, modified);
         var result = _service.ApplyPatch(original, patch);
 
         JsonNode.DeepEquals(

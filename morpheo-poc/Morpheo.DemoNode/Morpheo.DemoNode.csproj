@@ -10,6 +10,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Morpheo.Core\Morpheo.Core.csproj" />
     <ProjectReference Include="..\..\Morpheo.Sdk\Morpheo.Sdk.csproj" />
+    <ProjectReference Include="..\..\Morpheo.Usb\Morpheo.Usb.csproj" />
   </ItemGroup>
 
   <ItemGroup>

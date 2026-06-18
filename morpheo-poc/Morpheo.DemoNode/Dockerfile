@@ -5,6 +5,7 @@ WORKDIR /src
 # Copy core projects and the demo code
 COPY Morpheo.Sdk/ Morpheo.Sdk/
 COPY Morpheo.Core/ Morpheo.Core/
+COPY Morpheo.Usb/ Morpheo.Usb/
 COPY morpheo-poc/Morpheo.DemoNode/ morpheo-poc/Morpheo.DemoNode/
 
 # Restore dependencies
@@ -28,7 +29,7 @@ COPY --from=build /app/publish .
 
 # Create the data directory and set it as the working directory so
 # that both sqlite db and morpheo.runtime.json reside in the mounted volume.
-RUN mkdir -p /app/data
+RUN mkdir -p /app/data /app/data/mock-usb
 WORKDIR /app/data
 
 ENTRYPOINT ["dotnet", "/app/Morpheo.DemoNode.dll"]

@@ -8,6 +8,8 @@ using Microsoft.Extensions.Hosting;
 using Morpheo.Sdk;
 using Morpheo.Core.Sync;
 using Morpheo.Core.Security;
+using Morpheo.Usb;
+using Morpheo.Usb.Audit;
 
 namespace Morpheo.Core.Server;
 
@@ -52,6 +54,24 @@ public class MorpheoWebServer : IMorpheoServer
             builder.Services.AddSingleton(blobStore);
         builder.Services.AddSingleton(sp => _options);
 
+        // IPrintGateway is optional/standard
+        var printGateway = _serviceProvider.GetService<Morpheo.Sdk.IPrintGateway>();
+        if (printGateway != null)
+            builder.Services.AddSingleton<Morpheo.Sdk.IPrintGateway>(printGateway);
+
+        // USB subsystem services — bridge from parent container if registered
+        var usbEnumerator = _serviceProvider.GetService<IUsbDeviceEnumerator>();
+        if (usbEnumerator != null)
+        {
+            builder.Services.AddSingleton(usbEnumerator);
+            var usbDriver = _serviceProvider.GetService<IUsbDriver>();
+            var usbPolicy = _serviceProvider.GetService<IUsbAccessPolicy>();
+            var usbAudit = _serviceProvider.GetService<IUsbAuditLogger>();
+            if (usbDriver != null) builder.Services.AddSingleton(usbDriver);
+            if (usbPolicy != null) builder.Services.AddSingleton(usbPolicy);
+            if (usbAudit != null) builder.Services.AddSingleton(usbAudit);
+        }
+
         builder.Services.AddSignalR();
         builder.Services.AddAuthorization();
 
@@ -75,7 +95,7 @@ public class MorpheoWebServer : IMorpheoServer
         _app = builder.Build();
 
         // Register the active HubContext to bridge parent and child DI containers
-        Morpheo.Core.Sync.Strategies.SignalRHubContextLocator.HubContext = 
+        Morpheo.Core.Sync.Strategies.SignalRHubContextLocator.HubContext =
             _app.Services.GetService<Microsoft.AspNetCore.SignalR.IHubContext<Morpheo.Core.SignalR.MorpheoSyncHub>>();
 
         // Decompression must run BEFORE authentication so the HMAC is verified against
@@ -161,6 +181,120 @@ public class MorpheoWebServer : IMorpheoServer
             return Results.Ok(logs);
         });
 
+        // Endpoint for receiving print jobs from remote peers
+        _app.MapPost("/api/print", async ([FromBody] PrintRequestDto request, [FromServices] IPrintGateway printGateway) =>
+        {
+            if (request == null || string.IsNullOrEmpty(request.Content)) return Results.BadRequest("Invalid print request.");
+            var printer = string.IsNullOrEmpty(request.PrinterName) ? "Virtual-Zebra-01" : request.PrinterName;
+            var payload = JsonSerializer.Serialize(request);
+            var contentBytes = System.Text.Encoding.UTF8.GetBytes(payload);
+            await printGateway.PrintAsync(printer, contentBytes);
+            return Results.Ok();
+        });
+
+        // ─────────────────────────────────────────────────────────────
+        //  USB DEVICE API  (only active when AddMorpheoUsb() is called)
+        // ─────────────────────────────────────────────────────────────
+
+        // List all currently connected USB devices visible to this node
+        _app.MapGet("/api/usb/devices", async (HttpContext ctx) =>
+        {
+            var enumerator = ctx.RequestServices.GetService<IUsbDeviceEnumerator>();
+            if (enumerator == null) return Results.NotFound("USB subsystem not enabled.");
+            var principal = ctx.User.FindFirst("sub")?.Value ?? "anonymous";
+            var policy = ctx.RequestServices.GetService<IUsbAccessPolicy>();
+            var devices = await enumerator.EnumerateAsync(ctx.RequestAborted);
+            var visible = new List<object>();
+            foreach (var d in devices)
+            {
+                bool ok = policy == null || await policy.CanAccessDeviceAsync(principal, d, UsbAccessType.Read, ctx.RequestAborted);
+                if (ok) visible.Add(new { d.Id, d.Label, d.VendorId, d.ProductId, d.Manufacturer, d.ProductName, d.DeviceClass, d.CapacityBytes, d.IsReadOnly, d.SerialNumber, d.IsMock, d.DiscoveredAt });
+            }
+            return Results.Ok(visible);
+        });
+
+        // List files on a USB storage device
+        _app.MapGet("/api/usb/storage/{deviceId}/files", async (string deviceId, HttpContext ctx) =>
+        {
+            var driver = ctx.RequestServices.GetService<IUsbDriver>();
+            if (driver == null) return Results.NotFound("USB subsystem not enabled.");
+            var files = await driver.ListFilesAsync(deviceId, ctx.RequestAborted);
+            return Results.Ok(files);
+        });
+
+        // Read / download a file from a USB storage device
+        _app.MapGet("/api/usb/storage/{deviceId}/files/{**filePath}", async (string deviceId, string filePath, HttpContext ctx) =>
+        {
+            var driver = ctx.RequestServices.GetService<IUsbDriver>();
+            if (driver == null) return Results.NotFound("USB subsystem not enabled.");
+            var stream = await driver.ReadFileAsync(deviceId, "/" + filePath, ctx.RequestAborted);
+            if (stream == null) return Results.NotFound("File not found on device.");
+            var ct = filePath.EndsWith(".pdf") ? "application/pdf" : "application/octet-stream";
+            return Results.File(stream, ct, Path.GetFileName(filePath));
+        });
+
+        // Upload a file to a USB storage device
+        _app.MapPost("/api/usb/storage/{deviceId}/files", async (string deviceId, HttpRequest req, HttpContext ctx) =>
+        {
+            var driver = ctx.RequestServices.GetService<IUsbDriver>();
+            if (driver == null) return Results.NotFound("USB subsystem not enabled.");
+            if (!req.HasFormContentType) return Results.BadRequest("Multipart form expected.");
+            var form = await req.ReadFormAsync(ctx.RequestAborted);
+            var file = form.Files.GetFile("file");
+            if (file == null) return Results.BadRequest("No file in form.");
+            using var stream = file.OpenReadStream();
+            var path = "/" + file.FileName.Replace("..", "__");
+            var written = await driver.WriteFileAsync(deviceId, path, stream, file.ContentType, ctx.RequestAborted);
+            return Results.Ok(new { path, written });
+        });
+
+        // Delete a file from a USB storage device
+        _app.MapDelete("/api/usb/storage/{deviceId}/files/{**filePath}", async (string deviceId, string filePath, HttpContext ctx) =>
+        {
+            var driver = ctx.RequestServices.GetService<IUsbDriver>();
+            if (driver == null) return Results.NotFound("USB subsystem not enabled.");
+            await driver.DeleteFileAsync(deviceId, "/" + filePath, ctx.RequestAborted);
+            return Results.Ok();
+        });
+
+        // List USB printers
+        _app.MapGet("/api/usb/printers", async (HttpContext ctx) =>
+        {
+            var enumerator = ctx.RequestServices.GetService<IUsbDeviceEnumerator>();
+            if (enumerator == null) return Results.NotFound("USB subsystem not enabled.");
+            var printers = await enumerator.EnumerateByClassAsync(UsbDeviceClass.Printer, ctx.RequestAborted);
+            return Results.Ok(printers.Select(p => new { p.Id, p.Label, p.Manufacturer, p.ProductName, p.SerialNumber, p.IsMock }));
+        });
+
+        // Send RAW print job to a USB printer
+        _app.MapPost("/api/usb/print/{deviceId}", async (string deviceId, HttpContext ctx) =>
+        {
+            var driver = ctx.RequestServices.GetService<IUsbDriver>();
+            if (driver == null) return Results.NotFound("USB subsystem not enabled.");
+            using var ms = new MemoryStream();
+            await ctx.Request.Body.CopyToAsync(ms, ctx.RequestAborted);
+            await driver.SendPrintJobAsync(deviceId, ms.ToArray(), ctx.RequestAborted);
+            return Results.Accepted();
+        });
+
+        // Get printer status
+        _app.MapGet("/api/usb/print/{deviceId}/status", async (string deviceId, HttpContext ctx) =>
+        {
+            var driver = ctx.RequestServices.GetService<IUsbDriver>();
+            if (driver == null) return Results.NotFound("USB subsystem not enabled.");
+            var status = await driver.GetPrinterStatusAsync(deviceId, ctx.RequestAborted);
+            return status is null ? Results.NotFound() : Results.Ok(status);
+        });
+
+        // USB Audit log query
+        _app.MapGet("/api/usb/audit", async ([FromQuery] string? principalId, [FromQuery] string? deviceId, [FromQuery] int limit, HttpContext ctx) =>
+        {
+            var audit = ctx.RequestServices.GetService<IUsbAuditLogger>();
+            if (audit == null) return Results.NotFound("USB audit not enabled.");
+            var events = await audit.QueryAsync(principalId, deviceId, limit: limit == 0 ? 100 : limit);
+            return Results.Ok(events);
+        });
+
         // Health probe endpoints (unauthenticated, see middleware above).
         _app.MapHealthChecks("/health/live", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
         {
@@ -244,7 +378,7 @@ public class MorpheoWebServer : IMorpheoServer
             {
                 var manager = sp.GetService<Morpheo.Core.Configuration.MorpheoConfigManager>();
                 if (manager == null) return Results.NotFound("Config Manager not active.");
-                
+
                 manager.Save(config);
                 return Results.Ok();
             });
@@ -307,4 +441,11 @@ public class MorpheoWebServer : IMorpheoServer
             }
         }
     }
+}
+
+public class PrintRequestDto
+{
+    public string Content { get; set; } = string.Empty;
+    public string Sender { get; set; } = string.Empty;
+    public string PrinterName { get; set; } = string.Empty;
 }

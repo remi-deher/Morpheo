@@ -25,7 +25,7 @@ public class SimulatedRoutingStrategy : ISyncRoutingStrategy
         // In simulation, we bypass 'candidates' and 'sendFunc' (which use real network),
         // and instead hand off the packet directly to the Simulator Router.
         // The Simulator decides who receives it based on connectivity graph.
-        
+
         await _simulator.RouteMessage(_localNodeId, log);
     }
 }

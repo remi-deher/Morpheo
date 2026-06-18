@@ -1,4 +1,4 @@
-﻿namespace Morpheo.Sdk;
+namespace Morpheo.Sdk;
 
 /// <summary>
 /// Definition of a client capable of communicating with other Morpheo nodes.
@@ -10,7 +10,8 @@ public interface IMorpheoClient
     /// </summary>
     /// <param name="target">The target peer information.</param>
     /// <param name="content">The content to print.</param>
-    Task SendPrintJobAsync(PeerInfo target, string content);
+    /// <param name="printerName">The target printer name.</param>
+    Task SendPrintJobAsync(PeerInfo target, string content, string printerName = "Virtual-Zebra-01");
 
     /// <summary>
     /// Sends a data synchronization update (Push) to a target node.

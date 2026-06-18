@@ -18,7 +18,7 @@ public class SignalRClientStrategy : ISyncStrategyProvider, IDisposable, IAsyncD
     public SignalRClientStrategy(
         string hubUrl,
         IServiceProvider serviceProvider,
-        ILogger<SignalRClientStrategy> logger) 
+        ILogger<SignalRClientStrategy> logger)
         : this(new SignalRHubConnectionWrapper(new HubConnectionBuilder()
             .WithUrl(hubUrl)
             .WithAutomaticReconnect()

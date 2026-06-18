@@ -16,16 +16,16 @@ public class InMemoryNetworkSimulator
 
     public DataSyncService? GetService(string nodeId) => _participants.TryGetValue(nodeId, out var s) ? s : null;
     public IServiceProvider? GetProvider(string nodeId) => _providers.TryGetValue(nodeId, out var p) ? p : null;
-    
+
     // Key: NodeId, Value: True if isolated (cannot send OR receive)
-    
+
     public void Register(string nodeId, DataSyncService service, IServiceProvider provider)
     {
         _participants[nodeId] = service;
         _providers[nodeId] = provider;
         _disconnectedNodes[nodeId] = false;
     }
-    
+
     public void Disconnect(string nodeId)
     {
         if (_participants.ContainsKey(nodeId))
@@ -41,7 +41,7 @@ public class InMemoryNetworkSimulator
             _disconnectedNodes[nodeId] = false;
         }
     }
-    
+
     // Isolate is effectively Disconnect in this simple model, 
     // but semantically we treat it as "Network Partition".
     // Disconnect = Can't send/receive.
@@ -61,7 +61,7 @@ public class InMemoryNetworkSimulator
         foreach (var receiverId in _participants.Keys)
         {
             if (receiverId == senderId) continue;
-            
+
             if (_disconnectedNodes.TryGetValue(receiverId, out var receiverIsolated) && receiverIsolated)
             {
                 // Receiver is isolated: cannot receive.
@@ -72,7 +72,7 @@ public class InMemoryNetworkSimulator
             {
                 // Simulate network latency?
                 // await Task.Delay(10); 
-                
+
                 // Deliver message
                 await service.ReceiveRemoteLogAsync(log);
             }

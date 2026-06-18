@@ -575,6 +575,99 @@
       from { transform: translateY(100px); opacity: 0; }
       to { transform: translateY(0); opacity: 1; }
     }
+    /* ── USB Tab Styles ─────────────────────────────────────────── */
+    .usb-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    @media (max-width: 900px) { .usb-grid { grid-template-columns: 1fr; } }
+
+    .device-card {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .device-card:hover, .device-card.selected {
+      border-color: var(--primary);
+      background: rgba(99,102,241,0.08);
+    }
+    .device-icon {
+      font-size: 2rem;
+    }
+    .device-info { flex: 1; }
+    .device-label {
+      font-weight: 600;
+      margin-bottom: 0.2rem;
+    }
+    .device-meta {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .device-badge {
+      font-size: 0.65rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 8px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .badge-storage { background: rgba(16,185,129,0.15); color: var(--success); }
+    .badge-printer { background: rgba(99,102,241,0.15); color: var(--primary); }
+    .badge-mock    { background: rgba(245,158,11,0.15);  color: var(--warning); }
+
+    .usb-file-list {
+      max-height: 320px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .usb-file-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.5rem 0.75rem;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--glass-border);
+      font-size: 0.875rem;
+      transition: background 0.2s;
+    }
+    .usb-file-row:hover { background: rgba(255,255,255,0.05); }
+    .usb-file-name { flex: 1; color: var(--text); }
+    .usb-file-size { color: var(--text-muted); font-size: 0.75rem; min-width: 64px; text-align: right; }
+    .usb-file-del  { background: transparent; color: var(--danger); border: 1px solid var(--danger); padding: 0.15rem 0.5rem; border-radius: 6px; font-size: 0.75rem; }
+    .usb-file-dl   { background: transparent; color: var(--primary); border: 1px solid var(--primary); padding: 0.15rem 0.5rem; border-radius: 6px; font-size: 0.75rem; }
+
+    .spooler-row {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      padding: 0.75rem;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--glass-border);
+      font-size: 0.8rem;
+    }
+    .spooler-preview {
+      font-family: monospace;
+      color: #34d399;
+      background: rgba(15,23,42,0.5);
+      padding: 0.4rem 0.6rem;
+      border-radius: 5px;
+      white-space: pre-wrap;
+      word-break: break-all;
+      margin-top: 0.35rem;
+      max-height: 100px;
+      overflow-y: auto;
+    }
+    /* ── End USB Tab ─────────────────────────────────────────────── */
   </style>
 </head>
 <body>
@@ -606,7 +699,7 @@
       </div>
 
       <nav>
-        <button class="nav-btn active" onclick="switchTab('notes-tab', this)">
+        <button class="nav-btn" onclick="switchTab('notes-tab', this)">
           <span>📝</span> Notes Board
         </button>
         <button class="nav-btn" onclick="switchTab('files-tab', this)">
@@ -614,6 +707,9 @@
         </button>
         <button class="nav-btn" onclick="switchTab('print-tab', this)">
           <span>🖨️</span> Impression Émulée
+        </button>
+        <button class="nav-btn" onclick="switchTab('usb-tab', this)">
+          <span>🔌</span> Partage USB
         </button>
         <button class="nav-btn" onclick="switchTab('settings-tab', this)">
           <span>⚙️</span> Config / Pairs
@@ -817,6 +913,74 @@
         </div>
       </div>
 
+      <!-- TAB 5: USB DEVICE SHARING -->
+      <div id="usb-tab" class="tab-content">
+        <div class="header-panel">
+          <h2>🔌 Partage de Périphériques USB</h2>
+          <button class="btn btn-secondary" onclick="loadUsbDevices()">🔄 Actualiser</button>
+        </div>
+
+        <div class="usb-grid">
+          <!-- Left: device list + add device -->
+          <div>
+            <div class="card">
+              <div class="card-title">Périphériques connectés <span id="usb-count" style="font-size:0.85rem;color:var(--text-muted)">0</span></div>
+              <div id="usb-device-list" style="display:flex;flex-direction:column;gap:0.75rem;margin-bottom:1rem;">
+                <p style="color:var(--text-muted);font-size:0.875rem;">Chargement...</p>
+              </div>
+              <hr style="border-color:var(--glass-border);margin:0.75rem 0;">
+              <div class="card-title" style="font-size:0.95rem;margin-bottom:0.75rem;">+ Brancher un périphérique (simulation)</div>
+              <form id="usb-add-form" onsubmit="addMockDevice(event)" style="display:flex;flex-direction:column;gap:0.6rem;">
+                <div class="form-group" style="margin-bottom:0;">
+                  <label>Nom du périphérique</label>
+                  <input type="text" id="usb-new-label" placeholder="Ex: SanDisk Ultra 32 GB" required>
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                  <label>Type</label>
+                  <select id="usb-new-class">
+                    <option value="8">💾 Stockage (Mass Storage)</option>
+                    <option value="7">🖨️ Imprimante (Printer)</option>
+                  </select>
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                  <label>Capacité (Go, optionnel)</label>
+                  <input type="number" id="usb-new-capacity" placeholder="32" min="1">
+                </div>
+                <button type="submit" class="btn" style="margin-top:0.25rem;">🔌 Brancher le périphérique</button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Right: device explorer / printer spooler -->
+          <div>
+            <!-- Storage File Explorer -->
+            <div class="card" id="usb-explorer-card">
+              <div class="card-title">Explorateur de fichiers USB <span id="usb-selected-label" style="font-size:0.8rem;color:var(--text-muted);">— sélectionnez un périphérique</span></div>
+              <div id="usb-file-list" class="usb-file-list">
+                <p style="color:var(--text-muted);font-size:0.875rem;text-align:center;padding:1.5rem 0;">Sélectionnez un périphérique de stockage à gauche pour explorer ses fichiers.</p>
+              </div>
+              <hr style="border-color:var(--glass-border);margin:0.75rem 0;">
+              <div class="card-title" style="font-size:0.95rem;margin-bottom:0.5rem;">📤 Envoyer un fichier sur le périphérique</div>
+              <div class="upload-zone" id="usb-drop-zone" onclick="document.getElementById('usb-file-input').click()" style="min-height:80px;">
+                <span class="upload-icon" style="font-size:1.5rem;">📁</span>
+                <p style="font-size:0.8rem;">Glissez-déposez ou <strong>cliquez</strong> pour sélectionner</p>
+                <input type="file" id="usb-file-input" style="display:none;" onchange="uploadToUsb(this.files[0])">
+              </div>
+            </div>
+
+            <!-- Printer Spooler -->
+            <div class="card" id="usb-printer-card" style="display:none;">
+              <div class="card-title">🖨️ Spooler d'impression <span id="usb-printer-label" style="font-size:0.8rem;color:var(--text-muted);"></span>
+                <button class="btn btn-secondary" style="padding:0.2rem 0.5rem;font-size:0.75rem;float:right;" onclick="clearPrintSpooler()">🗑️ Vider</button>
+              </div>
+              <div id="usb-spooler-list" style="display:flex;flex-direction:column;gap:0.5rem;max-height:350px;overflow-y:auto;">
+                <p style="color:var(--text-muted);font-size:0.875rem;text-align:center;padding:1.5rem 0;">Aucun job d'impression.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </main>
   </div>
 
@@ -841,6 +1005,7 @@
         loadPrintJobs();
         loadPeers();
       }
+      if (tabId === 'usb-tab') loadUsbDevices();
       if (tabId === 'settings-tab') {
         loadConfig();
         loadPeers();
@@ -1216,10 +1381,18 @@
         
         if (type === 'notes') {
           loadNotes();
+          notify('Notes synchronisées', '📝');
         } else if (type === 'files') {
           loadFiles();
+          notify('Fichiers mis à jour', '📁');
         } else if (type === 'prints') {
           loadPrintJobs();
+          notify('Nouvelle impression reçue', '🖨️');
+        } else if (type === 'usb') {
+          loadUsbDevices();
+          notify('Périphérique USB modifié', '🔌');
+        } else if (type === 'peers') {
+          loadPeers();
         }
       };
 
@@ -1227,6 +1400,261 @@
         console.warn("Connexion au flux d'événements perdue. Reconnexion automatique...");
       };
     }
+
+    // ── USB Device Sharing ───────────────────────────────────────────────────
+    let selectedUsbDeviceId   = null;
+    let selectedUsbDeviceClass = null;  // 'storage' | 'printer'
+
+    async function loadUsbDevices() {
+      try {
+        const res  = await fetch('/api/usb/devices');
+        const devs = await res.json();
+        document.getElementById('usb-count').textContent = devs.length;
+        const list = document.getElementById('usb-device-list');
+        list.innerHTML = '';
+
+        if (devs.length === 0) {
+          list.innerHTML = '<p style="color:var(--text-muted);font-size:0.875rem;">Aucun périphérique connecté. Branchez-en un ci-dessous !</p>';
+          return;
+        }
+
+        devs.forEach(d => {
+          const isStorage = d.deviceClass === 8;
+          const isPrinter = d.deviceClass === 7;
+          const icon  = isStorage ? '💾' : isPrinter ? '🖨️' : '🔌';
+          const cls   = isStorage ? 'badge-storage' : 'badge-printer';
+          const kind  = isStorage ? 'Stockage' : 'Imprimante';
+          const cap   = d.capacityBytes ? ` • ${(d.capacityBytes / 1073741824).toFixed(0)} Go` : '';
+
+          const card = document.createElement('div');
+          card.className = 'device-card' + (d.id === selectedUsbDeviceId ? ' selected' : '');
+          card.dataset.id    = d.id;
+          card.dataset.class = isStorage ? 'storage' : 'printer';
+          card.innerHTML = `
+            <div class="device-icon">${icon}</div>
+            <div class="device-info">
+              <div class="device-label">${escapeHtml(d.label)}</div>
+              <div class="device-meta">${escapeHtml(d.manufacturer || d.vendorId || '')}${cap} • <code style="font-size:0.7rem;">${d.id}</code></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:0.3rem;align-items:flex-end;">
+              <span class="device-badge ${cls}">${kind}</span>
+              ${d.isMock ? '<span class="device-badge badge-mock">Mock</span>' : ''}
+              <button class="btn btn-secondary" style="padding:0.15rem 0.4rem;font-size:0.7rem;color:var(--danger);" onclick="ejectDevice('${d.id}', event)">⏏️ Éjecter</button>
+            </div>
+          `;
+          card.onclick = (e) => { if (e.target.tagName !== 'BUTTON') selectUsbDevice(d.id, isStorage ? 'storage' : 'printer', d.label); };
+          list.appendChild(card);
+        });
+
+        // Refresh explorer if already selected
+        if (selectedUsbDeviceId) {
+          if (selectedUsbDeviceClass === 'storage') loadUsbFiles(selectedUsbDeviceId);
+          else loadPrinterSpooler(selectedUsbDeviceId);
+        }
+      } catch (err) {
+        console.error('USB device list error', err);
+      }
+    }
+
+    function selectUsbDevice(id, cls, label) {
+      selectedUsbDeviceId    = id;
+      selectedUsbDeviceClass = cls;
+
+      // Highlight
+      document.querySelectorAll('.device-card').forEach(c => c.classList.remove('selected'));
+      const card = document.querySelector(`.device-card[data-id="${id}"]`);
+      if (card) card.classList.add('selected');
+
+      if (cls === 'storage') {
+        document.getElementById('usb-explorer-card').style.display = 'block';
+        document.getElementById('usb-printer-card').style.display  = 'none';
+        document.getElementById('usb-selected-label').textContent  = '— ' + label;
+        loadUsbFiles(id);
+      } else {
+        document.getElementById('usb-explorer-card').style.display = 'none';
+        document.getElementById('usb-printer-card').style.display  = 'block';
+        document.getElementById('usb-printer-label').textContent   = '— ' + label;
+        loadPrinterSpooler(id);
+      }
+    }
+
+    async function loadUsbFiles(deviceId) {
+      try {
+        const res   = await fetch(`/api/usb/storage/${encodeURIComponent(deviceId)}/files`);
+        const files = await res.json();
+        const list  = document.getElementById('usb-file-list');
+        list.innerHTML = '';
+
+        if (!files.length) {
+          list.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:1.5rem 0;">Aucun fichier sur ce périphérique.</p>';
+          return;
+        }
+
+        files.forEach(f => {
+          const row = document.createElement('div');
+          row.className = 'usb-file-row';
+          const filePath = f.path.replace(/^\//, '');
+          row.innerHTML = `
+            <span style="font-size:1.1rem;">${fileIcon(f.fileName)}</span>
+            <span class="usb-file-name">${escapeHtml(f.fileName)}</span>
+            <span class="usb-file-size">${formatBytes(f.sizeBytes)}</span>
+            <button class="usb-file-dl" onclick="downloadUsbFile('${encodeURIComponent(deviceId)}', '${encodeURIComponent(filePath)}', '${escapeHtml(f.fileName)}')">⬇</button>
+            <button class="usb-file-del" onclick="deleteUsbFile('${encodeURIComponent(deviceId)}', '${encodeURIComponent(filePath)}', this)">🗑</button>
+          `;
+          list.appendChild(row);
+        });
+      } catch (err) {
+        console.error('USB file list error', err);
+      }
+    }
+
+    async function downloadUsbFile(deviceId, filePath, fileName) {
+      const url = `/api/usb/storage/${deviceId}/files/${filePath}`;
+      const a   = document.createElement('a');
+      a.href     = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    async function deleteUsbFile(deviceId, filePath, btn) {
+      btn.disabled = true;
+      try {
+        await fetch(`/api/usb/storage/${deviceId}/files/${filePath}`, { method: 'DELETE' });
+        loadUsbFiles(selectedUsbDeviceId);
+        notify('Fichier supprimé', '🗑️');
+      } catch { btn.disabled = false; }
+    }
+
+    async function uploadToUsb(file) {
+      if (!selectedUsbDeviceId || selectedUsbDeviceClass !== 'storage') {
+        notify('Sélectionnez d\'abord un périphérique de stockage !', '⚠️');
+        return;
+      }
+      const fd = new FormData();
+      fd.append('file', file);
+      notify('Transfert en cours...', '⏳');
+      try {
+        const res = await fetch(`/api/usb/storage/${encodeURIComponent(selectedUsbDeviceId)}/files`, {
+          method: 'POST',
+          body: fd
+        });
+        if (res.ok) {
+          notify('Fichier transféré avec succès !', '✅');
+          loadUsbFiles(selectedUsbDeviceId);
+        } else {
+          notify('Erreur lors du transfert', '❌');
+        }
+      } catch { notify('Erreur réseau', '❌'); }
+      document.getElementById('usb-file-input').value = '';
+    }
+
+    async function addMockDevice(e) {
+      e.preventDefault();
+      const label    = document.getElementById('usb-new-label').value;
+      const cls      = parseInt(document.getElementById('usb-new-class').value);
+      const capacity = parseInt(document.getElementById('usb-new-capacity').value) || null;
+
+      const body = {
+        label,
+        deviceClass: cls,
+        capacityBytes: capacity ? capacity * 1073741824 : null
+      };
+
+      try {
+        const res = await fetch('/api/usb/mock/add', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        if (res.ok) {
+          notify(`Périphérique "${label}" branché !`, '🔌');
+          document.getElementById('usb-new-label').value    = '';
+          document.getElementById('usb-new-capacity').value = '';
+          loadUsbDevices();
+        }
+      } catch { notify('Erreur lors de l\'ajout', '❌'); }
+    }
+
+    async function ejectDevice(id, e) {
+      e.stopPropagation();
+      if (!confirm('Éjecter ce périphérique ?')) return;
+      try {
+        await fetch(`/api/usb/mock/eject/${encodeURIComponent(id)}`, { method: 'DELETE' });
+        if (selectedUsbDeviceId === id) {
+          selectedUsbDeviceId    = null;
+          selectedUsbDeviceClass = null;
+          document.getElementById('usb-file-list').innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:1.5rem 0;">Sélectionnez un périphérique.</p>';
+          document.getElementById('usb-selected-label').textContent = '— sélectionnez un périphérique';
+        }
+        notify('Périphérique éjecté', '⏏️');
+        loadUsbDevices();
+      } catch { notify('Erreur lors de l\'éjection', '❌'); }
+    }
+
+    async function loadPrinterSpooler(deviceId) {
+      try {
+        const res  = await fetch(`/api/usb/print/${encodeURIComponent(deviceId)}/jobs`);
+        const jobs = await res.json();
+        const list = document.getElementById('usb-spooler-list');
+        list.innerHTML = '';
+
+        if (!jobs.length) {
+          list.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:1.5rem 0;">Aucun job d\'impression.</p>';
+          return;
+        }
+
+        jobs.forEach(j => {
+          const row = document.createElement('div');
+          row.className = 'spooler-row';
+          const ts = new Date(j.receivedAt).toLocaleTimeString();
+          row.innerHTML = `
+            <div style="display:flex;justify-content:space-between;color:var(--text-muted);font-size:0.75rem;">
+              <span>Job #${j.id.slice(0,8)}</span><span>${ts} • ${j.rawBytes ? j.rawBytes.length + ' oct.' : 'n/a'}</span>
+            </div>
+            <div class="spooler-preview">${escapeHtml(j.textPreview || '<binary>')}</div>
+          `;
+          list.appendChild(row);
+        });
+      } catch (err) {
+        console.error('Printer spooler error', err);
+      }
+    }
+
+    async function clearPrintSpooler() {
+      if (!selectedUsbDeviceId) return;
+      await fetch(`/api/usb/print/${encodeURIComponent(selectedUsbDeviceId)}/jobs`, { method: 'DELETE' });
+      loadPrinterSpooler(selectedUsbDeviceId);
+      notify('Spooler vidé', '🗑️');
+    }
+
+    // USB drag-and-drop
+    const usbDz = document.getElementById('usb-drop-zone');
+    if (usbDz) {
+      usbDz.addEventListener('dragover', e => { e.preventDefault(); usbDz.style.borderColor = 'var(--primary)'; });
+      usbDz.addEventListener('dragleave', () => { usbDz.style.borderColor = 'var(--glass-border)'; });
+      usbDz.addEventListener('drop', e => {
+        e.preventDefault();
+        usbDz.style.borderColor = 'var(--glass-border)';
+        if (e.dataTransfer.files.length > 0) uploadToUsb(e.dataTransfer.files[0]);
+      });
+    }
+
+    // Helpers
+    function fileIcon(name) {
+      const ext = name.split('.').pop().toLowerCase();
+      return { pdf:'📄', png:'🖼️', jpg:'🖼️', jpeg:'🖼️', txt:'📝', csv:'📊',
+               json:'📋', xml:'📋', zip:'📦', mp4:'🎬', mp3:'🎵' }[ext] || '📁';
+    }
+    function formatBytes(b) {
+      if (!b) return '0 o';
+      if (b < 1024) return b + ' o';
+      if (b < 1048576) return (b/1024).toFixed(1) + ' Ko';
+      if (b < 1073741824) return (b/1048576).toFixed(1) + ' Mo';
+      return (b/1073741824).toFixed(2) + ' Go';
+    }
+    // ── End USB ──────────────────────────────────────────────────────────────
 
     // Boot
     loadStatus();
