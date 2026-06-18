@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+
+  <head>
+    <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <title>Class DataSyncService | Morpheo Framework </title>
+      <meta name="viewport" content="width=device-width">
+      <meta name="title" content="Class DataSyncService | Morpheo Framework ">
+    
+    <meta name="description" content="Core service managing data synchronization, broadcasting, and conflict resolution.">
+      <link rel="shortcut icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
+      <link rel="stylesheet" href="../styles/docfx.css">
+      <link rel="stylesheet" href="../styles/main.css">
+      <meta property="docfx:navrel" content="../toc.html">
+      <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="../">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+
+        <div id="search-results">
+          <div class="search-list">Search Results for <span></span></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination" data-first=First data-prev=Previous data-next=Next data-last=Last></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Morpheo.Core.Sync.DataSyncService">
+
+
+
+  <h1 id="Morpheo_Core_Sync_DataSyncService" data-uid="Morpheo.Core.Sync.DataSyncService" class="text-break">Class DataSyncService</h1>
+  <div class="markdown level0 summary"><p>Core service managing data synchronization, broadcasting, and conflict resolution.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+    <div class="level1"><span class="xref">DataSyncService</span></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Morpheo.html">Morpheo</a>.<a class="xref" href="Morpheo.Core.html">Core</a>.<a class="xref" href="Morpheo.Core.Sync.html">Sync</a></h6>
+  <h6><strong>Assembly</strong>: Morpheo.Core.dll</h6>
+  <h5 id="Morpheo_Core_Sync_DataSyncService_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class DataSyncService</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/remi-deher/Morpheo/new/main/apiSpec/new?filename=Morpheo_Core_Sync_DataSyncService__ctor_System_IServiceProvider_Morpheo_Sdk_IMorpheoClient_Morpheo_Sdk_INetworkDiscovery_Morpheo_Sdk_MorpheoOptions_Microsoft_Extensions_Logging_ILogger_Morpheo_Core_Sync_DataSyncService__Morpheo_Core_Sync_ConflictResolutionEngine_Morpheo_Sdk_ISyncRoutingStrategy_Morpheo_Core_Diagnostics_MorpheoMetrics_Morpheo_Core_Sync_MerkleTreeService_.md&amp;value=---%0Auid%3A%20Morpheo.Core.Sync.DataSyncService.%23ctor(System.IServiceProvider%2CMorpheo.Sdk.IMorpheoClient%2CMorpheo.Sdk.INetworkDiscovery%2CMorpheo.Sdk.MorpheoOptions%2CMicrosoft.Extensions.Logging.ILogger%7BMorpheo.Core.Sync.DataSyncService%7D%2CMorpheo.Core.Sync.ConflictResolutionEngine%2CMorpheo.Sdk.ISyncRoutingStrategy%2CMorpheo.Core.Diagnostics.MorpheoMetrics%2CMorpheo.Core.Sync.MerkleTreeService)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/remi-deher/Morpheo/blob/main/Morpheo.Core/Sync/DataSyncService.cs/#L33">View Source</a>
+  </span>
+  <a id="Morpheo_Core_Sync_DataSyncService__ctor_" data-uid="Morpheo.Core.Sync.DataSyncService.#ctor*"></a>
+  <h4 id="Morpheo_Core_Sync_DataSyncService__ctor_System_IServiceProvider_Morpheo_Sdk_IMorpheoClient_Morpheo_Sdk_INetworkDiscovery_Morpheo_Sdk_MorpheoOptions_Microsoft_Extensions_Logging_ILogger_Morpheo_Core_Sync_DataSyncService__Morpheo_Core_Sync_ConflictResolutionEngine_Morpheo_Sdk_ISyncRoutingStrategy_Morpheo_Core_Diagnostics_MorpheoMetrics_Morpheo_Core_Sync_MerkleTreeService_" data-uid="Morpheo.Core.Sync.DataSyncService.#ctor(System.IServiceProvider,Morpheo.Sdk.IMorpheoClient,Morpheo.Sdk.INetworkDiscovery,Morpheo.Sdk.MorpheoOptions,Microsoft.Extensions.Logging.ILogger{Morpheo.Core.Sync.DataSyncService},Morpheo.Core.Sync.ConflictResolutionEngine,Morpheo.Sdk.ISyncRoutingStrategy,Morpheo.Core.Diagnostics.MorpheoMetrics,Morpheo.Core.Sync.MerkleTreeService)">DataSyncService(IServiceProvider, IMorpheoClient, INetworkDiscovery, MorpheoOptions, ILogger&lt;DataSyncService&gt;, ConflictResolutionEngine, ISyncRoutingStrategy, MorpheoMetrics?, MerkleTreeService?)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DataSyncService(IServiceProvider serviceProvider, IMorpheoClient client, INetworkDiscovery discovery, MorpheoOptions options, ILogger&lt;DataSyncService&gt; logger, ConflictResolutionEngine conflictEngine, ISyncRoutingStrategy routingStrategy, MorpheoMetrics? metrics = null, MerkleTreeService? merkle = null)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iserviceprovider">IServiceProvider</a></td>
+        <td><span class="parametername">serviceProvider</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Morpheo.Sdk.IMorpheoClient.html">IMorpheoClient</a></td>
+        <td><span class="parametername">client</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Morpheo.Sdk.INetworkDiscovery.html">INetworkDiscovery</a></td>
+        <td><span class="parametername">discovery</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Morpheo.Sdk.MorpheoOptions.html">MorpheoOptions</a></td>
+        <td><span class="parametername">options</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1">ILogger</a>&lt;<a class="xref" href="Morpheo.Core.Sync.DataSyncService.html">DataSyncService</a>&gt;</td>
+        <td><span class="parametername">logger</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Morpheo.Core.Sync.ConflictResolutionEngine.html">ConflictResolutionEngine</a></td>
+        <td><span class="parametername">conflictEngine</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Morpheo.Sdk.ISyncRoutingStrategy.html">ISyncRoutingStrategy</a></td>
+        <td><span class="parametername">routingStrategy</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Morpheo.Core.Diagnostics.MorpheoMetrics.html">MorpheoMetrics</a></td>
+        <td><span class="parametername">metrics</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Morpheo.Core.Sync.MerkleTreeService.html">MerkleTreeService</a></td>
+        <td><span class="parametername">merkle</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="fields">Fields
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/remi-deher/Morpheo/new/main/apiSpec/new?filename=Morpheo_Core_Sync_DataSyncService_DefaultHistoryPageSize.md&amp;value=---%0Auid%3A%20Morpheo.Core.Sync.DataSyncService.DefaultHistoryPageSize%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/remi-deher/Morpheo/blob/main/Morpheo.Core/Sync/DataSyncService.cs/#L79">View Source</a>
+  </span>
+  <h4 id="Morpheo_Core_Sync_DataSyncService_DefaultHistoryPageSize" data-uid="Morpheo.Core.Sync.DataSyncService.DefaultHistoryPageSize">DefaultHistoryPageSize</h4>
+  <div class="markdown level1 summary"><p>Default maximum number of logs returned by a single <a class="xref" href="Morpheo.Core.Sync.DataSyncService.html#Morpheo_Core_Sync_DataSyncService_GetHistoryAsync_System_Int64_System_Int32_">GetHistoryAsync(long, int)</a> page.
+Keeps Cold Sync bounded so a node that has been offline for a long time cannot
+force the source node to materialize its entire history in one allocation.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const int DefaultHistoryPageSize = 500</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/remi-deher/Morpheo/new/main/apiSpec/new?filename=Morpheo_Core_Sync_DataSyncService_MaxHistoryPageSize.md&amp;value=---%0Auid%3A%20Morpheo.Core.Sync.DataSyncService.MaxHistoryPageSize%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/remi-deher/Morpheo/blob/main/Morpheo.Core/Sync/DataSyncService.cs/#L85">View Source</a>
+  </span>
+  <h4 id="Morpheo_Core_Sync_DataSyncService_MaxHistoryPageSize" data-uid="Morpheo.Core.Sync.DataSyncService.MaxHistoryPageSize">MaxHistoryPageSize</h4>
+  <div class="markdown level1 summary"><p>Hard ceiling on the page size a caller may request, to protect the source node
+from an over-large <code>limit</code> query parameter.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const int MaxHistoryPageSize = 2000</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/remi-deher/Morpheo/new/main/apiSpec/new?filename=Morpheo_Core_Sync_DataSyncService_BroadcastChangeAsync__1___0_System_String_.md&amp;value=---%0Auid%3A%20Morpheo.Core.Sync.DataSyncService.BroadcastChangeAsync%60%601(%60%600%2CSystem.String)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/remi-deher/Morpheo/blob/main/Morpheo.Core/Sync/DataSyncService.cs/#L209">View Source</a>
+  </span>
+  <a id="Morpheo_Core_Sync_DataSyncService_BroadcastChangeAsync_" data-uid="Morpheo.Core.Sync.DataSyncService.BroadcastChangeAsync*"></a>
+  <h4 id="Morpheo_Core_Sync_DataSyncService_BroadcastChangeAsync__1___0_System_String_" data-uid="Morpheo.Core.Sync.DataSyncService.BroadcastChangeAsync``1(``0,System.String)">BroadcastChangeAsync&lt;T&gt;(T, string)</h4>
+  <div class="markdown level1 summary"><p>Broadcasts a local change to the network.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task BroadcastChangeAsync&lt;T&gt;(T entity, string action) where T : MorpheoEntity</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">T</span></td>
+        <td><span class="parametername">entity</span></td>
+        <td><p>The entity that changed.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">action</span></td>
+        <td><p>The action performed (UPDATE, DELETE, etc.).</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T</span></td>
+        <td><p>The type of the entity.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/remi-deher/Morpheo/new/main/apiSpec/new?filename=Morpheo_Core_Sync_DataSyncService_CanReachDatabaseAsync.md&amp;value=---%0Auid%3A%20Morpheo.Core.Sync.DataSyncService.CanReachDatabaseAsync%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/remi-deher/Morpheo/blob/main/Morpheo.Core/Sync/DataSyncService.cs/#L586">View Source</a>
+  </span>
+  <a id="Morpheo_Core_Sync_DataSyncService_CanReachDatabaseAsync_" data-uid="Morpheo.Core.Sync.DataSyncService.CanReachDatabaseAsync*"></a>
+  <h4 id="Morpheo_Core_Sync_DataSyncService_CanReachDatabaseAsync" data-uid="Morpheo.Core.Sync.DataSyncService.CanReachDatabaseAsync">CanReachDatabaseAsync()</h4>
+  <div class="markdown level1 summary"><p>Readiness probe: returns true when the underlying database is reachable.
+Used by the <code>/health/ready</code> endpoint.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;bool&gt; CanReachDatabaseAsync()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/remi-deher/Morpheo/new/main/apiSpec/new?filename=Morpheo_Core_Sync_DataSyncService_ComputeLocalDigestAsync.md&amp;value=---%0Auid%3A%20Morpheo.Core.Sync.DataSyncService.ComputeLocalDigestAsync%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/remi-deher/Morpheo/blob/main/Morpheo.Core/Sync/DataSyncService.cs/#L134">View Source</a>
+  </span>
+  <a id="Morpheo_Core_Sync_DataSyncService_ComputeLocalDigestAsync_" data-uid="Morpheo.Core.Sync.DataSyncService.ComputeLocalDigestAsync*"></a>
+  <h4 id="Morpheo_Core_Sync_DataSyncService_ComputeLocalDigestAsync" data-uid="Morpheo.Core.Sync.DataSyncService.ComputeLocalDigestAsync">ComputeLocalDigestAsync()</h4>
+  <div class="markdown level1 summary"><p>Computes the Merkle root hash over the set of locally held sync-log Ids.
+Two nodes with identical log sets produce identical roots.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;string&gt; ComputeLocalDigestAsync()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/remi-deher/Morpheo/new/main/apiSpec/new?filename=Morpheo_Core_Sync_DataSyncService_FindMissingIdsAsync_System_Collections_Generic_IEnumerable_System_String__.md&amp;value=---%0Auid%3A%20Morpheo.Core.Sync.DataSyncService.FindMissingIdsAsync(System.Collections.Generic.IEnumerable%7BSystem.String%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/remi-deher/Morpheo/blob/main/Morpheo.Core/Sync/DataSyncService.cs/#L188">View Source</a>
+  </span>
+  <a id="Morpheo_Core_Sync_DataSyncService_FindMissingIdsAsync_" data-uid="Morpheo.Core.Sync.DataSyncService.FindMissingIdsAsync*"></a>
+  <h4 id="Morpheo_Core_Sync_DataSyncService_FindMissingIdsAsync_System_Collections_Generic_IEnumerable_System_String__" data-uid="Morpheo.Core.Sync.DataSyncService.FindMissingIdsAsync(System.Collections.Generic.IEnumerable{System.String})">FindMissingIdsAsync(IEnumerable&lt;string&gt;)</h4>
+  <div class="markdown level1 summary"><p>Returns the subset of <code class="paramref">candidateIds</code> that are NOT present locally.
+Used by a node to discover which of a peer's events it still needs.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;List&lt;string&gt;&gt; FindMissingIdsAsync(IEnumerable&lt;string&gt; candidateIds)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;</td>
+        <td><span class="parametername">candidateIds</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/remi-deher/Morpheo/new/main/apiSpec/new?filename=Morpheo_Core_Sync_DataSyncService_GetHistoryAsync_System_Int64_System_Int32_.md&amp;value=---%0Auid%3A%20Morpheo.Core.Sync.DataSyncService.GetHistoryAsync(System.Int64%2CSystem.Int32)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/remi-deher/Morpheo/blob/main/Morpheo.Core/Sync/DataSyncService.cs/#L95">View Source</a>
+  </span>
+  <a id="Morpheo_Core_Sync_DataSyncService_GetHistoryAsync_" data-uid="Morpheo.Core.Sync.DataSyncService.GetHistoryAsync*"></a>
+  <h4 id="Morpheo_Core_Sync_DataSyncService_GetHistoryAsync_System_Int64_System_Int32_" data-uid="Morpheo.Core.Sync.DataSyncService.GetHistoryAsync(System.Int64,System.Int32)">GetHistoryAsync(long, int)</h4>
+  <div class="markdown level1 summary"><p>Returns a single page of sync logs newer than <code class="paramref">sinceTick</code> for a
+Cold Sync pull, ordered chronologically. The caller paginates by re-issuing the
+request with <code class="paramref">sinceTick</code> set to the <code>Timestamp</code> of the last
+item received — the tick itself is the cursor.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;List&lt;SyncLogDto&gt;&gt; GetHistoryAsync(long sinceTick, int limit = 500)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></td>
+        <td><span class="parametername">sinceTick</span></td>
+        <td><p>Exclusive lower bound on the log timestamp (tick).</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><span class="parametername">limit</span></td>
+        <td><p>Maximum number of logs to return; clamped to [1, <a class="xref" href="Morpheo.Core.Sync.DataSyncService.html#Morpheo_Core_Sync_DataSyncService_MaxHistoryPageSize">MaxHistoryPageSize</a>].</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Morpheo.Sdk.SyncLogDto.html">SyncLogDto</a>&gt;&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/remi-deher/Morpheo/new/main/apiSpec/new?filename=Morpheo_Core_Sync_DataSyncService_GetLogsByIdsAsync_System_Collections_Generic_IReadOnlyList_System_String__.md&amp;value=---%0Auid%3A%20Morpheo.Core.Sync.DataSyncService.GetLogsByIdsAsync(System.Collections.Generic.IReadOnlyList%7BSystem.String%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/remi-deher/Morpheo/blob/main/Morpheo.Core/Sync/DataSyncService.cs/#L158">View Source</a>
+  </span>
+  <a id="Morpheo_Core_Sync_DataSyncService_GetLogsByIdsAsync_" data-uid="Morpheo.Core.Sync.DataSyncService.GetLogsByIdsAsync*"></a>
+  <h4 id="Morpheo_Core_Sync_DataSyncService_GetLogsByIdsAsync_System_Collections_Generic_IReadOnlyList_System_String__" data-uid="Morpheo.Core.Sync.DataSyncService.GetLogsByIdsAsync(System.Collections.Generic.IReadOnlyList{System.String})">GetLogsByIdsAsync(IReadOnlyList&lt;string&gt;)</h4>
+  <div class="markdown level1 summary"><p>Returns the sync logs matching the requested Ids, so a peer can pull exactly
+the events it has identified as missing.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;List&lt;SyncLogDto&gt;&gt; GetLogsByIdsAsync(IReadOnlyList&lt;string&gt; ids)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;</td>
+        <td><span class="parametername">ids</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Morpheo.Sdk.SyncLogDto.html">SyncLogDto</a>&gt;&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/remi-deher/Morpheo/new/main/apiSpec/new?filename=Morpheo_Core_Sync_DataSyncService_GetManifestAsync.md&amp;value=---%0Auid%3A%20Morpheo.Core.Sync.DataSyncService.GetManifestAsync%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/remi-deher/Morpheo/blob/main/Morpheo.Core/Sync/DataSyncService.cs/#L146">View Source</a>
+  </span>
+  <a id="Morpheo_Core_Sync_DataSyncService_GetManifestAsync_" data-uid="Morpheo.Core.Sync.DataSyncService.GetManifestAsync*"></a>
+  <h4 id="Morpheo_Core_Sync_DataSyncService_GetManifestAsync" data-uid="Morpheo.Core.Sync.DataSyncService.GetManifestAsync">GetManifestAsync()</h4>
+  <div class="markdown level1 summary"><p>Returns the full set of locally held sync-log Ids (the reconciliation manifest).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;List&lt;string&gt;&gt; GetManifestAsync()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/remi-deher/Morpheo/new/main/apiSpec/new?filename=Morpheo_Core_Sync_DataSyncService_ReceiveRemoteBatchAsync_System_Collections_Generic_IReadOnlyList_Morpheo_Sdk_SyncLogDto__.md&amp;value=---%0Auid%3A%20Morpheo.Core.Sync.DataSyncService.ReceiveRemoteBatchAsync(System.Collections.Generic.IReadOnlyList%7BMorpheo.Sdk.SyncLogDto%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/remi-deher/Morpheo/blob/main/Morpheo.Core/Sync/DataSyncService.cs/#L328">View Source</a>
+  </span>
+  <a id="Morpheo_Core_Sync_DataSyncService_ReceiveRemoteBatchAsync_" data-uid="Morpheo.Core.Sync.DataSyncService.ReceiveRemoteBatchAsync*"></a>
+  <h4 id="Morpheo_Core_Sync_DataSyncService_ReceiveRemoteBatchAsync_System_Collections_Generic_IReadOnlyList_Morpheo_Sdk_SyncLogDto__" data-uid="Morpheo.Core.Sync.DataSyncService.ReceiveRemoteBatchAsync(System.Collections.Generic.IReadOnlyList{Morpheo.Sdk.SyncLogDto})">ReceiveRemoteBatchAsync(IReadOnlyList&lt;SyncLogDto&gt;)</h4>
+  <div class="markdown level1 summary"><p>Receives and processes a batch of log entries from a remote node, in order.
+Used by the batch push endpoint and bulk catch-up paths.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task ReceiveRemoteBatchAsync(IReadOnlyList&lt;SyncLogDto&gt; remoteDtos)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;<a class="xref" href="Morpheo.Sdk.SyncLogDto.html">SyncLogDto</a>&gt;</td>
+        <td><span class="parametername">remoteDtos</span></td>
+        <td><p>The received log DTOs.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/remi-deher/Morpheo/new/main/apiSpec/new?filename=Morpheo_Core_Sync_DataSyncService_ReceiveRemoteLogAsync_Morpheo_Sdk_SyncLogDto_.md&amp;value=---%0Auid%3A%20Morpheo.Core.Sync.DataSyncService.ReceiveRemoteLogAsync(Morpheo.Sdk.SyncLogDto)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/remi-deher/Morpheo/blob/main/Morpheo.Core/Sync/DataSyncService.cs/#L291">View Source</a>
+  </span>
+  <a id="Morpheo_Core_Sync_DataSyncService_ReceiveRemoteLogAsync_" data-uid="Morpheo.Core.Sync.DataSyncService.ReceiveRemoteLogAsync*"></a>
+  <h4 id="Morpheo_Core_Sync_DataSyncService_ReceiveRemoteLogAsync_Morpheo_Sdk_SyncLogDto_" data-uid="Morpheo.Core.Sync.DataSyncService.ReceiveRemoteLogAsync(Morpheo.Sdk.SyncLogDto)">ReceiveRemoteLogAsync(SyncLogDto)</h4>
+  <div class="markdown level1 summary"><p>Receives and processes a log entry from a remote node.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task ReceiveRemoteLogAsync(SyncLogDto remoteDto)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Morpheo.Sdk.SyncLogDto.html">SyncLogDto</a></td>
+        <td><span class="parametername">remoteDto</span></td>
+        <td><p>The received log DTO.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="events">Events
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/remi-deher/Morpheo/new/main/apiSpec/new?filename=Morpheo_Core_Sync_DataSyncService_DataReceived.md&amp;value=---%0Auid%3A%20Morpheo.Core.Sync.DataSyncService.DataReceived%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/remi-deher/Morpheo/blob/main/Morpheo.Core/Sync/DataSyncService.cs/#L31">View Source</a>
+  </span>
+  <h4 id="Morpheo_Core_Sync_DataSyncService_DataReceived" data-uid="Morpheo.Core.Sync.DataSyncService.DataReceived">DataReceived</h4>
+  <div class="markdown level1 summary"><p>Event raised when a remote change is successfully applied.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event EventHandler&lt;SyncLog&gt;? DataReceived</code></pre>
+  </div>
+  <h5 class="eventType">Event Type</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventhandler-1">EventHandler</a>&lt;<a class="xref" href="Morpheo.Core.Data.SyncLog.html">SyncLog</a>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+</article>
+          </div>
+
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/remi-deher/Morpheo/new/main/apiSpec/new?filename=Morpheo_Core_Sync_DataSyncService.md&amp;value=---%0Auid%3A%20Morpheo.Core.Sync.DataSyncService%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Edit this page</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/remi-deher/Morpheo/blob/main/Morpheo.Core/Sync/DataSyncService.cs/#L14" class="contribution-link">View Source</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In this article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+      Copyright © 2025 DEHER Rémi - Propulsé par .NET 10
+      
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script type="text/javascript" src="../styles/docfx.vendor.min.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>
