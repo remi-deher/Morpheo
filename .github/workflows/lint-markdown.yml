@@ -36,3 +36,5 @@ jobs:
             !**/node_modules/**
             !**/bin/**
             !**/obj/**
+            !Benchmark/**
+            !README copy.md
