@@ -1,0 +1,38 @@
+name: Lint Markdown
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - '**/*.md'
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - '**/*.md'
+  workflow_dispatch:
+
+concurrency:
+  group: lint-markdown-${{ github.ref }}
+  cancel-in-progress: true
+
+# Run JavaScript actions on Node 24 now (the newest runtime GitHub Actions supports),
+# ahead of the June 2026 default switch. Node 26 is not available on Actions runners.
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  markdownlint:
+    name: Markdown Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Run markdownlint
+        uses: davidanson/markdownlint-cli2-action@v19
+        with:
+          globs: |
+            **/*.md
+            !**/node_modules/**
+            !**/bin/**
+            !**/obj/**

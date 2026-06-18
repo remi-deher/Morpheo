@@ -67,6 +67,9 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore Morpheo.sln
 
+      - name: Check formatting
+        run: dotnet format Morpheo.sln --verify-no-changes --no-restore
+
       - name: Build
         run: dotnet build Morpheo.sln --configuration Release --no-restore
 
@@ -79,6 +82,16 @@ jobs:
           --logger "trx;LogFileName=test-results.trx"
           --collect:"XPlat Code Coverage"
           --results-directory ./TestResults
+
+      - name: Generate Coverage Report
+        uses: danielpalme/ReportGenerator-GitHub-Action@v5
+        with:
+          reports: './TestResults/**/*.xml'
+          targetdir: './TestResults/Report'
+          reporttypes: 'MarkdownSummary'
+
+      - name: Publish Coverage Report
+        run: cat ./TestResults/Report/Summary.md >> $GITHUB_STEP_SUMMARY
 
       - name: Upload test results
         if: always()
