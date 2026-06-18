@@ -55,3 +55,7 @@ TestResults/
 
 # Benchmark results
 BenchmarkDotNet.Artifacts/
+
+# Docker Local Volumes
+morpheo-poc/volumes/
+volumes/

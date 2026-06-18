@@ -19,11 +19,11 @@ public class MorpheoHttpClientTests
     public MorpheoHttpClientTests()
     {
         _httpMessageHandlerMock = new Mock<HttpMessageHandler>();
-        
+
         var httpClient = new HttpClient(_httpMessageHandlerMock.Object);
         _clientFactoryMock = new Mock<IHttpClientFactory>();
         _clientFactoryMock.Setup(x => x.CreateClient(It.IsAny<string>())).Returns(httpClient);
-        
+
         _loggerMock = new Mock<ILogger<MorpheoHttpClient>>();
         _options = new MorpheoOptions { NodeName = "TestNode", UseSecureConnection = false };
 
@@ -123,7 +123,7 @@ public class MorpheoHttpClientTests
                 It.IsAny<EventId>(),
                 It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("Cold Sync Failed")),
                 It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception?, string>>()), 
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once);
     }
 }

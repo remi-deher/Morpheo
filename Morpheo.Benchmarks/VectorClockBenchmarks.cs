@@ -25,7 +25,7 @@ public class VectorClockBenchmarks
         {
             string nodeId = $"Node_{i}";
             _masterLocalClock[nodeId] = i;
-            
+
             _remoteClock[nodeId] = i + 10;
         }
 

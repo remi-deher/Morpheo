@@ -24,7 +24,7 @@ public class DataSyncService
     private readonly MerkleTreeService _merkle;
 
     private readonly List<PeerInfo> _peers = new();
-    
+
     /// <summary>
     /// Event raised when a remote change is successfully applied.
     /// </summary>

@@ -19,13 +19,13 @@ public class HttpPushStrategyTests
     public HttpPushStrategyTests()
     {
         _httpMessageHandlerMock = new Mock<HttpMessageHandler>();
-        
+
         var client = new HttpClient(_httpMessageHandlerMock.Object);
         client.BaseAddress = _targetUri;
 
         _clientFactoryMock = new Mock<IHttpClientFactory>();
         _clientFactoryMock.Setup(x => x.CreateClient(It.IsAny<string>())).Returns(client);
-        
+
         _loggerMock = new Mock<ILogger<HttpPushStrategy>>();
 
         _strategy = new HttpPushStrategy(
@@ -104,7 +104,7 @@ public class HttpPushStrategyTests
         // Assert
         // Should not throw exception, just log error
         await act.Should().NotThrowAsync();
-        
+
         // Verify logger was called
         _loggerMock.Verify(
             x => x.Log(
@@ -112,7 +112,7 @@ public class HttpPushStrategyTests
                 It.IsAny<EventId>(),
                 It.Is<It.IsAnyType>((v, t) => true),
                 It.IsAny<Exception>(),
-                It.Is<Func<It.IsAnyType, Exception?, string>>((v, t) => true)), 
+                It.Is<Func<It.IsAnyType, Exception?, string>>((v, t) => true)),
             Times.Once);
     }
 }

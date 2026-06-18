@@ -62,7 +62,7 @@ public class SignalRClientStrategyTests
         // The constructor fires ConnectAsync which calls StartAsync.
         // Since it's fire-and-forget, we might need a small delay or just verify valid call.
         // Ideally we should await something, but here we just check if it was called eventually.
-        
+
         await Task.Delay(100); // Wait for async void task to start
         _connectionMock.Verify(c => c.StartAsync(It.IsAny<CancellationToken>()), Times.Once);
     }

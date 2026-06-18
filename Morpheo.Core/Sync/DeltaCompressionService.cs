@@ -50,7 +50,7 @@ public class DeltaCompressionService
         {
             var opObj = new JsonObject
             {
-                ["op"]   = op.Op,
+                ["op"] = op.Op,
                 ["path"] = op.Path
             };
 
@@ -78,7 +78,7 @@ public class DeltaCompressionService
         JsonNode? patch;
         try
         {
-            doc   = JsonNode.Parse(originalJson);
+            doc = JsonNode.Parse(originalJson);
             patch = JsonNode.Parse(patchJson);
         }
         catch (JsonException ex)
@@ -93,8 +93,8 @@ public class DeltaCompressionService
         {
             if (opNode is not JsonObject opObj) continue;
 
-            var op    = opObj["op"]?.GetValue<string>()    ?? throw new ArgumentException("Missing 'op' field.");
-            var path  = opObj["path"]?.GetValue<string>()  ?? throw new ArgumentException("Missing 'path' field.");
+            var op = opObj["op"]?.GetValue<string>() ?? throw new ArgumentException("Missing 'op' field.");
+            var path = opObj["path"]?.GetValue<string>() ?? throw new ArgumentException("Missing 'path' field.");
             var value = opObj.ContainsKey("value") ? opObj["value"]?.DeepClone() : null;
 
             doc = ApplyOperation(doc, op, path, value);
@@ -171,7 +171,7 @@ public class DeltaCompressionService
             return op is "replace" or "add" ? value?.DeepClone() : doc;
 
         var segments = ParsePointer(path);
-        var parent   = NavigateToParent(doc, segments, out var lastSegment);
+        var parent = NavigateToParent(doc, segments, out var lastSegment);
 
         switch (op)
         {
@@ -229,15 +229,15 @@ public class DeltaCompressionService
         if (segments.Length == 0)
             throw new ArgumentException("Cannot navigate to parent of root pointer.");
 
-        lastSegment  = segments[^1];
-        var current  = root;
+        lastSegment = segments[^1];
+        var current = root;
 
         for (int i = 0; i < segments.Length - 1; i++)
         {
             current = current switch
             {
-                JsonObject obj                                          => obj[segments[i]],
-                JsonArray  arr when int.TryParse(segments[i], out int idx) => arr[idx],
+                JsonObject obj => obj[segments[i]],
+                JsonArray arr when int.TryParse(segments[i], out int idx) => arr[idx],
                 _ => throw new InvalidOperationException(
                          $"Path segment '{segments[i]}' not found while navigating JSON Pointer.")
             };
@@ -247,6 +247,6 @@ public class DeltaCompressionService
     }
 
     // RFC 6901 §3: '~' → '~0', '/' → '~1'  (escape order matters)
-    private static string EscapePointer(string s)   => s.Replace("~", "~0").Replace("/", "~1");
+    private static string EscapePointer(string s) => s.Replace("~", "~0").Replace("/", "~1");
     private static string UnescapePointer(string s) => s.Replace("~1", "/").Replace("~0", "~");
 }

@@ -1,4 +1,4 @@
-﻿using System.Net.Http.Json;
+using System.Net.Http.Json;
 using Microsoft.Extensions.Logging;
 using Morpheo.Sdk;
 
@@ -38,7 +38,7 @@ public class MorpheoHttpClient : IMorpheoClient
     }
 
     /// <inheritdoc/>
-    public async Task SendPrintJobAsync(PeerInfo target, string content)
+    public async Task SendPrintJobAsync(PeerInfo target, string content, string printerName = "Virtual-Zebra-01")
     {
         try
         {
@@ -46,7 +46,7 @@ public class MorpheoHttpClient : IMorpheoClient
             client.Timeout = TimeSpan.FromSeconds(5);
             var url = BuildUrl(target, "/api/print");
 
-            var request = new { Content = content, Sender = _options.NodeName };
+            var request = new { Content = content, Sender = _options.NodeName, PrinterName = printerName };
             await client.PostAsJsonAsync(url, request);
         }
         catch (Exception ex)

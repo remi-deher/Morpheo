@@ -28,7 +28,7 @@ public class PskHmacAuthenticator : IRequestAuthenticator
 
     private const string HEADER_SIGNATURE = "X-Morpheo-Signature";
     private const string HEADER_TIMESTAMP = "X-Morpheo-Timestamp";
-    private const string HEADER_NONCE     = "X-Morpheo-Nonce";
+    private const string HEADER_NONCE = "X-Morpheo-Nonce";
 
     // Seen nonce -> UTC expiry tick. Bounded by pruning expired entries.
     private readonly ConcurrentDictionary<string, long> _seenNonces = new();
@@ -61,7 +61,7 @@ public class PskHmacAuthenticator : IRequestAuthenticator
 
         // 2. Optional freshness headers
         var timestamp = context.Request.Headers.TryGetValue(HEADER_TIMESTAMP, out var tsVal) ? tsVal.ToString() : null;
-        var nonce     = context.Request.Headers.TryGetValue(HEADER_NONCE, out var nVal) ? nVal.ToString() : null;
+        var nonce = context.Request.Headers.TryGetValue(HEADER_NONCE, out var nVal) ? nVal.ToString() : null;
         bool hasFreshness = !string.IsNullOrEmpty(timestamp) && !string.IsNullOrEmpty(nonce);
 
         if (_requireFreshness && !hasFreshness)

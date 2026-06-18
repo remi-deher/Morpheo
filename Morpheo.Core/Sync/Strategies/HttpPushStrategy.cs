@@ -32,7 +32,7 @@ public class HttpPushStrategy : ISyncStrategyProvider
         try
         {
             var client = _httpClientFactory.CreateClient();
-            
+
             // Build the full URL.
             // Assuming provided URL is the root (e.g., https://api.morpheo.cloud)
             // Adding the standard Morpheo API path.

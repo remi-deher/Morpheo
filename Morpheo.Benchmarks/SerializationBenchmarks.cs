@@ -11,10 +11,10 @@ public class SerializationBenchmarks
     private SyncLogDto _singleLog = null!;
     private List<SyncLogDto> _batchLogs = null!;
     private string _serializedSingle = null!;
-    
-    private readonly JsonSerializerOptions _options = new() 
-    { 
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase 
+
+    private readonly JsonSerializerOptions _options = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
 
     [Params(100, 1000)]
@@ -23,12 +23,12 @@ public class SerializationBenchmarks
     [GlobalSetup]
     public void Setup()
     {
-        var complexPayload = new 
-        { 
+        var complexPayload = new
+        {
             Operation = "UpdateInventory",
             User = "Operator-42",
-            Details = new 
-            { 
+            Details = new
+            {
                 Items = Enumerable.Range(0, 50).Select(i => new { Sku = $"SKU-{i}", Qty = i * 2 }).ToList(),
                 Location = "Warehouse-A",
                 Verified = true

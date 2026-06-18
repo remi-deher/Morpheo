@@ -17,8 +17,8 @@ public class SignalRHubConnectionWrapper : IHubConnectionWrapper
 
     public Task StartAsync(CancellationToken token = default) => _connection.StartAsync(token);
     public Task StopAsync(CancellationToken token = default) => _connection.StopAsync(token);
-    
-    public Task InvokeAsync(string methodName, object? arg1, CancellationToken token = default) 
+
+    public Task InvokeAsync(string methodName, object? arg1, CancellationToken token = default)
         => _connection.InvokeAsync(methodName, arg1, token);
 
     public HubConnectionState State => _connection.State;

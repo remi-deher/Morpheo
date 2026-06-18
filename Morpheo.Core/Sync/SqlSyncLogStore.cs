@@ -30,7 +30,7 @@ public class SqlSyncLogStore
     /// </remarks>
     public async Task AddLogAsync(SyncLog log)
     {
-        try 
+        try
         {
             if (await _context.SyncLogs.AnyAsync(l => l.Id == log.Id))
             {

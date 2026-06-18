@@ -16,7 +16,7 @@ public class SimulatedMorpheoClient : IMorpheoClient
         _simulator = simulator;
     }
 
-    public Task SendPrintJobAsync(PeerInfo target, string content) => Task.CompletedTask;
+    public Task SendPrintJobAsync(PeerInfo target, string content, string printerName = "Virtual-Zebra-01") => Task.CompletedTask;
 
     public Task SendSyncUpdateAsync(PeerInfo target, SyncLogDto log)
     {
@@ -34,7 +34,7 @@ public class SimulatedMorpheoClient : IMorpheoClient
         // Cold Sync Simulation:
         // 1. Find the target node in the simulator.
         // 2. Access its DB directly to fetch logs > sinceTick.
-        
+
         var provider = _simulator.GetProvider(target.Id); // Assuming PeerInfo.Id matches NodeId
         if (provider == null) return new List<SyncLogDto>(); // Node not found or disconnected simulation logic?
 
@@ -42,10 +42,10 @@ public class SimulatedMorpheoClient : IMorpheoClient
         // Check if WE are disconnected? 
         // For simplicity, let's assume if we can call this, we are connected, but we should assert target is reachable.
         // (Simulator doesn't expose IsConnected checker publicly easily, let's assume success if registered)
-        
+
         using var scope = provider.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<MorpheoDbContext>();
-        
+
         if (limit <= 0) limit = 500;
 
         var logs = await db.SyncLogs
