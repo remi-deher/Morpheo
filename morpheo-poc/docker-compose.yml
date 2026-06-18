@@ -1,0 +1,95 @@
+version: '3.8'
+
+services:
+  server:
+    build:
+      context: ../
+      dockerfile: morpheo-poc/Morpheo.DemoNode/Dockerfile
+    container_name: morpheo-server
+    environment:
+      - NODE_NAME=server
+      - MODE=client-server    # Serves as the central SignalR Hub
+      - CLIENT_PORT=80
+      - CLUSTER_SECRET=MorpheoSecureDemoKey123!
+      - MOCK_USB_ROOT=/app/data/mock-usb
+    ports:
+      - "8080:80"             # User API (Todo CRUD)
+      - "5000:5000"           # Morpheo Sync API, SignalR Hub, and Dashboard
+    volumes:
+      - ./volumes/server:/app/data
+    restart: always
+    networks:
+      - morpheo-net
+
+  client1:
+    build:
+      context: ../
+      dockerfile: morpheo-poc/Morpheo.DemoNode/Dockerfile
+    container_name: morpheo-client1
+    environment:
+      - NODE_NAME=client1
+      - MODE=hybrid           # Connects to P2P Mesh + Central Server
+      - CENTRAL_SERVER_URL=http://server:5000
+      - CLIENT_PORT=80
+      - CLUSTER_SECRET=MorpheoSecureDemoKey123!
+      - MOCK_USB_ROOT=/app/data/mock-usb
+    ports:
+      - "8081:80"             # User API (Todo CRUD)
+      - "5001:5000"           # Morpheo Sync API and Dashboard
+    volumes:
+      - ./volumes/client1:/app/data
+    restart: always
+    networks:
+      - morpheo-net
+    depends_on:
+      - server
+
+  client2:
+    build:
+      context: ../
+      dockerfile: morpheo-poc/Morpheo.DemoNode/Dockerfile
+    container_name: morpheo-client2
+    environment:
+      - NODE_NAME=client2
+      - MODE=hybrid           # Connects to P2P Mesh + Central Server
+      - CENTRAL_SERVER_URL=http://server:5000
+      - CLIENT_PORT=80
+      - CLUSTER_SECRET=MorpheoSecureDemoKey123!
+      - MOCK_USB_ROOT=/app/data/mock-usb
+    ports:
+      - "8082:80"             # User API (Todo CRUD)
+      - "5002:5000"           # Morpheo Sync API and Dashboard
+    volumes:
+      - ./volumes/client2:/app/data
+    restart: always
+    networks:
+      - morpheo-net
+    depends_on:
+      - server
+
+  client3:
+    build:
+      context: ../
+      dockerfile: morpheo-poc/Morpheo.DemoNode/Dockerfile
+    container_name: morpheo-client3
+    environment:
+      - NODE_NAME=client3
+      - MODE=hybrid           # Connects to P2P Mesh + Central Server
+      - CENTRAL_SERVER_URL=http://server:5000
+      - CLIENT_PORT=80
+      - CLUSTER_SECRET=MorpheoSecureDemoKey123!
+      - MOCK_USB_ROOT=/app/data/mock-usb
+    ports:
+      - "8083:80"             # User API (Todo CRUD)
+      - "5003:5000"           # Morpheo Sync API and Dashboard
+    volumes:
+      - ./volumes/client3:/app/data
+    restart: always
+    networks:
+      - morpheo-net
+    depends_on:
+      - server
+
+networks:
+  morpheo-net:
+    driver: bridge

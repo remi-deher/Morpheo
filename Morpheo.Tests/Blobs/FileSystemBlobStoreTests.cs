@@ -31,13 +31,13 @@ public class FileSystemBlobStoreTests : IDisposable
         var store = new FileSystemBlobStore(_testDir);
         var content = "Hello World Blob";
         using var stream = new MemoryStream(Encoding.UTF8.GetBytes(content));
-        
+
         // Act
         var blobId = await store.SaveBlobAsync(stream, "test.txt", "text/plain");
 
         // Assert
         blobId.Should().NotBeNullOrEmpty();
-        
+
         var filePath = Path.Combine(_testDir, blobId);
         var metaPath = Path.Combine(_testDir, blobId + ".meta.json");
 
@@ -52,18 +52,18 @@ public class FileSystemBlobStoreTests : IDisposable
         var store = new FileSystemBlobStore(_testDir);
         var contentStr = "Important Data";
         var originalBytes = Encoding.UTF8.GetBytes(contentStr);
-        
+
         using var stream = new MemoryStream(originalBytes);
         var blobId = await store.SaveBlobAsync(stream, "data.bin", "application/octet-stream");
 
         // Act
         using var retrievedStream = await store.GetBlobStreamAsync(blobId);
-        
+
         // Assert
         retrievedStream.Should().NotBeNull();
         using var memoryStream = new MemoryStream();
         await retrievedStream!.CopyToAsync(memoryStream);
-        
+
         var retrievedBytes = memoryStream.ToArray();
         retrievedBytes.Should().BeEquivalentTo(originalBytes);
     }
@@ -74,7 +74,7 @@ public class FileSystemBlobStoreTests : IDisposable
         // Arrange
         var store = new FileSystemBlobStore(_testDir);
         using var stream = new MemoryStream(Encoding.UTF8.GetBytes("12345")); // 5 bytes
-        
+
         // Act
         var blobId = await store.SaveBlobAsync(stream, "numbers.txt", "text/plain");
         var metadata = await store.GetBlobMetadataAsync(blobId);
@@ -92,7 +92,7 @@ public class FileSystemBlobStoreTests : IDisposable
     {
         // Arrange
         var store = new FileSystemBlobStore(_testDir);
-        
+
         // Act
         var stream = await store.GetBlobStreamAsync("non-existent-id");
         var meta = await store.GetBlobMetadataAsync("non-existent-id");

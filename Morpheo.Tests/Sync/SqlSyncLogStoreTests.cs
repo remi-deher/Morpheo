@@ -74,13 +74,13 @@ public class SqlSyncLogStoreTests : IDisposable
 
         // Act
         await _store.AddLogAsync(log);
-        
+
         // Try adding again
         Func<Task> act = async () => await _store.AddLogAsync(log);
 
         // Assert
         await act.Should().NotThrowAsync();
-        
+
         var logs = await _store.GetLogsAsync();
         logs.Should().HaveCount(1); // Should still be 1
     }

@@ -34,7 +34,7 @@ public static class HostingExtensions
             });
         }
         // For other OS (macOS, iOS, etc.), we use the standard GenericHost lifecycle by default.
-        
+
         return builder;
     }
 }

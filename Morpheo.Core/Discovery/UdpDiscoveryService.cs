@@ -23,6 +23,8 @@ public class UdpDiscoveryService : INetworkDiscovery, IDisposable
     private Task? _cleanupTask;
 
     private readonly ConcurrentDictionary<string, (PeerInfo Info, DateTime LastSeen)> _peers = new();
+    private CancellationTokenSource? _advertisingCts;
+    private CancellationTokenSource? _listeningCts;
 
     public event EventHandler<PeerInfo>? PeerFound;
     public event EventHandler<PeerInfo>? PeerLost;
@@ -59,14 +61,17 @@ public class UdpDiscoveryService : INetworkDiscovery, IDisposable
     {
         EnsureSocketInitialized();
 
+        // Dispose previous CTS if it exists
+        _advertisingCts?.Dispose();
+
         // Link external token with internal CTS to allow Stop()
-        var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(_cts!.Token, ct);
+        _advertisingCts = CancellationTokenSource.CreateLinkedTokenSource(_cts!.Token, ct);
 
         // Start background task (Fire and Forget)
-        _broadcastTask = BroadcastLoopAsync(myInfo, linkedCts.Token);
+        _broadcastTask = BroadcastLoopAsync(myInfo, _advertisingCts.Token);
 
         // Start cleanup task here as well
-        _cleanupTask = CleanupLoopAsync(linkedCts.Token);
+        _cleanupTask = CleanupLoopAsync(_advertisingCts.Token);
 
         return Task.CompletedTask;
     }
@@ -76,10 +81,13 @@ public class UdpDiscoveryService : INetworkDiscovery, IDisposable
     {
         EnsureSocketInitialized();
 
-        var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(_cts!.Token, ct);
+        // Dispose previous CTS if it exists
+        _listeningCts?.Dispose();
+
+        _listeningCts = CancellationTokenSource.CreateLinkedTokenSource(_cts!.Token, ct);
 
         // Start listening in background
-        _receiveTask = ReceiveLoopAsync(linkedCts.Token);
+        _receiveTask = ReceiveLoopAsync(_listeningCts.Token);
 
         return Task.CompletedTask;
     }
@@ -92,6 +100,14 @@ public class UdpDiscoveryService : INetworkDiscovery, IDisposable
         _udpClient?.Close();
         _udpClient?.Dispose();
         _udpClient = null;
+
+        // Clean up linked CTS to prevent resource leaks
+        _advertisingCts?.Dispose();
+        _advertisingCts = null;
+        _listeningCts?.Dispose();
+        _listeningCts = null;
+        _cts?.Dispose();
+        _cts = null;
     }
 
     private async Task ReceiveLoopAsync(CancellationToken token)

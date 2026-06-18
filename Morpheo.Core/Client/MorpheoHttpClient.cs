@@ -1,4 +1,4 @@
-﻿using System.Net.Http.Json;
+using System.Net.Http.Json;
 using Microsoft.Extensions.Logging;
 using Morpheo.Sdk;
 
@@ -38,7 +38,7 @@ public class MorpheoHttpClient : IMorpheoClient
     }
 
     /// <inheritdoc/>
-    public async Task SendPrintJobAsync(PeerInfo target, string content)
+    public async Task SendPrintJobAsync(PeerInfo target, string content, string printerName = "Virtual-Zebra-01")
     {
         try
         {
@@ -46,12 +46,12 @@ public class MorpheoHttpClient : IMorpheoClient
             client.Timeout = TimeSpan.FromSeconds(5);
             var url = BuildUrl(target, "/api/print");
 
-            var request = new { Content = content, Sender = _options.NodeName };
+            var request = new { Content = content, Sender = _options.NodeName, PrinterName = printerName };
             await client.PostAsJsonAsync(url, request);
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Print Error to {target.Name}: {ex.Message}");
+            _logger.LogError(ex, "Print Error to {PeerName}", target.Name);
         }
     }
 
@@ -70,16 +70,43 @@ public class MorpheoHttpClient : IMorpheoClient
                 _logger.LogWarning($"Sync Push Error to {target.Name}: {response.StatusCode}");
             }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            _logger.LogDebug($"Sync failed to {target.Name} (Expected if disconnected)");
+            _logger.LogDebug(ex, "Sync failed to {PeerName} (Expected if disconnected)", target.Name);
         }
     }
 
     /// <inheritdoc/>
-    public async Task<List<SyncLogDto>> GetHistoryAsync(PeerInfo target, long sinceTick)
+    public async Task<bool> SendSyncBatchAsync(PeerInfo target, IReadOnlyList<SyncLogDto> logs)
     {
-        var url = BuildUrl(target, $"/api/sync/history?since={sinceTick}");
+        if (logs == null || logs.Count == 0) return true;
+
+        try
+        {
+            var client = _httpClientFactory.CreateClient();
+            // Scale the timeout modestly with batch size so large catch-ups are not cut off.
+            client.Timeout = TimeSpan.FromSeconds(Math.Min(30, 2 + logs.Count / 100.0));
+            var url = BuildUrl(target, "/api/sync/batch");
+
+            var response = await client.PostAsJsonAsync(url, logs);
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogWarning("Sync Batch Error to {PeerName}: {StatusCode}", target.Name, response.StatusCode);
+                return false;
+            }
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogDebug(ex, "Sync batch failed to {PeerName} (Expected if disconnected)", target.Name);
+            return false;
+        }
+    }
+
+    /// <inheritdoc/>
+    public async Task<List<SyncLogDto>> GetHistoryAsync(PeerInfo target, long sinceTick, int limit = 500)
+    {
+        var url = BuildUrl(target, $"/api/sync/history?since={sinceTick}&limit={limit}");
         try
         {
             var client = _httpClientFactory.CreateClient();
@@ -88,8 +115,66 @@ public class MorpheoHttpClient : IMorpheoClient
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Cold Sync Failed to {target.Name}: {ex.Message}");
+            _logger.LogError(ex, "Cold Sync Failed to {PeerName}", target.Name);
             return new List<SyncLogDto>();
         }
     }
+
+    /// <inheritdoc/>
+    public async Task<string> GetDigestAsync(PeerInfo target)
+    {
+        var url = BuildUrl(target, "/api/sync/digest");
+        try
+        {
+            var client = _httpClientFactory.CreateClient();
+            client.Timeout = TimeSpan.FromSeconds(5);
+            var result = await client.GetFromJsonAsync<DigestResponse>(url);
+            return result?.Digest ?? string.Empty;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogDebug(ex, "Digest fetch failed from {PeerName}", target.Name);
+            return string.Empty;
+        }
+    }
+
+    /// <inheritdoc/>
+    public async Task<List<string>> GetManifestAsync(PeerInfo target)
+    {
+        var url = BuildUrl(target, "/api/sync/manifest");
+        try
+        {
+            var client = _httpClientFactory.CreateClient();
+            client.Timeout = TimeSpan.FromSeconds(15);
+            return await client.GetFromJsonAsync<List<string>>(url) ?? new List<string>();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogDebug(ex, "Manifest fetch failed from {PeerName}", target.Name);
+            return new List<string>();
+        }
+    }
+
+    /// <inheritdoc/>
+    public async Task<List<SyncLogDto>> GetLogsByIdsAsync(PeerInfo target, IReadOnlyList<string> ids)
+    {
+        if (ids == null || ids.Count == 0) return new List<SyncLogDto>();
+
+        var url = BuildUrl(target, "/api/sync/by-ids");
+        try
+        {
+            var client = _httpClientFactory.CreateClient();
+            client.Timeout = TimeSpan.FromSeconds(Math.Min(30, 5 + ids.Count / 100.0));
+            var response = await client.PostAsJsonAsync(url, ids);
+            if (!response.IsSuccessStatusCode) return new List<SyncLogDto>();
+            return await response.Content.ReadFromJsonAsync<List<SyncLogDto>>() ?? new List<SyncLogDto>();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogDebug(ex, "By-ids fetch failed from {PeerName}", target.Name);
+            return new List<SyncLogDto>();
+        }
+    }
+
+    private sealed record DigestResponse(string Digest);
 }

@@ -21,11 +21,11 @@ public class MerkleTreeService
     public string ComputeRootHash(IEnumerable<string> dataItems)
     {
         if (dataItems == null) throw new ArgumentNullException(nameof(dataItems));
-        
-        var leaves = dataItems.OrderBy(x => x, StringComparer.Ordinal).Select(ComputeHash).ToList(); 
-        
+
+        var leaves = dataItems.OrderBy(x => x, StringComparer.Ordinal).Select(ComputeHash).ToList();
+
         if (leaves.Count == 0) return string.Empty;
-        
+
         var currentLevel = leaves;
         while (currentLevel.Count > 1)
         {
@@ -33,15 +33,15 @@ public class MerkleTreeService
             for (int i = 0; i < currentLevel.Count; i += 2)
             {
                 var left = currentLevel[i];
-                var right = (i + 1 < currentLevel.Count) ? currentLevel[i + 1] : left; 
+                var right = (i + 1 < currentLevel.Count) ? currentLevel[i + 1] : left;
                 nextLevel.Add(ComputeHash(left + right));
             }
             currentLevel = nextLevel;
         }
-        
+
         return currentLevel[0];
     }
-    
+
     /// <summary>
     /// Computes the SHA-256 hash of a specific input string.
     /// </summary>

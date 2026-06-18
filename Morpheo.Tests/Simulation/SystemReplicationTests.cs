@@ -2,7 +2,6 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Moq;
 using Morpheo.Core.Data;
 using Morpheo.Core.Sync;
 using Morpheo.Sdk;
@@ -42,7 +41,7 @@ public class SystemReplicationTests : IDisposable
     private NodeContext CreateNode(string nodeId)
     {
         var services = new ServiceCollection();
-        
+
         // 1. Temp Storage
         var tempPath = Path.Combine(Path.GetTempPath(), "MorpheoSystemTests", nodeId, Guid.NewGuid().ToString());
         Directory.CreateDirectory(tempPath);
@@ -60,7 +59,7 @@ public class SystemReplicationTests : IDisposable
         services.AddSingleton<ConflictResolutionEngine>();
         services.AddSingleton<IEntityTypeResolver>(new SimpleTypeResolver());
         services.AddLogging(logging => logging.AddConsole());
-        
+
         var discovery = new ManualNetworkDiscovery();
         services.AddSingleton<INetworkDiscovery>(discovery);
 
@@ -82,14 +81,14 @@ public class SystemReplicationTests : IDisposable
         }
 
         var service = provider.GetRequiredService<DataSyncService>();
-        
+
         // Register to simulator
         _simulator.Register(nodeId, service, provider);
 
-        return new NodeContext 
-        { 
-            Service = service, 
-            Provider = provider, 
+        return new NodeContext
+        {
+            Service = service,
+            Provider = provider,
             NodeId = nodeId,
             Discovery = discovery
         };
@@ -110,7 +109,7 @@ public class SystemReplicationTests : IDisposable
     {
         // Actually, with InMemoryNetworkSimulator broadcast, A -> C happens directly.
         // But verifying that C receives data from A confirms propagation.
-        
+
         // Arrange
         var nodeA = CreateNode("NodeA");
         var nodeB = CreateNode("NodeB");
@@ -145,15 +144,14 @@ public class SystemReplicationTests : IDisposable
         var nodeB = CreateNode("NodeB"); // This one will go offline
         var nodeC = CreateNode("NodeC");
 
-        // 1. Initial State: All connected.
-        // 2. Disconnect B
+        // 1. Disconnect B before any data is written
         _simulator.Disconnect("NodeB");
 
-        // 3. A and C generate data
+        // 2. A and C generate data while B is offline
         await nodeA.Service.BroadcastChangeAsync(new TestEntity { Id = "doc-A", Content = "From A" }, "UPDATE");
         await nodeC.Service.BroadcastChangeAsync(new TestEntity { Id = "doc-C", Content = "From C" }, "UPDATE");
 
-        // 4. Verify A has C's data (connected)
+        // 3. Verify A has C's data (they are still connected to each other)
         await WaitForConditionAsync(async () =>
         {
             using var scope = nodeA.Provider.CreateScope();
@@ -161,35 +159,159 @@ public class SystemReplicationTests : IDisposable
             return await db.SyncLogs.AnyAsync(l => l.EntityId == "doc-C");
         });
 
-        // 5. Verify B is empty (Disconnected)
+        // 4. Verify B is empty (was disconnected during writes)
         using (var scope = nodeB.Provider.CreateScope())
         {
             var db = scope.ServiceProvider.GetRequiredService<MorpheoDbContext>();
             var count = await db.SyncLogs.CountAsync();
-            count.Should().Be(0); 
+            count.Should().Be(0);
         }
 
-        // 6. Reconnect B
+        // 5. Reconnect B
         _simulator.Reconnect("NodeB");
 
-        // 7. Trigger Re-Sync (Cold Sync)
-        // In real life, Discovery triggers this. Here we manually invoke the sync logic.
-        // We simulate that NodeB "Discovers" NodeA and NodeC
-        // Access private method? No, we can't. 
-        // We can simulate it by firing the PeerFound event on the Mock Discovery?
-        // But we instantiated Mock discovery in CreateNode and didn't keep reference.
-        // Let's rely on constructing PeerInfo and calling... DataSyncService has private handlers.
-        // Actually, Simulating PeerFound is the best way.
-        
-        // Wait, I need access to the Mock<INetworkDiscovery> of NodeB to raise the event.
-        // Refactor CreateNode to return mock? Or just use reflection/public method?
-        // DataSyncService treats Discovery events.
-        
-        // ALTERNATIVE: Since we can't easily trigger the private event handler without the mock ref,
-        // We will assume that in a System Test we might need to expose a "ForceSync(peer)" method 
-        // OR we refactor CreateNode to give us the mock.
-        
-        // Let's compromise: I will just instantiate a ManualDiscovery (fake implementation) instead of Mock.
+        // 6. Trigger Cold Sync by simulating peer discovery
+        // In production, UdpDiscoveryService fires PeerFound which triggers SynchronizeWithPeerAsync.
+        // ManualNetworkDiscovery.SimulatePeerFound replicates this event.
+        var peerA = new PeerInfo("NodeA", "NodeA", "127.0.0.1", 5555, NodeRole.StandardClient, Array.Empty<string>());
+        var peerC = new PeerInfo("NodeC", "NodeC", "127.0.0.1", 5556, NodeRole.StandardClient, Array.Empty<string>());
+        nodeB.Discovery.SimulatePeerFound(peerA);
+        nodeB.Discovery.SimulatePeerFound(peerC);
+
+        // 7. Wait for B to catch up with both docs
+        await WaitForConditionAsync(async () =>
+        {
+            using var scope = nodeB.Provider.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<MorpheoDbContext>();
+            return await db.SyncLogs.AnyAsync(l => l.EntityId == "doc-A")
+                && await db.SyncLogs.AnyAsync(l => l.EntityId == "doc-C");
+        }, timeoutMs: 5000);
+
+        // 8. Assert B has caught up with all missed data
+        using (var scope = nodeB.Provider.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<MorpheoDbContext>();
+
+            var logA = await db.SyncLogs.FirstOrDefaultAsync(l => l.EntityId == "doc-A");
+            logA.Should().NotBeNull();
+            logA!.JsonData.Should().Contain("From A");
+
+            var logC = await db.SyncLogs.FirstOrDefaultAsync(l => l.EntityId == "doc-C");
+            logC.Should().NotBeNull();
+            logC!.JsonData.Should().Contain("From C");
+        }
+    }
+    [Fact]
+    public async Task GetHistoryAsync_ShouldRespectLimit()
+    {
+        var nodeA = CreateNode("NodeA");
+
+        await nodeA.Service.BroadcastChangeAsync(new TestEntity { Id = "d1", Content = "1" }, "UPDATE");
+        await nodeA.Service.BroadcastChangeAsync(new TestEntity { Id = "d2", Content = "2" }, "UPDATE");
+        await nodeA.Service.BroadcastChangeAsync(new TestEntity { Id = "d3", Content = "3" }, "UPDATE");
+
+        var page = await nodeA.Service.GetHistoryAsync(0, limit: 2);
+
+        page.Should().HaveCount(2);
+        // Chronological order — the first two by timestamp.
+        page.Should().BeInAscendingOrder(l => l.Timestamp);
+    }
+
+    [Fact]
+    public async Task ReceiveRemoteBatchAsync_ShouldApplyAllEntries()
+    {
+        var nodeB = CreateNode("NodeB");
+
+        var now = DateTime.UtcNow.Ticks;
+        var batch = new List<SyncLogDto>
+        {
+            new(Guid.NewGuid().ToString(), "batch-1", nameof(TestEntity), "{\"Id\":\"batch-1\",\"Content\":\"a\"}", "UPDATE", now + 1, new() { ["NodeX"] = 1 }, "NodeX"),
+            new(Guid.NewGuid().ToString(), "batch-2", nameof(TestEntity), "{\"Id\":\"batch-2\",\"Content\":\"b\"}", "UPDATE", now + 2, new() { ["NodeX"] = 1 }, "NodeX"),
+        };
+
+        await nodeB.Service.ReceiveRemoteBatchAsync(batch);
+
+        using var scope = nodeB.Provider.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<MorpheoDbContext>();
+        (await db.SyncLogs.AnyAsync(l => l.EntityId == "batch-1")).Should().BeTrue();
+        (await db.SyncLogs.AnyAsync(l => l.EntityId == "batch-2")).Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task ReceiveRemoteLogAsync_ShouldReject_FutureSchemaVersion()
+    {
+        var nodeB = CreateNode("NodeB");
+
+        var future = new SyncLogDto(
+            Guid.NewGuid().ToString(), "from-future", nameof(TestEntity),
+            "{\"Id\":\"from-future\",\"Content\":\"x\"}", "UPDATE",
+            DateTime.UtcNow.Ticks, new() { ["NodeX"] = 1 }, "NodeX")
+        {
+            SchemaVersion = SyncLogDto.CurrentSchemaVersion + 1
+        };
+
+        await nodeB.Service.ReceiveRemoteLogAsync(future);
+
+        using var scope = nodeB.Provider.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<MorpheoDbContext>();
+        (await db.SyncLogs.AnyAsync(l => l.EntityId == "from-future")).Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task AntiEntropy_ShouldRecover_TickSkewedLog_MissedByColdSync()
+    {
+        // This is the scenario pure tick-based Cold Sync cannot handle: NodeA holds a log
+        // whose timestamp is LOWER than NodeB's latest tick (clock skew). A "since > maxTick"
+        // pull would never return it; the Merkle reconciliation must catch it.
+
+        var nodeA = CreateNode("NodeA");
+        var nodeB = CreateNode("NodeB");
+
+        // 1. NodeB writes a recent log → its max tick is "now".
+        await nodeB.Service.BroadcastChangeAsync(new TestEntity { Id = "b-high", Content = "b" }, "UPDATE");
+
+        long bMaxTick;
+        using (var scope = nodeB.Provider.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<MorpheoDbContext>();
+            bMaxTick = await db.SyncLogs.MaxAsync(l => l.Timestamp);
+        }
+
+        // 2. Inject into NodeA a log with a LOWER tick than NodeB's max (the skew).
+        using (var scope = nodeA.Provider.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<MorpheoDbContext>();
+            db.SyncLogs.Add(new SyncLog
+            {
+                Id = Guid.NewGuid().ToString(),
+                EntityId = "a-skewed",
+                EntityName = nameof(TestEntity),
+                JsonData = "{\"Id\":\"a-skewed\",\"Content\":\"skew\"}",
+                Action = "UPDATE",
+                Timestamp = bMaxTick - 1000,
+                VectorClockJson = "{\"NodeA\":1}"
+            });
+            await db.SaveChangesAsync();
+        }
+
+        // 3. Trigger sync: NodeB discovers NodeA.
+        var peerA = new PeerInfo("NodeA", "NodeA", "127.0.0.1", 5555, NodeRole.StandardClient, Array.Empty<string>());
+        nodeB.Discovery.SimulatePeerFound(peerA);
+
+        // 4. NodeB must end up with the skewed log via anti-entropy reconciliation.
+        await WaitForConditionAsync(async () =>
+        {
+            using var scope = nodeB.Provider.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<MorpheoDbContext>();
+            return await db.SyncLogs.AnyAsync(l => l.EntityId == "a-skewed");
+        }, timeoutMs: 6000);
+
+        using (var scope = nodeB.Provider.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<MorpheoDbContext>();
+            (await db.SyncLogs.AnyAsync(l => l.EntityId == "a-skewed"))
+                .Should().BeTrue("anti-entropy should recover logs missed by tick-based Cold Sync");
+        }
     }
 }
 

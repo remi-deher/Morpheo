@@ -44,7 +44,7 @@ public class FileLogStoreTests : IDisposable
         // Assert
         var manifestPath = Path.Combine(_testDir, "manifest.json");
         File.Exists(manifestPath).Should().BeTrue();
-        
+
         var json = await File.ReadAllTextAsync(manifestPath);
         json.Should().Contain("Version");
     }

@@ -58,17 +58,19 @@ public static class MorpheoConfigurationExtensions
         // Database
         switch (config.DatabaseType?.ToLowerInvariant())
         {
+            case "postgres":
+            case "postgresql":
+                builder.UsePostgres(config.ConnectionString);
+                break;
+
+            case "sqlserver":
+            case "mssql":
+                builder.UseSqlServer(config.ConnectionString);
+                break;
+
             case "sqlite":
             default:
                 builder.UseSqlite(config.ConnectionString);
-                break;
-                
-            // Extension points for future providers
-            case "postgres":
-                // builder.UsePostgres(config.ConnectionString);
-                break;
-            case "sqlserver":
-                 // builder.UseSqlServer(config.ConnectionString);
                 break;
         }
 

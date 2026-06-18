@@ -30,19 +30,19 @@ public class PskHmacAuthenticatorTests
         // It seems the user *assumed* it had one or wants me to test the Client side counterpart which acts as signer?
         // OR, maybe I should implement a helper method in the test that mimics the client behavior described in RFC Section 6.
         // I will assume I need to manually construct the signature in the test using the same logic.
-        
+
         // However, if the user requested "Appelle SignRequest", maybe I missed a file?
         // I checked PskHmacAuthenticator.cs and it only has IsAuthorizedAsync. 
         // I will stick to testing IsAuthorizedAsync (Server side) essentially.
         // But to test it I need to "Sign" a request.
-        
+
         // Let's implement authorization tests.
         // "Test de Signature" requested by user might be a misunderstanding of the class I provided OR 
         // they want me to verify the logic "if I sign it myself, does it pass?".
-        
+
         // Actually, often these classes have a static Helper or a Client counterpart. 
         // Since I don't see it, I'll write the signing logic in the Test to verify the server accepts it.
-        
+
         // Wait, checking the User prompt again: "Ce composant signe les requêtes HTTP... Appelle SignRequest".
         // The user might think the class does both. 
         // I will implicitly test the signing by implementing a valid signature generator in the test.
@@ -61,7 +61,7 @@ public class PskHmacAuthenticatorTests
         // Arrange
         var content = "{\"data\": \"vital info\"}";
         var signature = CalculateSignature(content, _testKey);
-        
+
         var context = new DefaultHttpContext();
         context.Request.Headers["X-Morpheo-Signature"] = signature;
         context.Request.Body = new MemoryStream(Encoding.UTF8.GetBytes(content));
@@ -80,7 +80,7 @@ public class PskHmacAuthenticatorTests
         // Arrange
         var content = "{\"data\": \"vital info\"}";
         var signature = CalculateSignature(content, "wrong-key"); // Wrong Key
-        
+
         var context = new DefaultHttpContext();
         context.Request.Headers["X-Morpheo-Signature"] = signature;
         context.Request.Body = new MemoryStream(Encoding.UTF8.GetBytes(content));
@@ -98,9 +98,9 @@ public class PskHmacAuthenticatorTests
         // Arrange
         var content = "original content";
         var signature = CalculateSignature(content, _testKey);
-        
+
         var tamperedContent = "modified content"; // Attack!
-        
+
         var context = new DefaultHttpContext();
         context.Request.Headers["X-Morpheo-Signature"] = signature; // Signature matches Original
         context.Request.Body = new MemoryStream(Encoding.UTF8.GetBytes(tamperedContent)); // Body is Modified
@@ -111,7 +111,7 @@ public class PskHmacAuthenticatorTests
         // Assert
         isValid.Should().BeFalse();
     }
-    
+
     [Fact]
     public async Task ValidateRequest_ShouldReturnFalse_WhenHeaderIsMissing()
     {
@@ -125,14 +125,14 @@ public class PskHmacAuthenticatorTests
         // Assert
         isValid.Should().BeFalse();
     }
-    
+
     [Fact]
     public async Task ValidateRequest_ShouldRewindBody_ForNextMiddleware()
     {
         // Arrange
         var content = "data";
         var signature = CalculateSignature(content, _testKey);
-        
+
         var context = new DefaultHttpContext();
         context.Request.Headers["X-Morpheo-Signature"] = signature;
         var stream = new MemoryStream(Encoding.UTF8.GetBytes(content));

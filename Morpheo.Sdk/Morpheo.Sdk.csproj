@@ -6,12 +6,31 @@
     <Nullable>enable</Nullable>
     <RootNamespace>Morpheo.Sdk</RootNamespace>
     <AssemblyName>Morpheo.Sdk</AssemblyName>
-    <Description>Shared abstractions, interfaces, and DTOs for the Morpheo framework.</Description>
     <Version>1.0.2</Version>
+
+    <!-- NuGet package metadata -->
+    <Description>Shared abstractions, interfaces, and DTOs for the Morpheo distributed data synchronization framework (.NET 10). Lightweight contract package with no heavy dependencies, intended for your Domain/Shared projects.</Description>
+    <Authors>DEHER Rémi</Authors>
+    <Company>DEHER Rémi</Company>
+    <Copyright>Copyright (c) 2025 DEHER Rémi</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/remi-deher/Morpheo</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/remi-deher/Morpheo</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>morpheo;sync;synchronization;distributed;offline-first;local-first;crdt;p2p;mesh;abstractions;sdk</PackageTags>
+
+    <!-- Ship XML docs so consumers get IntelliSense; silence "missing doc" noise. -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
 </Project>

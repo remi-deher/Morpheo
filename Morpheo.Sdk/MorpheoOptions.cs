@@ -68,6 +68,13 @@ public class MorpheoOptions
     public bool UseSecureConnection { get; set; } = false;
 
     /// <summary>
+    /// Gets or sets the cluster shared secret (PSK) used to sign and authenticate
+    /// inter-node requests (HMAC-SHA256). When null or empty, requests are not signed
+    /// and the node accepts unauthenticated traffic. Set this via <c>AddClusterSecurity()</c>.
+    /// </summary>
+    public string? ClusterSecret { get; set; }
+
+    /// <summary>
     /// Gets or sets the duration to keep synchronization logs before cleanup.
     /// Default is 30 days.
     /// </summary>
@@ -82,10 +89,19 @@ public class MorpheoOptions
     /// <summary>
     /// Validates the configuration options.
     /// </summary>
-    /// <exception cref="ArgumentException">Thrown when the port is invalid.</exception>
+    /// <exception cref="ArgumentException">Thrown when the configuration is invalid.</exception>
     public void Validate()
     {
+        if (string.IsNullOrWhiteSpace(NodeName))
+            throw new ArgumentException("NodeName cannot be empty or whitespace.");
+
         if (DiscoveryPort < 1 || DiscoveryPort > 65535)
-            throw new ArgumentException("Morpheo port must be between 1 and 65535.");
+            throw new ArgumentException("DiscoveryPort must be between 1 and 65535.");
+
+        if (LogRetention <= TimeSpan.Zero)
+            throw new ArgumentException("LogRetention must be greater than zero.");
+
+        if (CompactionInterval <= TimeSpan.Zero)
+            throw new ArgumentException("CompactionInterval must be greater than zero.");
     }
 }

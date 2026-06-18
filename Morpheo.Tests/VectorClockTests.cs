@@ -19,6 +19,6 @@ public class VectorClockTests
         // Assert
         state.Should().Contain("NodeA");
         // The JSON serialization of Dictionary<string, long> usually produces {"NodeA":1}
-        state.Should().Contain("1"); 
+        state.Should().Contain("1");
     }
 }

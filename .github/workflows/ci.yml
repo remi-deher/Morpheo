@@ -1,0 +1,102 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+    paths-ignore:
+      - 'README.md'
+      - 'README copy.md'
+      - 'TESTS.md'
+      - 'docs/**'
+      - 'LICENSE'
+      - '.gitignore'
+      - '.gitattributes'
+      - '.github/workflows/docs.yml'
+      - '.github/dependabot.yml'
+      - '.claude/**'
+  pull_request:
+    branches: [ "main" ]
+    paths-ignore:
+      - 'README.md'
+      - 'README copy.md'
+      - 'TESTS.md'
+      - 'docs/**'
+      - 'LICENSE'
+      - '.gitignore'
+      - '.gitattributes'
+      - '.github/workflows/docs.yml'
+      - '.github/dependabot.yml'
+      - '.claude/**'
+  workflow_dispatch:
+
+# Cancel superseded runs on the same ref (e.g. rapid pushes to a PR branch).
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+# Run JavaScript actions on Node 24 now (the newest runtime GitHub Actions supports),
+# ahead of the June 2026 default switch. Node 26 is not available on Actions runners.
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  build-and-test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.x
+
+      # Manual NuGet cache keyed on the project files (no packages.lock.json required).
+      - name: Cache NuGet packages
+        uses: actions/cache@v5
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            nuget-${{ runner.os }}-
+
+      - name: Restore dependencies
+        run: dotnet restore Morpheo.sln
+
+      - name: Check formatting
+        run: dotnet format Morpheo.sln --verify-no-changes --no-restore
+
+      - name: Build
+        run: dotnet build Morpheo.sln --configuration Release --no-restore
+
+      - name: Test
+        run: >
+          dotnet test Morpheo.sln
+          --configuration Release
+          --no-build
+          --verbosity normal
+          --logger "trx;LogFileName=test-results.trx"
+          --collect:"XPlat Code Coverage"
+          --results-directory ./TestResults
+
+      - name: Generate Coverage Report
+        uses: danielpalme/ReportGenerator-GitHub-Action@v5
+        with:
+          reports: './TestResults/**/*.xml'
+          targetdir: './TestResults/Report'
+          reporttypes: 'MarkdownSummary'
+
+      - name: Publish Coverage Report
+        run: cat ./TestResults/Report/Summary.md >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-results
+          path: ./TestResults
+          retention-days: 7

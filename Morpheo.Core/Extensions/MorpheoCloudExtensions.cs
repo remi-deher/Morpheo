@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
@@ -34,7 +34,7 @@ public static class MorpheoCloudExtensions
         }
 
         // Register HTTP Push strategy
-        builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<ISyncStrategyProvider>(sp =>
+        builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<ISyncStrategyProvider, HttpPushStrategy>(sp =>
         {
             var httpClientFactory = sp.GetRequiredService<IHttpClientFactory>();
             var logger = sp.GetRequiredService<ILogger<HttpPushStrategy>>();

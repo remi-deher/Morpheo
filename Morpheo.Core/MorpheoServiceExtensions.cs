@@ -41,21 +41,41 @@ public static class MorpheoServiceExtensions
         configure?.Invoke(builder);
 
         // 3. Core Infrastructure Services
+        // Register as both Singleton (for direct resolution) and IHostedService (for lifecycle management)
         services.AddSingleton<MorpheoNode>();
-        
+        services.AddHostedService(sp => sp.GetRequiredService<MorpheoNode>());
+
         // Registering Null/NoOp versions by default
         services.TryAddSingleton<INetworkDiscovery, NullNetworkDiscovery>();
         services.TryAddSingleton<IMorpheoServer, NullMorpheoServer>();
-        
-        services.AddHttpClient();
+
+        // Default HttpClient used by MorpheoHttpClient:
+        //  - HmacSigningHandler signs outgoing requests when a cluster secret is set.
+        //  - RequestCompressionHandler gzips large outgoing bodies (batch pushes).
+        //  - AutomaticDecompression transparently inflates gzip/deflate responses (Cold Sync).
+        // Signing is registered BEFORE compression so the HMAC covers the plaintext body.
+        services.AddTransient<Security.HmacSigningHandler>();
+        services.AddTransient<RequestCompressionHandler>();
+        services.AddHttpClient(string.Empty)
+            .ConfigurePrimaryHttpMessageHandler(() => new System.Net.Http.HttpClientHandler
+            {
+                AutomaticDecompression = System.Net.DecompressionMethods.GZip | System.Net.DecompressionMethods.Deflate
+            })
+            .AddHttpMessageHandler<Security.HmacSigningHandler>()
+            .AddHttpMessageHandler<RequestCompressionHandler>();
         services.AddSingleton<IMorpheoClient, MorpheoHttpClient>();
-        
+
         services.AddSingleton<DatabaseInitializer>();
+        services.AddHostedService<DatabaseInitializationService>();
 
         // 4. Synchronization Engine
         var typeResolver = new SimpleTypeResolver();
         services.AddSingleton<IEntityTypeResolver>(typeResolver);
         services.AddSingleton(typeResolver);
+
+        services.AddSingleton<Morpheo.Core.Diagnostics.MorpheoMetrics>();
+
+        services.AddSingleton<MerkleTreeService>();
 
         services.AddSingleton<ConflictResolutionEngine>();
 
@@ -100,6 +120,36 @@ public static class MorpheoServiceExtensions
     public static IServiceCollection AddWindowsPrinting(this IServiceCollection services)
     {
         services.Replace(ServiceDescriptor.Singleton<IPrintGateway, WindowsPrinterService>());
+        return services;
+    }
+
+    /// <summary>
+    /// Adds Linux/macOS printing via CUPS (the <c>lp</c> / <c>lpstat</c> CLI).
+    /// </summary>
+    /// <param name="services">The service collection.</param>
+    /// <returns>The service collection.</returns>
+    [SupportedOSPlatform("linux")]
+    [SupportedOSPlatform("macos")]
+    public static IServiceCollection AddCupsPrinting(this IServiceCollection services)
+    {
+        services.Replace(ServiceDescriptor.Singleton<IPrintGateway, CupsPrinterService>());
+        return services;
+    }
+
+    /// <summary>
+    /// Registers the native print gateway appropriate for the current operating system:
+    /// winspool on Windows, CUPS on Linux/macOS, and the no-op gateway elsewhere.
+    /// </summary>
+    /// <param name="services">The service collection.</param>
+    /// <returns>The service collection.</returns>
+    public static IServiceCollection AddNativePrinting(this IServiceCollection services)
+    {
+        if (OperatingSystem.IsWindows())
+            services.Replace(ServiceDescriptor.Singleton<IPrintGateway, WindowsPrinterService>());
+        else if (OperatingSystem.IsLinux() || OperatingSystem.IsMacOS())
+            services.Replace(ServiceDescriptor.Singleton<IPrintGateway, CupsPrinterService>());
+        // else: keep the default NullPrintGateway registered by AddMorpheo.
+
         return services;
     }
 }

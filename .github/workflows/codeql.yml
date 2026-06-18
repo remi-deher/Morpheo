@@ -1,0 +1,77 @@
+name: CodeQL
+
+on:
+  push:
+    branches: [ "main" ]
+    paths-ignore:
+      - 'README.md'
+      - 'README copy.md'
+      - 'TESTS.md'
+      - 'docs/**'
+      - 'LICENSE'
+      - '.gitignore'
+      - '.gitattributes'
+      - '.github/workflows/docs.yml'
+      - '.github/dependabot.yml'
+      - '.claude/**'
+  pull_request:
+    branches: [ "main" ]
+    paths-ignore:
+      - 'README.md'
+      - 'README copy.md'
+      - 'TESTS.md'
+      - 'docs/**'
+      - 'LICENSE'
+      - '.gitignore'
+      - '.gitattributes'
+      - '.github/workflows/docs.yml'
+      - '.github/dependabot.yml'
+      - '.claude/**'
+  schedule:
+    # Weekly scan (Mondays 06:00 UTC) to catch advisories in already-merged code.
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+concurrency:
+  group: codeql-${{ github.ref }}
+  cancel-in-progress: true
+
+# Run JavaScript actions on Node 24 now (the newest runtime GitHub Actions supports),
+# ahead of the June 2026 default switch. Node 26 is not available on Actions runners.
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  analyze:
+    name: Analyze (C#)
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.x
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: csharp
+          # Manual build so CodeQL traces a real .NET 10 compilation.
+          build-mode: manual
+
+      - name: Build
+        run: |
+          dotnet restore Morpheo.sln
+          dotnet build Morpheo.sln --configuration Release --no-restore
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v4
+        with:
+          category: "/language:csharp"

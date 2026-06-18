@@ -37,10 +37,10 @@ public class IngestionPipelineBenchmarks
         var dbOptions = new DbContextOptionsBuilder<MorpheoDbContext>()
             .UseSqlite($"Data Source={dbPath}")
             .Options;
-        
+
         _dbContext = new MorpheoDbContext(dbOptions);
         _dbContext.Database.EnsureCreated();
-        
+
         _sqlStore = new SqlSyncLogStore(_dbContext);
 
         _incomingLog = new SyncLogDto(
@@ -60,7 +60,7 @@ public class IngestionPipelineBenchmarks
     {
         _fileStore?.StopAsync().GetAwaiter().GetResult();
         _dbContext?.Dispose();
-        
+
         if (Directory.Exists(_tempPath))
         {
             try { Directory.Delete(_tempPath, recursive: true); } catch { }
@@ -72,7 +72,7 @@ public class IngestionPipelineBenchmarks
     {
         var entity = new SyncLog
         {
-            Id = Guid.NewGuid().ToString(), 
+            Id = Guid.NewGuid().ToString(),
             EntityId = _incomingLog.EntityId,
             EntityName = _incomingLog.EntityName,
             JsonData = _incomingLog.JsonData,

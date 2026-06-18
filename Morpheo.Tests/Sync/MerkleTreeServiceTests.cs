@@ -27,7 +27,7 @@ public class MerkleTreeServiceTests
         hash1.Should().NotBeNullOrEmpty();
         hash1.Should().Be(hash2);
     }
-    
+
     [Fact]
     public void ComputeRootHash_ShouldReturnSameHash_WhenDataOrderIsDifferent()
     {

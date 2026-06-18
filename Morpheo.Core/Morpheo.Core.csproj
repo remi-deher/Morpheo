@@ -1,11 +1,26 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Description>Core implementation of the Morpheo framework, including synchronization, discovery, and hosting logic.</Description>
     <Version>1.0.2</Version>
+
+    <!-- NuGet package metadata -->
+    <Description>Core implementation of the Morpheo distributed data synchronization framework (.NET 10): vector-clock conflict resolution, Merkle anti-entropy, UDP/SignalR/HTTP sync transports, CRDTs, embedded server, blobs, and white-label hosting.</Description>
+    <Authors>DEHER Rémi</Authors>
+    <Company>DEHER Rémi</Company>
+    <Copyright>Copyright (c) 2025 DEHER Rémi</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/remi-deher/Morpheo</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/remi-deher/Morpheo</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>morpheo;sync;synchronization;distributed;offline-first;local-first;crdt;vector-clock;merkle;p2p;mesh;signalr</PackageTags>
+
+    <!-- Ship XML docs so consumers get IntelliSense; silence "missing doc" noise. -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,15 +28,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.1">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.9">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.1" />
-    <PackageReference Include="System.Drawing.Common" Version="10.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="10.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="10.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.9" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.9" />
+    <PackageReference Include="System.Drawing.Common" Version="10.0.9" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="10.0.9" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="10.0.9" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="10.0.9" />
   </ItemGroup>
 
   <ItemGroup>
@@ -29,7 +46,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Morpheo.Sdk\Morpheo.Sdk.csproj" />
+    <ProjectReference Include="..\Morpheo.Usb\Morpheo.Usb.csproj" />
   </ItemGroup>
 
 </Project>

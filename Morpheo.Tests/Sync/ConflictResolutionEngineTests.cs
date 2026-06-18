@@ -31,7 +31,7 @@ public class ConflictResolutionEngineTests
         // Act
         // Remote is newer
         var resultRemoteWins = _engine.Resolve("Entity", localJson, localTs, remoteJson, remoteTs);
-        
+
         // Local is newer
         var resultLocalWins = _engine.Resolve("Entity", localJson, 200, remoteJson, 100);
 
@@ -53,14 +53,14 @@ public class ConflictResolutionEngineTests
         // Act
         // local = A, remote = B. B > A. Expect B.
         var result1 = _engine.Resolve("Entity", jsonA, ts, jsonB, ts);
-        
+
         // local = B, remote = A. B > A. Expect B.
         var result2 = _engine.Resolve("Entity", jsonB, ts, jsonA, ts);
 
         // Assert
         result1.Should().Be(jsonB);
         result2.Should().Be(jsonB);
-        
+
         // Sanity check: they are equal
         result1.Should().Be(result2);
     }

@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.SignalR;
@@ -25,7 +25,7 @@ public static class MorpheoSignalRExtensions
         builder.Services.AddSignalR();
 
         // 2. Register Internal Broadcast Strategy (Server -> Clients)
-        builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<ISyncStrategyProvider>(sp =>
+        builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<ISyncStrategyProvider, SignalRServerBroadcastStrategy>(sp =>
         {
             var hubContext = sp.GetRequiredService<IHubContext<MorpheoSyncHub>>();
             return new SignalRServerBroadcastStrategy(hubContext);
@@ -45,7 +45,7 @@ public static class MorpheoSignalRExtensions
         if (string.IsNullOrWhiteSpace(serverHubUrl)) throw new ArgumentNullException(nameof(serverHubUrl));
 
         // 1. Register Client Strategy (Local -> Server)
-        builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<ISyncStrategyProvider>(sp =>
+        builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<ISyncStrategyProvider, SignalRClientStrategy>(sp =>
         {
             var logger = sp.GetRequiredService<ILogger<SignalRClientStrategy>>();
             // IServiceProvider is passed to resolve DataSyncService within the handler

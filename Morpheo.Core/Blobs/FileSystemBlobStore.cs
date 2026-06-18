@@ -62,9 +62,18 @@ namespace Morpheo.Core.Blobs
             {
                 return Task.FromResult<Stream?>(null);
             }
-            
+
             // Return read-only stream
-            return Task.FromResult<Stream?>(new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read));
+            // IMPORTANT: Caller is responsible for disposing this stream
+            try
+            {
+                var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                return Task.FromResult<Stream?>(stream);
+            }
+            catch (Exception)
+            {
+                return Task.FromResult<Stream?>(null);
+            }
         }
 
         /// <inheritdoc/>

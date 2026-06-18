@@ -41,12 +41,19 @@ public class MorpheoConfigManager
     }
 
     /// <summary>
-    /// Saves the configuration to the JSON file.
+    /// Saves the configuration to the JSON file atomically (write-then-replace)
+    /// to prevent corruption if the process crashes mid-write.
     /// </summary>
     /// <param name="config">The configuration to save.</param>
     public void Save(RuntimeConfig config)
     {
+        if (config == null) throw new ArgumentNullException(nameof(config));
+
         var json = JsonSerializer.Serialize(config, _jsonOptions);
-        File.WriteAllText(_configPath, json);
+        var tempPath = _configPath + ".tmp";
+
+        // Write to a temp file first, then atomically replace the target
+        File.WriteAllText(tempPath, json);
+        File.Move(tempPath, _configPath, overwrite: true);
     }
 }

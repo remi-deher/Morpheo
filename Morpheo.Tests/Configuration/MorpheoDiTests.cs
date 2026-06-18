@@ -16,7 +16,7 @@ public class MorpheoDiTests
     {
         // Arrange
         var services = new ServiceCollection();
-        
+
         // Add Logging (Required by many Morpheo services)
         services.AddLogging(builder => builder.AddConsole());
 
@@ -65,7 +65,7 @@ public class MorpheoDiTests
         // Line 44: services.AddSingleton<MorpheoNode>();
         // It does NOT seem to register it as IHostedService.
         // However, LogCompactionService IS registered as HostedService (Line 70).
-        
+
         var compactor = hostedServices.FirstOrDefault(s => s.GetType().Name == "LogCompactionService");
         compactor.Should().NotBeNull("LogCompactionService should be registered as IHostedService");
 
